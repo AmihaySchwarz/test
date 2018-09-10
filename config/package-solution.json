@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "qn-a-list-client-side-solution",
+    "id": "25eb1400-85c3-44fd-8619-4aca12e85099",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/qn-a-list.sppkg"
+  }
+}
