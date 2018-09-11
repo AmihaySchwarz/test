@@ -11,6 +11,7 @@ export interface IQnAContainerProps {
 export interface IQnAContainerState {
     qnaItems: any[];
     newQuestions: any[];
+    masterItems: any[];
     isDataLoaded: boolean;
     view: ViewType;
     error: string;

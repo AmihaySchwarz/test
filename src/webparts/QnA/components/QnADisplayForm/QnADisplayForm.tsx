@@ -39,10 +39,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
       {this.state.isLoading && <LoadingSpinner />}
       {/* <DialogHeader title='Edit' showSaveButton={false} previousView={ViewType.Display}
           changeView={this.props.changeView} onSaveClick={this.onSaveClick} /> */}
-        <div>
-          <span> Division: </span>
-          
-        </div>
+        
 
        <div>New Questions </div>
 

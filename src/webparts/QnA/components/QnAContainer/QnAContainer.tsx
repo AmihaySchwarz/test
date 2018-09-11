@@ -6,6 +6,7 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import { ViewType } from '../../../common/enum';
 import { QnADisplayForm } from '../QnADisplayForm';
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
+import { Button, Select } from '@material-ui/core';
 
 export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContainerState> {
 
@@ -22,6 +23,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
         //editItem: undefined,
         setLoading: true,
         newQuestions: [],
+        masterItems: []
     };
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
@@ -34,6 +36,8 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   public componentDidMount() {
     console.log("in did mount");
     //check data in master list if current user has access to the divisions
+    //get division lists available to the user
+    //pass array of divisions in loaddata
       this.loadData(this.props);
   }
 
@@ -42,6 +46,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   }
 
   private async loadData(props): Promise<void> {
+    
     console.log("load Data");
     this.setState({
       qnaItems: await this.actionHandler.getQnAItems(),
@@ -51,8 +56,19 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   public render(): React.ReactElement<IQnAContainerProps> {
     console.log(this.state.qnaItems,"lasudlkasdj")
-    return <QnADisplayForm newQuestions={this.state.newQuestions} 
-    changeView={this.changeView} qnaItems={this.state.qnaItems} actionHandler={this.actionHandler} />;
+
+    
+    return ( <div>
+         <div>
+          <span> Division: </span>
+          <Select></Select>
+          
+        </div>
+        
+        <QnADisplayForm newQuestions={this.state.newQuestions} 
+            changeView={this.changeView} qnaItems={this.state.qnaItems} actionHandler={this.actionHandler} />  
+        </div>  
+     );
     //return( <div> TESTING this i the container</div> );
   }
 }

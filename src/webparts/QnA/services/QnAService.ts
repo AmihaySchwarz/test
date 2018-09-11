@@ -7,6 +7,7 @@ import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
 //import * as moment from 'moment-mini';
 
 export class QnAService extends BaseService implements IQnAService {
+   
     private endpointUrl: Object;
     private context: WebPartContext;
     public webPartContext: WebPartContext;
@@ -18,8 +19,8 @@ export class QnAService extends BaseService implements IQnAService {
        this.context = webPartContext;
     }
 
-    public getQnAItems(): Promise<any> {
-        return this.webPartContext.httpClient.get(`${this.endpointUrl}/api/v2.0/me/tasks?&$select=*&$top=1000&Status!=Completed&$filter=Status ne 'Completed'&$orderby=DueDateTime/DateTime asc`, HttpClient.configurations.v1, {
+    public getQnAItems(division: string): Promise<any> {
+        return this.webPartContext.httpClient.get(`${this.endpointUrl}/_api/lists/getbytitle('${division}')/items`, HttpClient.configurations.v1, {
             headers: {
                 'Prefer': 'outlook.timezone="Singapore Standard Time"',
                 //'Authorization': "Bearer " + accesstoken,
@@ -43,6 +44,8 @@ export class QnAService extends BaseService implements IQnAService {
     private Error(e) {
         console.log(e);
     }
+
+    public getMasterListItems: () => Promise<any>;
 
     public updateWebpartProps(propertyPath: string, newValue: any): void {
         switch (propertyPath) {
