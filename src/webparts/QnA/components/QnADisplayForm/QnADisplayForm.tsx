@@ -21,7 +21,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
       newQuestions: props.newQuestions,
       masterListItems: props.masterItems,
       qnaListItems: [],
-      division:[]
+      division:[],
+      selectedItem: undefined
     };
   }
 
@@ -47,8 +48,15 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
     this.props.changeView(ViewType.Display);
   }
 
+  public changeState = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
+    this.setState({ selectedItem: item });
+  };
+
   public render() {
    console.log(this.state.division, "division");
+   const { selectedItem, selectedItems } = this.state;
+
     const qna  =  [
       {
           Items: [
@@ -87,8 +95,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
             placeHolder="Select Division"
             id="division"
             options={this.state.division}
-            //onFocus={this._log('onFocus called')}
-            //onBlur={this._log('onBlur called')}
+            selectedKey={selectedItem ? selectedItem.key : undefined}
+            //onChange={this.changeState}
           />
           <DefaultButton
             text='Edit'
