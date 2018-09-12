@@ -6,12 +6,14 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import { ViewType } from '../../../common/enum';
 import { QnADisplayForm } from '../QnADisplayForm';
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
-import { Button, Select } from '@material-ui/core';
+import { Division } from '../../../common/enum/Division';
+
 
 export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContainerState> {
 
   private actionHandler: QnAActionHandler;
   public authContext: AuthenticationContext;
+ 
 
   constructor(props: IQnAContainerProps, state: IQnAContainerState) {
     super(props);
@@ -20,55 +22,58 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
         isDataLoaded: false,
         view: ViewType.Display,
         error: "",
-        //editItem: undefined,
         setLoading: true,
         newQuestions: [],
-        masterItems: []
+        masterItems: [],
     };
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
   }
   public componentWillReceiveProps(newProps): void {
+    const currentUser = "admin-ptangalin@cupdev.onmicrosoft.com";
     console.log("in recevied props");
-    this.loadData(newProps);
+    this.loadMasterList(currentUser);
   }
 
   public componentDidMount() {
     console.log("in did mount");
-    //check data in master list if current user has access to the divisions
+    //test user
+    const currentUser = "admin-ptangalin@cupdev.onmicrosoft.com";
+      //check data in master list if current user has access to the divisions
     //get division lists available to the user
-    //pass array of divisions in loaddata
-      this.loadData(this.props);
+    this.loadMasterList(currentUser);
   }
+
+  private async loadMasterList(currentUser: string): Promise<void> {
+    console.log(this.props.endpoints[0].tenantQnAUrl, "ENDPOINTS");
+
+    this.setState({
+      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.endpoints[0].tenantQnAUrl,this.props.endpoints[0].masterListName ),
+      isDataLoaded: true,
+    });
+    console.log(this.state.masterItems, "master items!");
+    
+  }
+
+  // private async loadData(): Promise<void> {
+  //   //load all data of user's division list
+  //   console.log(this.state.masterItems, "load Data");
+  //    this.setState({
+  //      qnaItems: await this.actionHandler.getQnAItems(this.state.masterItems, this.props.endpoints[0].tenantQnAUrl),
+  //      isDataLoaded: true,
+  //    });
+  // }
 
   private changeView(view: ViewType): void {
     this.setState({ view });
   }
 
-  private async loadData(props): Promise<void> {
-    
-    console.log("load Data");
-    this.setState({
-      qnaItems: await this.actionHandler.getQnAItems(),
-      isDataLoaded: true,
-    });
-  }
-
   public render(): React.ReactElement<IQnAContainerProps> {
-    console.log(this.state.qnaItems,"lasudlkasdj")
+    console.log(this.state.masterItems,"lasudlkasdj")
 
     
-    return ( <div>
-         <div>
-          <span> Division: </span>
-          <Select></Select>
-          
-        </div>
-        
-        <QnADisplayForm newQuestions={this.state.newQuestions} 
-            changeView={this.changeView} qnaItems={this.state.qnaItems} actionHandler={this.actionHandler} />  
-        </div>  
-     );
+    return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
+            changeView={this.changeView} actionHandler={this.actionHandler} /> ;
     //return( <div> TESTING this i the container</div> );
   }
 }

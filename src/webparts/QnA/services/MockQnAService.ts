@@ -12,28 +12,59 @@ export class MockQnAService extends BaseService {
                     Id: "1",
                     Division: "Admission",
                     QnAListName: "AdmissionQnA",
-                    Editors: "pageflourin@gmail.com" 
+                    Editors: ["admin-ptangalin@cupdev.onmicrosoft.com", "page@gamil.com"  ]
                 },
                 {
-                    Id: "1",
+                    Id: "2",
                     Division: "Registrars Office",
                     QnAListName: "RegistrarsQnA",
-                    Editors: "pageflourin@gmail.com" 
+                    Editors: ["admin-ptangalin@cupdev.onmicrosoft.com", "page@gamil.com"  ]
                 }, {
-                    Id: "1",
+                    Id: "3",
                     Division: "Finance",
                     QnAListName: "FinanceQnA",
-                    Editors: "pageflourin@gmail.com" 
+                    Editors: [ "page@gamil.com"  ]
                 }, {
-                    Id: "1",
+                    Id: "4",
                     Division: "CIT",
                     QnAListName: "CITQnA",
-                    Editors: "pageflourin@gmail.com" 
+                    Editors: ["page@gamil.com"  ]
                 },
             ]
         }
-
     ];
+
+    private mockNewQuestionsData = [
+        {
+            Items: [
+                {
+                    Id: "1",
+                    Question: "Question Number 1",
+                    PostedDate: "09-08-2018",
+                    PostedBy: "Page Tangalin"
+                },    
+                {
+                    Id: "2",
+                    Question: "Question Number 2",
+                    PostedDate: "09-08-2018",
+                    PostedBy: "Page"
+                },
+                {
+                    Id: "3",
+                    Question: "Question Number 3",
+                    PostedDate: "09-08-2018",
+                    PostedBy: "PT"
+                },
+                {
+                    Id: "4",
+                    Question: "Question Number 4",
+                    PostedDate: "09-08-2018",
+                    PostedBy: "Page T"
+                },
+            ]
+        }
+    ];
+
 
     private readonly mockAdmissionQnAData = [
         {
@@ -144,25 +175,40 @@ export class MockQnAService extends BaseService {
         }
     ];
     
-    public getMasterListItems(): Promise<any[]> {
+    public getMasterListItems(currentUser: string, url : string, masterListName: string): Promise<any[]> {
+        const masterItems = this.masterListData[0].Items;
+        console.log(masterItems, "mast items", currentUser)
         return new Promise<any[]>((resolve) => {
-            setTimeout(() => resolve(this.masterListData), 300);
+        //     setTimeout(() => masterItems.forEach((data) => {data.Editors.filter((item) => {
+        //        if(item.toString() == currentUser.toString()){
+        //            console.log(data);
+        //            return data;
+        //        }
+        //     })
+        //  }) ,300 )
+           setTimeout(() => resolve(this.masterListData[0].Items) ,300 )
         });
     }
 
-
-    public getQnAItems(division: string): Promise<any[]> {
+    public getNewQuestions(): Promise<any[]> {
+        //get 
         return new Promise<any[]>((resolve) => {
-            if(division === Division.Admission ) {
+            setTimeout(() => resolve(this.mockNewQuestionsData) ,300 )
+        });
+    }
+
+    public getQnAItems(masterItems: any[], url : string): Promise<any[]> {
+        console.log(masterItems);
+        return new Promise<any[]>((resolve) => {
+            if(masterItems[0].division === Division.Admission ) {
                 setTimeout(() => resolve(this.mockAdmissionQnAData), 300);
-            } else if (division === Division.CIT) {
+            } else if (masterItems[0].division === Division.CIT) {
                 setTimeout(() => resolve(this.mockCITQnAData), 300);
-            } else if (division === Division.Finance) {
+            } else if (masterItems[0].division === Division.Finance) {
                 setTimeout(() => resolve(this.mockFinanceQnAData), 300);
-            }else if (division === Division.Registrars) {
+            }else if (masterItems[0].division === Division.Registrars) {
                 setTimeout(() => resolve(this.mockRegistrarsQnAData), 300);
             }
-           
         });
     }
 

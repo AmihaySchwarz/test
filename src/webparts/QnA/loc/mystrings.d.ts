@@ -12,7 +12,7 @@ declare interface IQnAListWebPartStrings {
   NewQuestionsEndpointUrlFieldLabel: string;
   QnATrackingEndpointUrlFieldLabel: string;
   QnAEndpointUrlFieldLabel: string;
-  MasterListEndpointUrlFieldLabel: string;
+  MasterListNameFieldLabel: string;
 }
 
 declare module 'QnAListWebPartStrings' {

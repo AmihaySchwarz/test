@@ -4,8 +4,9 @@ import { IQnAService } from '../../services';
 import * as AuthenticationContext from 'adal-angular';
 
 export interface IQnAContainerProps {
-  description: string;
+  //description: string;
   service: IQnAService;
+  endpoints: Object;
 }
 
 export interface IQnAContainerState {

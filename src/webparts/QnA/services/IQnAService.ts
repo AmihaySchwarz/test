@@ -2,7 +2,8 @@
 //import IItemResult from "../../common/models/IItemResult";
 
 export interface IQnAService {
-    getQnAItems: (division: string) => Promise<any>;
-    getMasterListItems: () => Promise<any>
+    getQnAItems: (masterItems: any[], url : string) => Promise<any>;
+    getMasterListItems: (currentUser: string, url : string, masterListName: string) => Promise<any>;
+    getNewQuestions: () => Promise<any>;
     updateWebpartProps(propertyPath: string, newValue: any): void;
 }

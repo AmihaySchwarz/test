@@ -24,17 +24,14 @@ if (DEBUG) {
 export interface IQnAListWebPartProps {
   description: string;
   title: string;
-    numberOfItems: number;
-    clientId: string;
-    tenant: string;
-    redirectUrl: string;
-    endpoints: {
-      
-      masterListEndpointUrl: string;
-      newQuestionsEndpointUrl: string;
-      qnATrackingEndpointUrl: string;
-      qnAEndpointUrl: string;
-    }
+  numberOfItems: number;
+  clientId: string;
+  redirectUrl: string;
+    masterListName: string;
+    newQuestionsEndpointUrl: string;
+    qnATrackingEndpointUrl: string;
+    qnAEndpointUrl: string;
+    tenantQnAUrl: string;
     
 }
 
@@ -53,7 +50,7 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
       console.log("environment is local");
       this.service = new MockQnAService.MockQnAService(null);
     } else {
-      this.service = new QnAService(this.properties.endpoints, this.context);
+      this.service = new QnAService(this.context);
     }
       return super.onInit();
   }
@@ -62,8 +59,14 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
     const element: React.ReactElement<IQnAContainerProps > = React.createElement(
       QnAContainer,
       {
-        description: this.properties.description,
-        service: this.service
+        service: this.service,
+        endpoints: [{
+          masterListName: this.properties.masterListName,
+          newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
+          qnATrackingEndpointUrl: this.properties.qnATrackingEndpointUrl, 
+          tenantQnAUrl: this.properties.tenantQnAUrl, 
+        }]
+
       }
     );
 
@@ -92,36 +95,37 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
                 PropertyPaneTextField('title', {
                   label: strings.TitleFieldLabel,
               }),
-              PropertyPaneSlider('numberOfItems', {
-                  label: strings.NumberOfItemsFieldLabel,
-                  min: 1,
-                  max: 10,
-                  showValue: true,
-                  step: 1
-              }),
+              // PropertyPaneSlider('numberOfItems', {
+              //     label: strings.NumberOfItemsFieldLabel,
+              //     min: 1,
+              //     max: 10,
+              //     showValue: true,
+              //     step: 1
+              // }),
               PropertyPaneTextField('apiServiceEndpoint', {
                   label: strings.ApiServiceEndpointFieldLabel,
               }),
               PropertyPaneTextField('clientId', {
                 label: strings.ClientIdFieldLabel,
             }),
-            PropertyPaneTextField('tenant', {
+            PropertyPaneTextField('tenantQnAUrl', {
                 label: strings.TenantFieldLabel,
             }),
             PropertyPaneTextField('redirectUrl', {
                 label: strings.RedirectUrlFieldLabel,
             }),
-            PropertyPaneTextField('masterListEndpointUrl', {
-                label: strings.MasterListEndpointUrlFieldLabel,
+            PropertyPaneTextField('masterListName', {
+                label: strings.MasterListNameFieldLabel,
             }),
-            PropertyPaneTextField('qnAEndpointUrl', {
-              label: strings.QnAEndpointUrlFieldLabel,
-            }),
+            // PropertyPaneTextField('qnAEndpointUrl', {
+            //   label: strings.QnAEndpointUrlFieldLabel,
+            // }),
             PropertyPaneTextField('qnATrackingEndpointUrl', {
               label: strings.QnATrackingEndpointUrlFieldLabel,
             }),
             PropertyPaneTextField('newQuestionsEndpointUrl', {
               label: strings.NewQuestionsEndpointUrlFieldLabel,
+              
             }),
               ]
             }
@@ -139,15 +143,15 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
     return this.needsConfiguration() ? {
         clientId: this.properties.clientId,
         redirectUri: this.properties.redirectUrl,
-        tenant: this.properties.tenant,
+        tenant: this.properties.tenantQnAUrl,
         popUp: false,
         extraQueryParameter: `login_hint=${this.context.pageContext.legacyPageContext.userLoginName}`,
         cacheLocation: "localStorage",
         endpoints: { 
-            masterListEndpointUrl: this.properties.endpoints.masterListEndpointUrl,
-            newQuestionsEndpointUrl: this.properties.endpoints.newQuestionsEndpointUrl,
-            qnAEndpointUrl: this.properties.endpoints.qnAEndpointUrl,
-            qnATrackingEndpointUrl: this.properties.endpoints.qnATrackingEndpointUrl 
+            masterListEndpointUrl: this.properties.masterListName,
+            newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
+            qnAEndpointUrl: this.properties.qnAEndpointUrl,
+            qnATrackingEndpointUrl: this.properties.qnATrackingEndpointUrl 
         },
         loadFrameTimeout: 30000
     } : null;
@@ -156,12 +160,12 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
 private needsConfiguration(): boolean {
     return (!!this.properties.title &&
         !!this.properties.clientId &&
-        !!this.properties.tenant &&
+        !!this.properties.tenantQnAUrl &&
         !!this.properties.redirectUrl &&
-        !!this.properties.endpoints.masterListEndpointUrl &&
-        !!this.properties.endpoints.newQuestionsEndpointUrl &&
-        !!this.properties.endpoints.qnAEndpointUrl &&
-        !!this.properties.endpoints.qnATrackingEndpointUrl);
+        !!this.properties.masterListName &&
+        !!this.properties.newQuestionsEndpointUrl &&
+        !!this.properties.qnAEndpointUrl &&
+        !!this.properties.qnATrackingEndpointUrl);
 }
 
 }

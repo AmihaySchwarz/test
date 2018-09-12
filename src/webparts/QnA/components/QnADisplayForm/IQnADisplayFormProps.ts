@@ -4,10 +4,11 @@ import { IQnAService } from '../../services';
 
 export interface IQnADisplayFormProps {
     //service: IQnAService;
-    qnaItems: any[];
+    //qnaItems: any[];
     newQuestions: any[];
     actionHandler: QnAActionHandler;
     changeView: Function;
+    masterItems: any[];
     //editItemIndex?: string;
     //editItem?: IQnA;
 }

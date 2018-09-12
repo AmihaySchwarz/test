@@ -23,7 +23,8 @@
     "@types/webpack-env": "1.13.1",
     "react": "15.6.2",
     "react-dom": "15.6.2",
-    "react-table": "^6.8.6"
+    "react-table": "^6.8.6",
+    "typescript": "^3.0.3"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "1.6.0",

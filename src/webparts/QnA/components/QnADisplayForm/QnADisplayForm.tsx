@@ -8,21 +8,38 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css'
  import { Pagination } from './Pagination';
+ import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
+ import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
+ import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
   constructor(props) {
     super(props);
     console.log(props);
     this.state = {
-      qnaItems: props.qnaItems
+      qnaItems: props.qnaItems,
+      newQuestions: props.newQuestions,
+      masterListItems: props.masterItems,
+      qnaListItems: [],
+      division:[]
     };
   }
 
   public componentWillReceiveProps(newProps): void {
-    console.log("in recevied props");
-    console.log(newProps)
-    this.setState({ qnaItems: newProps.qnaItems });
-    console.log(this.state.qnaItems);
+    console.log(newProps, "in recevied props");
+
+   // this.setState({ qnaItems: newProps.qnaItems });
+    //load qna division list data based from the division in the dropdown
+    this.setState({
+      division: newProps.masterItems.map(divisionItem => ({
+        key: divisionItem.QnAListName,
+        text: divisionItem.Division
+      }))
+    })
+  }
+
+  public loadQnAListData(divisionList: string): void {
+    
   }
 
   private onSaveClick(): void {
@@ -31,16 +48,62 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
   }
 
   public render() {
-    const test = [{answer:"wee",classification:"wee"},{answer:"wee",classification:"wee"}]
-    const qna  = this.state.qnaItems.Items? this.state.qnaItems.Items : [] ;
+   console.log(this.state.division, "division");
+    const qna  =  [
+      {
+          Items: [
+              {
+                  Id: "1",
+                  Question: "Question Number 1",
+                  Answer: "Answer 1",
+                  Classification: "Class 1",
+                  QnAId: "cqna1"
+              },
+              {
+                  Id: "2",
+                  Question: "Question Number 2",
+                  Answer: "Answer 2",
+                  Classification: "Class 2",
+                  QnAId: "cqna2"
+              },
+              { 
+                  Id: "3",
+                  Question: "Question Number 3",
+                  Answer: "Answer 3",
+                  Classification: "Class 3",
+                  QnAId: "cqna3"
+              }
+          ]
+      }];
     console.log(qna);
     return (
       <div>
       {this.state.isLoading && <LoadingSpinner />}
-      {/* <DialogHeader title='Edit' showSaveButton={false} previousView={ViewType.Display}
-          changeView={this.props.changeView} onSaveClick={this.onSaveClick} /> */}
-        
 
+        <div> 
+          <span> Division: </span>
+          <Dropdown
+            
+            placeHolder="Select Division"
+            id="division"
+            options={this.state.division}
+            //onFocus={this._log('onFocus called')}
+            //onBlur={this._log('onBlur called')}
+          />
+          <DefaultButton
+            text='Edit'
+            primary={ true }
+            href='#'
+          />
+          <DefaultButton
+            text='Publish'
+            primary={ true }
+            href='#'
+          />
+        </div>
+      
+
+          
        <div>New Questions </div>
 
         <ReactTable
@@ -71,7 +134,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
 
         <div> QnA </div> 
         <ReactTable
-          data={qna}
+          data={qna[0].Items}
+          
           PaginationComponent={Pagination}
           columns={[
             {
