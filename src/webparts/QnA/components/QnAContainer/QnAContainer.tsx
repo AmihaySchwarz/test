@@ -30,18 +30,18 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
   }
-  public async componentWillReceiveProps(newProps): Promise<void> 
+  public  componentWillReceiveProps(newProps): void
   {
-    console.log("in recevied props");
-    //get current user
-    this.setState({
-      currentUser: await this.actionHandler.getCurrentUser()
-    });
-    this.loadMasterList(this.state.currentUser);
+    this.loadData();
   }
 
-  public async componentDidMount() {
-    console.log("in did mount");
+  public  componentDidMount() 
+  {
+   this.loadData();
+  }
+
+  private async loadData(): Promise<void>{
+    console.log("in load data");
     this.setState({
       currentUser: await this.actionHandler.getCurrentUser()
     });
@@ -72,7 +72,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.setState({ view });
   }
 
-  public render(): React.ReactElement<IQnAContainerProps> {
+  public render() {
     console.log(this.state.masterItems,"lasudlkasdj")
 
     
