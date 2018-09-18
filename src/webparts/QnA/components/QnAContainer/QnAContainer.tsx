@@ -25,30 +25,34 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
         setLoading: true,
         newQuestions: [],
         masterItems: [],
+        currentUser: undefined
     };
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
   }
-  public componentWillReceiveProps(newProps): void {
-    const currentUser = "admin-ptangalin@cupdev.onmicrosoft.com";
+  public async componentWillReceiveProps(newProps): Promise<void> 
+  {
     console.log("in recevied props");
-    this.loadMasterList(currentUser);
+    //get current user
+    this.setState({
+      currentUser: await this.actionHandler.getCurrentUser()
+    });
+    this.loadMasterList(this.state.currentUser);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     console.log("in did mount");
-    //test user
-    const currentUser = "admin-ptangalin@cupdev.onmicrosoft.com";
-      //check data in master list if current user has access to the divisions
-    //get division lists available to the user
-    this.loadMasterList(currentUser);
+    this.setState({
+      currentUser: await this.actionHandler.getCurrentUser()
+    });
+    this.loadMasterList(this.state.currentUser);
   }
 
-  private async loadMasterList(currentUser: string): Promise<void> {
+  private async loadMasterList(currentUser: any[]): Promise<void> {
     console.log(this.props.endpoints[0].tenantQnAUrl, "ENDPOINTS");
 
     this.setState({
-      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.endpoints[0].tenantQnAUrl,this.props.endpoints[0].masterListName ),
+      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.endpoints[0].weburl,this.props.endpoints[0].masterListName ),
       isDataLoaded: true,
     });
     console.log(this.state.masterItems, "master items!");
@@ -73,7 +77,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
     
     return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-            changeView={this.changeView} actionHandler={this.actionHandler} /> ;
+            changeView={this.changeView} actionHandler={this.actionHandler} endpoints={this.props.endpoints} /> ;
     //return( <div> TESTING this i the container</div> );
   }
 }

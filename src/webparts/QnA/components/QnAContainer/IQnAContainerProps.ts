@@ -6,7 +6,7 @@ import * as AuthenticationContext from 'adal-angular';
 export interface IQnAContainerProps {
   //description: string;
   service: IQnAService;
-  endpoints: Object;
+  endpoints: any;
 }
 
 export interface IQnAContainerState {
@@ -18,4 +18,5 @@ export interface IQnAContainerState {
     error: string;
     //editItem: IMyTasks;
     setLoading: boolean;
+    currentUser: any;
 }

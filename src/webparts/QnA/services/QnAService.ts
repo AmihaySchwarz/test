@@ -2,53 +2,34 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
 import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
-//import IMyTasks from '../components/Model/IMyTasks';
-//import IItemResult from '../../common/models/IItemResult';
+import { sp } from '@pnp/sp';
+import { IQnAListItem } from "../models/IQnAListItem";
+import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
+import { IQnAMakerItem } from "../models/IQnAMakerItem";
 //import * as moment from 'moment-mini';
 
 export class QnAService extends BaseService implements IQnAService {
    
-    public qnaTenantUrl: Object;
+    
+    public endpoints: Object;
     private context: WebPartContext;
     public webPartContext: WebPartContext;
 
     constructor(webPartContext: WebPartContext) {
         super(webPartContext);
         //get endpoints
-        //console.log(endpoints);
-       //this.qnaTenantUrl = endpoints;
+       // console.log(endpoints);
+       //this.endpoints = endpoints;
        this.context = webPartContext;
     }
 
-    public getQnAItems(masterListItems: any[], url : string): Promise<any> {
-        console.log(masterListItems, "master list items");
-        return this.webPartContext.httpClient.get(`${url}/_api/lists/getbytitle('${masterListItems}')/items`, HttpClient.configurations.v1, {
-            headers: {
-                'Prefer': 'outlook.timezone="Singapore Standard Time"',
-                //'Authorization': "Bearer " + accesstoken,
-                'Cache-Control': 'no-cache',
-                'pragma': 'no-cache'
-            }
-        })
-            .then((response: HttpClientResponse) => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response.json();
-            })
-            .then((json) => {
-                return json.value;
-            })
-            .catch((e) => {
-                this.Error(e);
-            });
+    public getCurrentUser(): Promise<any> {
+        return sp.web.currentUser.get().then((user) => {
+            console.log(user);
+            return user;
+        });
     }
-    private Error(e) {
-        console.log(e);
-    }
-
-    public getMasterListItems(currentUser: string, url : string, masterListName: string): Promise<any>{
-
+    public getMasterListItems(currentUser: any[], url: string, masterListName: string): Promise<any>{
         return this.webPartContext.httpClient.get(`${url}/_api/web/lists/GetByTitle('${masterListName}')/Items?$expand=Editors`, HttpClient.configurations.v1)  
         .then((response: HttpClientResponse) => {   
           //debugger;  
@@ -56,16 +37,29 @@ export class QnAService extends BaseService implements IQnAService {
         });  
     };
 
-    public getNewQuestions: () => Promise<any>;
-
-    public updateWebpartProps(propertyPath: string, newValue: any): void {
-        switch (propertyPath) {
-            case "tenantUrl":
-                this.qnaTenantUrl = newValue;
-                break;
-            default:
-                break;
-        }
+    public getQnAItems(masterListItem: any[]): Promise<any> {
+        console.log(masterListItem, "master list item");
+        return sp.web.lists.getByTitle(masterListItem[0].Title).items.select("ID", "Questions", "Answer", "Classification", "QnAID").getAll().then((items: any[]) => {
+            console.log(items);
+            return items;
+        });
     }
+
+    public checkLockStatus(division: any, divisionQnAListName: string): Promise<any>{
+        return null;
+    }
+
+    private Error(e) {
+        console.log(e);
+    }
+    
+    public getNewQuestions: () => Promise<any>;
+    deleteFromNewQuestion: () => Promise<any>;
+    lockList: () => Promise<any>;
+    updateItemInQnAList: (url: string, qnaListItem: IQnAListItem) => Promise<any>;
+    addToQnAList:(url: string, qnaListItem: IQnAListItem) => Promise<any>;
+    updateQnAListTracking: (url: string, qnaListTrackingItem: IQnAListTrackingItem) => Promise<any>;
+    updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
+    publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
    
 }

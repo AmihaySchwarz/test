@@ -6,10 +6,10 @@ define([], function() {
     "ApiServiceEndpointFieldLabel": "API service endpoint url",
     "EndpointUrlFieldLabel": "Endpoint URL",
     "RedirectUrlFieldLabel": "Redirect URL",
-    "TenantFieldLabel": "SharePoint QnA Tenant URL",
+    "WebUrlFieldLabel": "SharePoint QnA Tenant URL",
     "ClientIdFieldLabel": "Client ID",
     "NewQuestionsEndpointUrlFieldLabel": "Chat Bot DB Endpoint URL",
-    "QnATrackingEndpointUrlFieldLabel": "QnA List Tracking Endpoint URL",
+    "QnATrackingListNameFieldLabel": "QnA List Tracking Endpoint URL",
     "QnAEndpointUrlFieldLabel": "QnA List Endpoint URL",
     "MasterListNameFieldLabel": "QnA Master List Name"
   }

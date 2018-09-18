@@ -7,10 +7,10 @@ declare interface IQnAListWebPartStrings {
   NumberOfItemsFieldLabel: string;
   EndpointUrlFieldLabel: strings;
   RedirectUrlFieldLabel: string;
-  TenantFieldLabel: string;
+  WebUrlFieldLabel: string;
   ClientIdFieldLabel: string;
   NewQuestionsEndpointUrlFieldLabel: string;
-  QnATrackingEndpointUrlFieldLabel: string;
+  QnATrackingListNameFieldLabel: string;
   QnAEndpointUrlFieldLabel: string;
   MasterListNameFieldLabel: string;
 }

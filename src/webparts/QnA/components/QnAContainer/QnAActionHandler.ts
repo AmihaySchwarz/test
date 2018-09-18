@@ -7,12 +7,12 @@ export class QnAActionHandler {
     constructor(private container: QnAContainer, private service: IQnAService) {
         this.changeView = this.changeView.bind(this);
     }
-    public async getQnAItems(masterItems: any[], url : string): Promise<any[]> { //accesstoken: string
-       let items =  await this.service.getQnAItems(masterItems, url);
+    public async getQnAItems(masterItem: any, url : string): Promise<any[]> { //accesstoken: string
+       let items =  await this.service.getQnAItems(masterItem, url);
        console.log(items[0]);
        return items[0];
     }
-    public async getMasterListItems(currentUser:string, url : string, listname: string): Promise<any[]> {
+    public async getMasterListItems(currentUser:any[] , url: string, listname: string): Promise<any[]> {
         let items =  await this.service.getMasterListItems(currentUser,url, listname);
         console.log(items);
         return items;
@@ -21,4 +21,11 @@ export class QnAActionHandler {
     public changeView(view: ViewType): void {
         this.container.setState({ view });
     }
+
+    public async getCurrentUser(): Promise<any> {
+        let user =  await this.service.getCurrentUser();
+       console.log(user, "current user");
+       return user;
+    }
+
 }

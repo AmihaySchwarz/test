@@ -29,29 +29,25 @@ export interface IQnAListWebPartProps {
   redirectUrl: string;
     masterListName: string;
     newQuestionsEndpointUrl: string;
-    qnATrackingEndpointUrl: string;
+    qnATrackingListName: string;
     qnAEndpointUrl: string;
-    tenantQnAUrl: string;
+    webUrl: string;
     
 }
 
 export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPartProps> {
 
   private service: IQnAService;
-  private readonly userMenuItems = [
-      { type: MenuItemType.ChangeView, text: "Add", view: ViewType.New },
-      { type: MenuItemType.ChangeView, text: "Advance Add", view: ViewType.AdvanceAdd },
-      { type: MenuItemType.ChangeView, text: "Edit", view: ViewType.Edit },
-  ];
+
 
   protected onInit(): Promise<void> {
     console.log("here", Environment.type);
-    if (Environment.type === EnvironmentType.Local) {
-      console.log("environment is local");
-      this.service = new MockQnAService.MockQnAService(null);
-    } else {
+    //if (Environment.type === EnvironmentType.Local) {
+    //  console.log("environment is local");
+    //  this.service = new MockQnAService.MockQnAService(null);
+    //} else {
       this.service = new QnAService(this.context);
-    }
+    //}
       return super.onInit();
   }
 
@@ -63,8 +59,8 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
         endpoints: [{
           masterListName: this.properties.masterListName,
           newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
-          qnATrackingEndpointUrl: this.properties.qnATrackingEndpointUrl, 
-          tenantQnAUrl: this.properties.tenantQnAUrl, 
+          qnATrackingListName: this.properties.qnATrackingListName, 
+          webUrl: this.properties.webUrl, 
         }]
 
       }
@@ -95,33 +91,26 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
                 PropertyPaneTextField('title', {
                   label: strings.TitleFieldLabel,
               }),
-              // PropertyPaneSlider('numberOfItems', {
-              //     label: strings.NumberOfItemsFieldLabel,
-              //     min: 1,
-              //     max: 10,
-              //     showValue: true,
-              //     step: 1
-              // }),
               PropertyPaneTextField('apiServiceEndpoint', {
                   label: strings.ApiServiceEndpointFieldLabel,
               }),
-              PropertyPaneTextField('clientId', {
-                label: strings.ClientIdFieldLabel,
+             // PropertyPaneTextField('clientId', {
+             //   label: strings.ClientIdFieldLabel,
+            //}),
+            PropertyPaneTextField('webUrl', {
+                label: strings.WebUrlFieldLabel,
             }),
-            PropertyPaneTextField('tenantQnAUrl', {
-                label: strings.TenantFieldLabel,
-            }),
-            PropertyPaneTextField('redirectUrl', {
-                label: strings.RedirectUrlFieldLabel,
-            }),
+            //PropertyPaneTextField('redirectUrl', {
+            //    label: strings.RedirectUrlFieldLabel,
+            //}),
             PropertyPaneTextField('masterListName', {
                 label: strings.MasterListNameFieldLabel,
             }),
             // PropertyPaneTextField('qnAEndpointUrl', {
             //   label: strings.QnAEndpointUrlFieldLabel,
             // }),
-            PropertyPaneTextField('qnATrackingEndpointUrl', {
-              label: strings.QnATrackingEndpointUrlFieldLabel,
+            PropertyPaneTextField('qnATrackingListName', {
+              label: strings.QnATrackingListNameFieldLabel,
             }),
             PropertyPaneTextField('newQuestionsEndpointUrl', {
               label: strings.NewQuestionsEndpointUrlFieldLabel,
@@ -135,37 +124,28 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
     };
   }
 
-  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
-    this.service.updateWebpartProps(propertyPath, newValue);
-}
+//  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
+//     this.service.updateWebpartProps(propertyPath, newValue);
+// }
 
-  private getAuthContextOptions(): AuthenticationContext.Options {
-    return this.needsConfiguration() ? {
-        clientId: this.properties.clientId,
-        redirectUri: this.properties.redirectUrl,
-        tenant: this.properties.tenantQnAUrl,
-        popUp: false,
-        extraQueryParameter: `login_hint=${this.context.pageContext.legacyPageContext.userLoginName}`,
-        cacheLocation: "localStorage",
-        endpoints: { 
-            masterListEndpointUrl: this.properties.masterListName,
-            newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
-            qnAEndpointUrl: this.properties.qnAEndpointUrl,
-            qnATrackingEndpointUrl: this.properties.qnATrackingEndpointUrl 
-        },
-        loadFrameTimeout: 30000
-    } : null;
-}
+//   private getAuthContextOptions(): AuthenticationContext.Options {
+//     return this.needsConfiguration() ? {
+//         clientId: this.properties.clientId,
+//         redirectUri: this.properties.redirectUrl,
+//         tenant: this.properties.tenantQnAUrl,
+//         popUp: false,
+//         extraQueryParameter: `login_hint=${this.context.pageContext.legacyPageContext.userLoginName}`,
+//         cacheLocation: "localStorage",
+//         endpoints: { 
+//             masterListEndpointUrl: this.properties.masterListName,
+//             newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
+//             qnAEndpointUrl: this.properties.qnAEndpointUrl,
+//             qnATrackingEndpointUrl: this.properties.qnATrackingListName 
+//         },
+//         loadFrameTimeout: 30000
+//     } : null;
+// }
 
-private needsConfiguration(): boolean {
-    return (!!this.properties.title &&
-        !!this.properties.clientId &&
-        !!this.properties.tenantQnAUrl &&
-        !!this.properties.redirectUrl &&
-        !!this.properties.masterListName &&
-        !!this.properties.newQuestionsEndpointUrl &&
-        !!this.properties.qnAEndpointUrl &&
-        !!this.properties.qnATrackingEndpointUrl);
-}
+
 
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './QnADisplayForm.module.scss';
-import { IQnADisplayFormProps } from './IQnADisplayFormProps';
+import { IQnADisplayFormProps,IQnAFormState } from './IQnADisplayFormProps';
 import { DialogHeader } from '../../../common/components/DialogHeader';
 import { LoadingSpinner } from '../../../common/components/LoadingSpinner';
 import { ViewType } from '../../../common/enum';
@@ -11,18 +11,24 @@ import 'react-table/react-table.css'
  import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
  import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
  import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+ import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 
-export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
+export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFormState> {
+
+  private isEdit: boolean;
+  private actionHandler: QnAActionHandler;
+
   constructor(props) {
     super(props);
     console.log(props);
     this.state = {
-      qnaItems: props.qnaItems,
-      newQuestions: props.newQuestions,
-      masterListItems: props.masterItems,
-      qnaListItems: [],
-      division:[],
-      selectedItem: undefined
+      question: [],
+      answers: "",
+      classification: "",
+      division: "",
+      selectedItem: undefined,
+      qnaItems: [],
+      isDataLoaded: false
     };
   }
 
@@ -39,8 +45,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
     })
   }
 
-  public loadQnAListData(divisionList: string): void {
-    
+  public async loadQnAListData(divisionItem: string): Promise<void> {
+    console.log(divisionItem, "ENDPOINTS");
+
+    this.setState({
+      qnaItems: await this.props.actionHandler.getQnAItems(divisionItem,this.props.endpoints[0].webUrl),
+      isDataLoaded: true,
+    });
+    console.log(this.state.qnaItems, "qna items!");
   }
 
   private onSaveClick(): void {
@@ -55,7 +67,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
 
   public render() {
    console.log(this.state.division, "division");
-   const { selectedItem, selectedItems } = this.state;
+   const { selectedItem } = this.state;
 
     const qna  =  [
       {
@@ -142,7 +154,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, any> {
 
         <div> QnA </div> 
         <ReactTable
-          data={qna[0].Items}
+          data={this.state.qnaItems}
           
           PaginationComponent={Pagination}
           columns={[

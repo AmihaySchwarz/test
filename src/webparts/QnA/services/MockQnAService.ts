@@ -212,7 +212,5 @@ export class MockQnAService extends BaseService {
         });
     }
 
-    public updateWebpartProps(propertyPath: string, newValue: any): void {
-    
-    }
+  
 }

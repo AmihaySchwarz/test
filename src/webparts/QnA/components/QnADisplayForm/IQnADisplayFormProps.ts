@@ -1,23 +1,31 @@
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
-//import IQnA from '../Model/IQnA';
 import { IQnAService } from '../../services';
+import { IQnAListItem } from "../../models/IQnAListItem";
+import { IQnAListTrackingItem } from "../../models/IQnAListTrackingItem";
+import { IQnAMakerItem } from "../../models/IQnAMakerItem";
+import { INewQuestions } from "../../models/INewQuestions";
+
 
 export interface IQnADisplayFormProps {
     //service: IQnAService;
-    //qnaItems: any[];
-    newQuestions: any[];
+    endpoints: any;
     actionHandler: QnAActionHandler;
+    newQuestions: INewQuestions[];
     changeView: Function;
     masterItems: any[];
     //editItemIndex?: string;
-    //editItem?: IQnA;
+    editItem?: any;
 }
 
 export interface IQnAFormState {
-    Question: string[];
-    Answers: string;
-    Classification: string;
-    Division: string;
+    qnaItems: IQnAListItem[];
+    question: string[];
+    answers: string;
+    classification: string;
+    division: string;
+    selectedItem:any;
+    isLoading?: boolean;
+    isDataLoaded?: boolean
 }
 
 export interface INewQuestionsFormState {
