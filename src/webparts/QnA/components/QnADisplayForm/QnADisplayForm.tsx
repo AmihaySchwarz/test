@@ -34,7 +34,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
     };
     this.filterAll = this.filterAll.bind(this);
   }
-
+public componentDidMount() {
+  console.log("component did mount in form!");
+}
   public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
 

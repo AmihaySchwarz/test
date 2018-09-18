@@ -30,13 +30,14 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
   }
-  public  componentWillReceiveProps(newProps): void
+  public componentWillReceiveProps(newProps): void
   {
     this.loadData();
   }
 
-  public  componentDidMount() 
+  public componentDidMount() 
   {
+    console.log("component did mount")
    this.loadData();
   }
 
