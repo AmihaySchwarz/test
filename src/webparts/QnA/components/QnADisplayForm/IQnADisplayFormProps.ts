@@ -25,7 +25,9 @@ export interface IQnAFormState {
     division: string;
     selectedItem:any;
     isLoading?: boolean;
-    isDataLoaded?: boolean
+    isDataLoaded?: boolean;
+    filtered: any;
+    filterAll: any;
 }
 
 export interface INewQuestionsFormState {

@@ -28,8 +28,11 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       division: "",
       selectedItem: undefined,
       qnaItems: [],
-      isDataLoaded: false
+      isDataLoaded: false,
+      filtered: "",
+      filterAll: ""
     };
+    this.filterAll = this.filterAll.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -54,6 +57,30 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
     });
     console.log(this.state.qnaItems, "qna items!");
   }
+
+  onFilteredChange(filtered) {
+    // console.log('filtered:',filtered);
+    // const { sortedData } = this.reactTable.getResolvedState();
+    // console.log('sortedData:', sortedData);
+
+    // extra check for the "filterAll"
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      // NOTE: this removes any FILTER ALL filter
+      const filterAll = '';
+      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
+    }
+    else
+      this.setState({ filtered });
+  }
+
+  filterAll(e) {
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: 'all', value: filterAll }];
+    // NOTE: this completely clears any COLUMN filters
+    this.setState({ filterAll, filtered });
+  }
+
 
   private onSaveClick(): void {
     // TODO: Save Items
@@ -125,7 +152,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
 
           
        <div>New Questions </div>
-
+        Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
            PaginationComponent={Pagination}
           columns={[
