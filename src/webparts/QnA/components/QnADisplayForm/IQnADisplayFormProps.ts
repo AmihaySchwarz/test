@@ -8,11 +8,11 @@ import { INewQuestions } from "../../models/INewQuestions";
 
 export interface IQnADisplayFormProps {
     //service: IQnAService;
-    endpoints: any;
-    actionHandler: QnAActionHandler;
-    newQuestions: INewQuestions[];
-    changeView: Function;
-    masterItems: any[];
+    endpoints?: any;
+    actionHandler?: QnAActionHandler;
+    newQuestions?: INewQuestions[];
+    changeView?: Function;
+    masterItems?: any[];
     //editItemIndex?: string;
     editItem?: any;
 }
@@ -22,8 +22,8 @@ export interface IQnAFormState {
     question: string[];
     answers: string;
     classification: string;
-    division: string;
-    selectedItem:any;
+    division: any[];
+    selectedDivision:any;
     isLoading?: boolean;
     isDataLoaded?: boolean;
     filtered: any;

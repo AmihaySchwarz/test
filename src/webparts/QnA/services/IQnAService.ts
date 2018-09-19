@@ -3,7 +3,7 @@ import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { IQnAMakerItem } from "../models/IQnAMakerItem";
 
 export interface IQnAService {
-    getQnAItems: (masterItem: any[], url : string) => Promise<any>;
+    getQnAItems: (divisionListName: string, url : string) => Promise<any>;
     getMasterListItems: (currentUser: any[],url: string,  masterListName: string) => Promise<any>;
     getNewQuestions: (url:string) => Promise<any>;
     deleteFromNewQuestion:() =>Promise<any>;

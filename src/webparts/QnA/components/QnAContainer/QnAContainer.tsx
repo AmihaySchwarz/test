@@ -31,7 +31,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.loadData = this.loadData.bind(this);
   }
-  public componentWillReceiveProps(newProps): void
+  public async componentWillReceiveProps(newProps): Promise<void>
   {
     this.loadData();
   }
@@ -50,7 +50,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.loadMasterList(this.state.currentUser);
   }
 
-  private async loadMasterList(currentUser: any[]): Promise<void> {
+  private async loadMasterList(currentUser: any): Promise<void> {
     console.log(this.props.endpoints[0].tenantQnAUrl, "ENDPOINTS");
 
     this.setState({
@@ -60,26 +60,15 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     console.log(this.state.masterItems, "master items!");
     
   }
-
-  // private async loadData(): Promise<void> {
-  //   //load all data of user's division list
-  //   console.log(this.state.masterItems, "load Data");
-  //    this.setState({
-  //      qnaItems: await this.actionHandler.getQnAItems(this.state.masterItems, this.props.endpoints[0].tenantQnAUrl),
-  //      isDataLoaded: true,
-  //    });
-  // }
-
   private changeView(view: ViewType): void {
     this.setState({ view });
   }
 
   public render() {
     console.log(this.state.masterItems,"lasudlkasdj")
-
     
-    return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-            changeView={this.changeView} actionHandler={this.actionHandler} endpoints={this.props.endpoints} /> ;
+     return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
+             changeView={this.changeView} actionHandler={this.actionHandler} endpoints={this.props.endpoints} /> ;
     // return( <div> TESTING this i the container</div> );
   }
 }

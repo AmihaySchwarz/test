@@ -25,8 +25,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       question: [],
       answers: "",
       classification: "",
-      division: "",
-      selectedItem: undefined,
+      division: [],
+      selectedDivision: undefined,
       qnaItems: [],
       isDataLoaded: false,
       filtered: "",
@@ -37,24 +37,23 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
 public componentDidMount() {
   console.log("component did mount in form!");
 }
-  public componentWillReceiveProps(newProps): void {
+public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
 
-   // this.setState({ qnaItems: newProps.qnaItems });
-    //load qna division list data based from the division in the dropdown
+   this.setState({ qnaItems: newProps.qnaItems });
     this.setState({
       division: newProps.masterItems.map(divisionItem => ({
         key: divisionItem.QnAListName,
-        text: divisionItem.Division
+        text: divisionItem.Division.Label
       }))
     })
+
+    console.log(this.state.division, "division")
   }
 
-  public async loadQnAListData(divisionItem: string): Promise<void> {
-    console.log(divisionItem, "ENDPOINTS");
-
+  public async loadQnAListData(divisionListName: string): Promise<void> {
     this.setState({
-      qnaItems: await this.props.actionHandler.getQnAItems(divisionItem,this.props.endpoints[0].webUrl),
+      qnaItems: await this.props.actionHandler.getQnAItems(divisionListName,this.props.endpoints[0].webUrl),
       isDataLoaded: true,
     });
     console.log(this.state.qnaItems, "qna items!");
@@ -89,15 +88,20 @@ public componentDidMount() {
     this.props.changeView(ViewType.Display);
   }
 
-  public changeState = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+  public changeState = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
-    this.setState({ selectedItem: item });
+    this.setState({ selectedDivision: item });
+    //get the qna list item!
+    this.loadQnAListData(item.key.toString());
   };
 
   public render() {
-   console.log(this.state.division, "division");
-   const { selectedItem } = this.state;
 
+
+   console.log(this.state.selectedDivision, "selected division");
+   console.log(this.state.qnaItems, "qna items");
+   const { selectedDivision } = this.state;
+  
     const qna  =  [
       {
           Items: [
@@ -124,7 +128,7 @@ public componentDidMount() {
               }
           ]
       }];
-    console.log(qna);
+    
     return (
       <div>
       {this.state.isLoading && <LoadingSpinner />}
@@ -136,9 +140,9 @@ public componentDidMount() {
             placeHolder="Select Division"
             id="division"
             options={this.state.division}
-            selectedKey={selectedItem ? selectedItem.key : undefined}
-            //onChange={this.changeState}
-          />
+            selectedKey={selectedDivision ? selectedDivision.key : undefined}
+            onChanged={this.changeState}
+          /> 
           <DefaultButton
             text='Edit'
             primary={ true }
@@ -183,7 +187,8 @@ public componentDidMount() {
 
         <div> QnA </div> 
         <ReactTable
-          data={this.state.qnaItems}
+           data={this.state.qnaItems}
+          
           
           PaginationComponent={Pagination}
           columns={[
