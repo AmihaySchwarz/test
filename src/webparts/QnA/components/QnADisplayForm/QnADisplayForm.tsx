@@ -30,7 +30,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       qnaItems: [],
       isDataLoaded: false,
       filtered: "",
-      filterAll: ""
+      filterAll: "",
+      isEdit: false
     };
     this.filterAll = this.filterAll.bind(this);
   }
@@ -88,12 +89,20 @@ public componentWillReceiveProps(newProps): void {
     this.props.changeView(ViewType.Display);
   }
 
-  public changeState = (item: IDropdownOption): void => {
+  public setDivisionDD = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
     this.setState({ selectedDivision: item });
     //get the qna list item!
     this.loadQnAListData(item.key.toString());
   };
+
+  public changeToEdit(): void {
+    this.props.changeView(ViewType.Edit);
+    this.setState({
+      isEdit: true
+    });
+    console.log(ViewType);
+  }
 
   public render() {
 
@@ -141,12 +150,12 @@ public componentWillReceiveProps(newProps): void {
             id="division"
             options={this.state.division}
             selectedKey={selectedDivision ? selectedDivision.key : undefined}
-            onChanged={this.changeState}
+            onChanged={this.setDivisionDD}
           /> 
           <DefaultButton
             text='Edit'
             primary={ true }
-            href='#'
+            onClick={this.changeToEdit}
           />
           <DefaultButton
             text='Publish'
@@ -155,7 +164,6 @@ public componentWillReceiveProps(newProps): void {
           />
         </div>
       
-
           
        <div>New Questions </div>
         Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  

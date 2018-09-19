@@ -28,6 +28,7 @@ export interface IQnAFormState {
     isDataLoaded?: boolean;
     filtered: any;
     filterAll: any;
+    isEdit?: boolean;
 }
 
 export interface INewQuestionsFormState {
