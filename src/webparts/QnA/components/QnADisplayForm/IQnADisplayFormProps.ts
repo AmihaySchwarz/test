@@ -29,6 +29,7 @@ export interface IQnAFormState {
     filtered: any;
     filterAll: any;
     isEdit?: boolean;
+    selectedDivisionListName: string;
 }
 
 export interface INewQuestionsFormState {

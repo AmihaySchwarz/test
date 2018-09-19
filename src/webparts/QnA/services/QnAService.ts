@@ -2,7 +2,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
 import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
-import { sp , RenderListDataParameters, RenderListDataOptions } from '@pnp/sp';
+import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult } from '@pnp/sp';
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { IQnAMakerItem } from "../models/IQnAMakerItem";
@@ -58,8 +58,7 @@ export class QnAService extends BaseService implements IQnAService {
             console.log(userDivision.Row);
             return userDivision.Row;
         });
-
-    };
+    }
 
     public getQnAItems(divisionListName: string): Promise<any> {
         console.log(divisionListName, "master list item");
@@ -68,22 +67,97 @@ export class QnAService extends BaseService implements IQnAService {
             return items;
         });
     }
+    public updateItemInQnAList(url: string,qnaListName:string, id:number, qnaListItems: IQnAListItem[]): Promise<any>{
+        //return null;
+        let res; 
+        qnaListItems.forEach(item => {
+             sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).update({
+                Questions: item.Questions,
+                Answer: item.Answer,
+                Classification: item.Classification,
+                QnAID: item.QnAID
+            }).then(i => {
+                console.log(i);
+                res = i;
+            });
+        });
 
-    public checkLockStatus(division: any, divisionQnAListName: string): Promise<any>{
-        return null;
+        return res;
+
+        // return sp.web.lists.getByTitle(qnaListName).items.getById(id).update({
+        //     Questions: qnaListItem.Questions,
+        //     Answer: qnaListItem.Answer,
+        //     Classification: qnaListItem.Classification,
+        //     QnAID: qnaListItem.QnAID
+        // }).then(i => {
+        //     console.log(i);
+        //     return i
+        // });
+    };
+    public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+        // add an item to the list
+        return sp.web.lists.getByTitle(qnaListName).items.add({
+            Questions: qnaListItem.Questions,
+            Answer: qnaListItem.Answer,
+            Classification: qnaListItem.Classification,
+            QnAID: qnaListItem.QnAID
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            return result;
+        });
+    };
+    
+    public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
+        let res; 
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + qnaListTrackingItem.Division).get().then((items: any[]) => {
+            // see if we got something
+            if (items.length > 0) {
+                return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                    Title: "Updated Title",
+                }).then(result => {
+                    console.log(JSON.stringify(result));
+                    res = result;
+                });
+            }
+        });
+        return res;
+    };
+
+    public checkLockStatus(url: string, division: string, qnaListTrackingListName: string): Promise<any>{
+        console.log(qnaListTrackingListName, "qna tracking list");
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
+        .filter("Division eq " +division)
+        .expand("LockedBY")
+        .get().then((items: any[]) => {
+            console.log(items);
+            return items;
+        });
     }
 
+    public lockList (currentUser: any, division: string, qnaListTrackingListName: string) : Promise<any>{
+        let res; 
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + division).get().then((items: any[]) => {
+            // see if we got something
+            if (items.length > 0) {
+                return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                    LockedBY: currentUser.Id,
+                }).then(result => {
+                    console.log(JSON.stringify(result));
+                    res = result;
+                });
+            }
+        });
+        return res;
+    };
+
+    public getNewQuestions: () => Promise<any>;
+    public deleteFromNewQuestion: () => Promise<any>;
+    public updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
+    public publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
+    
+    
     private Error(e) {
         console.log(e);
     }
-    
-    public getNewQuestions: () => Promise<any>;
-    public deleteFromNewQuestion: () => Promise<any>;
-    public lockList: () => Promise<any>;
-    public updateItemInQnAList: (url: string, qnaListItem: IQnAListItem) => Promise<any>;
-    public addToQnAList:(url: string, qnaListItem: IQnAListItem) => Promise<any>;
-    public updateQnAListTracking: (url: string, qnaListTrackingItem: IQnAListTrackingItem) => Promise<any>;
-    public updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
-    public publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
-   
+       
 }

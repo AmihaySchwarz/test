@@ -27,6 +27,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       classification: "",
       division: [],
       selectedDivision: undefined,
+      selectedDivisionListName: "",
       qnaItems: [],
       isDataLoaded: false,
       filtered: "",
@@ -34,7 +35,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       isEdit: false
     };
     this.filterAll = this.filterAll.bind(this);
-  }
+    this.changeToEdit = this.changeToEdit.bind(this);
+}
 public componentDidMount() {
   console.log("component did mount in form!");
 }
@@ -86,89 +88,156 @@ public componentWillReceiveProps(newProps): void {
 
   private onSaveClick(): void {
     // TODO: Save Items
-    this.props.changeView(ViewType.Display);
+    this.setState({
+      isEdit: false
+    });
   }
 
   public setDivisionDD = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
-    this.setState({ selectedDivision: item });
-    //get the qna list item!
+    this.setState({ 
+      selectedDivision: item.text ,
+      selectedDivisionListName: item.key.toString()
+    });
+
     this.loadQnAListData(item.key.toString());
   };
 
   public changeToEdit(): void {
-    this.props.changeView(ViewType.Edit);
+    console.log("edit is clicked");
+    //this.props.changeView(ViewType.Edit);
     this.setState({
       isEdit: true
     });
-    console.log(ViewType);
+    
   }
 
   public render() {
 
 
    console.log(this.state.selectedDivision, "selected division");
-   console.log(this.state.qnaItems, "qna items");
-   const { selectedDivision } = this.state;
-  
-    const qna  =  [
-      {
-          Items: [
-              {
-                  Id: "1",
-                  Question: "Question Number 1",
-                  Answer: "Answer 1",
-                  Classification: "Class 1",
-                  QnAId: "cqna1"
-              },
-              {
-                  Id: "2",
-                  Question: "Question Number 2",
-                  Answer: "Answer 2",
-                  Classification: "Class 2",
-                  QnAId: "cqna2"
-              },
-              { 
-                  Id: "3",
-                  Question: "Question Number 3",
-                  Answer: "Answer 3",
-                  Classification: "Class 3",
-                  QnAId: "cqna3"
-              }
-          ]
-      }];
+   //console.log(this.state.qnaItems, "qna items");
+   console.log(this.state.isEdit);
+   const { selectedDivision } = this.state;    
     
-    return (
+
+   return (
+
       <div>
       {this.state.isLoading && <LoadingSpinner />}
+        {this.state.isEdit ?  
+        <div>
+          <div className={styles.controlMenu}> 
+            <span> Division: { this.state.selectedDivision} </span>
 
-        <div> 
-          <span> Division: </span>
-          <Dropdown
-            
-            placeHolder="Select Division"
-            id="division"
-            options={this.state.division}
-            selectedKey={selectedDivision ? selectedDivision.key : undefined}
-            onChanged={this.setDivisionDD}
-          /> 
-          <DefaultButton
-            text='Edit'
-            primary={ true }
-            onClick={this.changeToEdit}
-          />
-          <DefaultButton
-            text='Publish'
-            primary={ true }
-            href='#'
-          />
+            <DefaultButton
+              text='Save'
+              primary={ true }
+              onClick={this.onSaveClick}
+            />
+            <DefaultButton
+              text='Save and Publish'
+              primary={ true }
+              href='#'
+            />
         </div>
-      
-          
-       <div>New Questions </div>
+    
+        <div>New Questions </div>
         Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
-           PaginationComponent={Pagination}
+          PaginationComponent={Pagination}
+          columns={[
+            {
+              columns: [
+                {
+                  Header: "Question",
+                  accessor: "question"
+                },
+                {
+                  Header: "Posted Date",
+                  id: "postedDate"
+                },
+                {
+                  Header: "Posted By",
+                  id: "postedBy"
+                },
+                {
+                  Header: "Actions",
+                  id: "newQuestionsActions"
+                }
+              ]
+            }
+          ]}
+          defaultPageSize={10}
+          className="-striped -highlight"
+        />
+        <br />
+
+
+        <div> QnA </div> 
+        Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
+        <ReactTable
+          data={this.state.qnaItems}
+          
+          
+          PaginationComponent={Pagination}
+          columns={[
+            {
+              columns: [
+                {
+                  Header: "Questions",
+                  accessor: "Questions"
+                },
+                {
+                  Header: "Answer",
+                  accessor: "Answer"
+                },
+                {
+                  Header: "Classification",
+                  accessor: "Classification"
+                },
+                {
+                  Header: "Actions",
+                  accessor: "Actions"
+                }
+              ]
+            }
+          ]}
+          defaultPageSize={10}
+          className="-striped -highlight"
+        />
+        <br />
+          
+
+        </div> : 
+        <div>
+          <div className={styles.controlMenu}> 
+            <span> Division: </span>
+
+            <Dropdown
+              
+              placeHolder="Select Division"
+              id="division"
+              options={this.state.division}
+              selectedKey={selectedDivision ? selectedDivision.key : undefined}
+              onChanged={this.setDivisionDD}
+            /> 
+            <DefaultButton
+              text='Edit'
+              primary={ true }
+              onClick={this.changeToEdit}
+            />
+            <DefaultButton
+              text='Publish'
+              primary={ true }
+              href='#'
+            />
+        </div>
+    
+        <div>New Questions </div>
+        Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
+        <ReactTable
+          PaginationComponent={Pagination}
           columns={[
             {
               columns: [
@@ -194,8 +263,9 @@ public componentWillReceiveProps(newProps): void {
 
 
         <div> QnA </div> 
+        Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
-           data={this.state.qnaItems}
+          data={this.state.qnaItems}
           
           
           PaginationComponent={Pagination}
@@ -221,6 +291,8 @@ public componentWillReceiveProps(newProps): void {
           className="-striped -highlight"
         />
         <br />
+      </div>
+      }
       </div>
     );
   }

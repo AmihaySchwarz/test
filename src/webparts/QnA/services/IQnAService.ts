@@ -7,11 +7,11 @@ export interface IQnAService {
     getMasterListItems: (currentUser: any[],url: string,  masterListName: string) => Promise<any>;
     getNewQuestions: (url:string) => Promise<any>;
     deleteFromNewQuestion:() =>Promise<any>;
-    checkLockStatus:(url:string, division: any, divisionQnAListName: string) => Promise<any>;
-    lockList:() => Promise<any>;
-    updateItemInQnAList:(url: string, qnaListItem: IQnAListItem) => Promise<any>;
-    addToQnAList:(url:string,qnaListItem: IQnAListItem ) => Promise<any>;
-    updateQnAListTracking:(url: string,qnaListTrackingItem: IQnAListTrackingItem ) => Promise<any>;
+    checkLockStatus:(url:string, division: string, qnaListTrackingListName: string) => Promise<any>;
+    lockList:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
+    updateItemInQnAList:(url: string, qnaListName:string, id:number, qnaListItems: IQnAListItem[]) => Promise<any>;
+    addToQnAList:(url:string,qnaListName:string,qnaListItem: IQnAListItem ) => Promise<any>;
+    updateQnAListTracking:(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem ) => Promise<any>;
     updateQnAMakerKB:(url: string, qnamakerItem: IQnAMakerItem ) => Promise<any>;
     publishQnAMakerItem:(url: string, qnamakerItem: IQnAMakerItem ) => Promise<any>;
     getCurrentUser:() => Promise<any>;
