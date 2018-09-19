@@ -195,8 +195,8 @@ public componentWillReceiveProps(newProps): void {
             {
               columns: [
                 {
-                  Header: "Question",
-                  accessor: "Question"
+                  Header: "Questions",
+                  accessor: "Questions"
                 },
                 {
                   Header: "Answer",
