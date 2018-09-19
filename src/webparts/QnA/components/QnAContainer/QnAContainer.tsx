@@ -36,9 +36,9 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.loadData();
   }
 
-  public componentDidMount() 
+  public async componentDidMount() : Promise<void>
   {
-    console.log("component did mount")
+    console.log("componentdsd did mount")
    this.loadData();
   }
 
@@ -80,6 +80,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     
     return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
             changeView={this.changeView} actionHandler={this.actionHandler} endpoints={this.props.endpoints} /> ;
-    //return( <div> TESTING this i the container</div> );
+    // return( <div> TESTING this i the container</div> );
   }
 }

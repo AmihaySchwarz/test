@@ -75,7 +75,7 @@ public componentDidMount() {
       this.setState({ filtered });
   }
 
-  filterAll(e) {
+  public filterAll(e) {
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: 'all', value: filterAll }];

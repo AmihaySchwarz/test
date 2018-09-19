@@ -54,12 +54,12 @@ export class QnAService extends BaseService implements IQnAService {
     }
     
     public getNewQuestions: () => Promise<any>;
-    deleteFromNewQuestion: () => Promise<any>;
-    lockList: () => Promise<any>;
-    updateItemInQnAList: (url: string, qnaListItem: IQnAListItem) => Promise<any>;
-    addToQnAList:(url: string, qnaListItem: IQnAListItem) => Promise<any>;
-    updateQnAListTracking: (url: string, qnaListTrackingItem: IQnAListTrackingItem) => Promise<any>;
-    updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
-    publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
+    public deleteFromNewQuestion: () => Promise<any>;
+    public lockList: () => Promise<any>;
+    public updateItemInQnAList: (url: string, qnaListItem: IQnAListItem) => Promise<any>;
+    public addToQnAList:(url: string, qnaListItem: IQnAListItem) => Promise<any>;
+    public updateQnAListTracking: (url: string, qnaListTrackingItem: IQnAListTrackingItem) => Promise<any>;
+    public updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
+    public publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
    
 }
