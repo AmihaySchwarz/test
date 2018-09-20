@@ -221,6 +221,7 @@ public componentWillReceiveProps(newProps): void {
               options={this.state.division}
               selectedKey={selectedDivision ? selectedDivision.key : undefined}
               onChanged={this.setDivisionDD}
+              
             /> 
             <DefaultButton
               text='Edit'

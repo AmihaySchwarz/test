@@ -7,6 +7,9 @@ import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { IQnAMakerItem } from "../models/IQnAMakerItem";
 //import * as moment from 'moment-mini';
+import * as storage from "azure-storage"
+//const storage = require('azure-storage');
+
 
 export class QnAService extends BaseService implements IQnAService {
    
@@ -150,7 +153,11 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     };
 
-    public getNewQuestions: () => Promise<any>;
+    public getNewQuestions():Promise<any>{
+        
+        //connect to the api service endpoint created 
+        return null;
+    };
     public deleteFromNewQuestion: () => Promise<any>;
     public updateQnAMakerKB: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
     public publishQnAMakerItem: (url: string, qnamakerItem: IQnAMakerItem) => Promise<any>;
