@@ -36,6 +36,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
     };
     this.filterAll = this.filterAll.bind(this);
     this.changeToEdit = this.changeToEdit.bind(this);
+    this.onSaveClick = this.onSaveClick.bind(this);
 }
 public componentDidMount() {
   console.log("component did mount in form!");
