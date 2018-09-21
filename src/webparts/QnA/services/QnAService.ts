@@ -7,7 +7,7 @@ import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { IQnAMakerItem } from "../models/IQnAMakerItem";
 //import * as moment from 'moment-mini';
-import * as storage from "azure-storage"
+import * as storage from "azure-storage";
 //const storage = require('azure-storage');
 
 
@@ -96,7 +96,7 @@ export class QnAService extends BaseService implements IQnAService {
         //     console.log(i);
         //     return i
         // });
-    };
+    }
     public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         // add an item to the list
         return sp.web.lists.getByTitle(qnaListName).items.add({
@@ -108,7 +108,7 @@ export class QnAService extends BaseService implements IQnAService {
             console.log(result);
             return result;
         });
-    };
+    }
     
     public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
         let res; 
@@ -124,7 +124,7 @@ export class QnAService extends BaseService implements IQnAService {
             }
         });
         return res;
-    };
+    }
 
     public checkLockStatus(url: string, division: string, qnaListTrackingListName: string): Promise<any>{
         console.log(qnaListTrackingListName, "qna tracking list");
@@ -151,7 +151,7 @@ export class QnAService extends BaseService implements IQnAService {
             }
         });
         return res;
-    };
+    }
 
     public getNewQuestions():Promise<any>{
         

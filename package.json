@@ -27,6 +27,7 @@
     "@types/webpack-env": "1.13.1",
     "azure-storage": "^2.10.1",
     "react": "15.6.2",
+    "react-bootstrap-table-next": "^1.1.4",
     "react-dom": "15.6.2",
     "react-table": "^6.8.6",
     "typescript": "^3.0.3"

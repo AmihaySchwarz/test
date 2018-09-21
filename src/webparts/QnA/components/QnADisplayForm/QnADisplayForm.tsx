@@ -37,6 +37,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
     this.filterAll = this.filterAll.bind(this);
     this.changeToEdit = this.changeToEdit.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
+    this.renderEditable = this.renderEditable.bind(this);
 }
 public componentDidMount() {
   console.log("component did mount in form!");
@@ -113,14 +114,47 @@ public componentWillReceiveProps(newProps): void {
     
   }
 
+  renderEditable(cellInfo) {
+    return (
+      <div
+        style={{ backgroundColor: "#fafafa" }}
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={e => {
+          const qnaItems = [...this.state.qnaItems];
+          qnaItems[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
+          this.setState({ qnaItems });
+        }}
+        dangerouslySetInnerHTML={{
+          __html: this.state.qnaItems[cellInfo.index][cellInfo.column.id]
+        }}
+      />
+    );
+  }
+
   public render() {
 
 
    console.log(this.state.selectedDivision, "selected division");
-   //console.log(this.state.qnaItems, "qna items");
+   console.log(this.state.qnaItems, "qna items");
    console.log(this.state.isEdit);
    const { selectedDivision } = this.state;    
     
+    let mockNewQuestions = [{
+      Items :[
+        {
+          question: "question 1, question 2",
+          postedDate: "4/11/2018 09:00 AM",
+          postedBy: "Page Tangalin"
+        },
+        {
+          question: "question 3, question 4",
+          postedDate: "9/20/2018 09:00 AM",
+          postedBy: "Page Tangalin"
+        }
+      ]
+    } 
+    ]
 
    return (
 
@@ -144,9 +178,10 @@ public componentWillReceiveProps(newProps): void {
         </div>
     
         <div>New Questions </div>
-        Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
+        <span> Filter New Questions:  </span><input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
           PaginationComponent={Pagination}
+          data={mockNewQuestions[0].Items}
           columns={[
             {
               columns: [
@@ -156,15 +191,18 @@ public componentWillReceiveProps(newProps): void {
                 },
                 {
                   Header: "Posted Date",
-                  id: "postedDate"
+                  accessor: "postedDate"
                 },
                 {
                   Header: "Posted By",
-                  id: "postedBy"
+                  accessor: "postedBy"
                 },
                 {
                   Header: "Actions",
-                  id: "newQuestionsActions"
+                  accessor: "newQuestionsActions",
+                  Cell: ({row}) => (<div><button>Add to QnA List</button> <br />
+                    <button>Delete Question</button><br />
+                    <button>Mark as Resolved</button></div>) // onClick={this.editRow({value})}
                 }
               ]
             }
@@ -187,19 +225,25 @@ public componentWillReceiveProps(newProps): void {
               columns: [
                 {
                   Header: "Questions",
-                  accessor: "Questions"
+                  accessor: "Questions",
+                  Cell: this.renderEditable
                 },
                 {
                   Header: "Answer",
-                  accessor: "Answer"
+                  accessor: "Answer",
+                  Cell: this.renderEditable
                 },
                 {
                   Header: "Classification",
-                  accessor: "Classification"
+                  accessor: "Classification",
+                  Cell: this.renderEditable
                 },
                 {
                   Header: "Actions",
-                  accessor: "Actions"
+                  accessor: "Actions",
+                  Cell: ({value}) => (<div>
+                    <button>Delete Question</button>
+                    <button>Preview</button></div>)
                 }
               ]
             }

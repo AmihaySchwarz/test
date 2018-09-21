@@ -28,10 +28,11 @@ export interface IQnAListWebPartProps {
   clientId: string;
   redirectUrl: string;
     masterListName: string;
-    newQuestionsEndpointUrl: string;
+    endpointUrl: string;
     qnATrackingListName: string;
     qnAEndpointUrl: string;
     webUrl: string;
+    tenant: string;
     
 }
 
@@ -58,10 +59,12 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
         service: this.service,
         endpoints: [{
           masterListName: this.properties.masterListName,
-          newQuestionsEndpointUrl: this.properties.newQuestionsEndpointUrl,
+          endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
           webUrl: this.properties.webUrl, 
-        }]
+          tenant: this.properties.tenant
+        }],
+        authContextOptions: this.getAuthContextOptions(),
 
       }
     );
@@ -100,6 +103,9 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
             PropertyPaneTextField('webUrl', {
                 label: strings.WebUrlFieldLabel,
             }),
+            PropertyPaneTextField('tenant', {
+              label: strings.TenantFieldLabel,
+          }),
             //PropertyPaneTextField('redirectUrl', {
             //    label: strings.RedirectUrlFieldLabel,
             //}),
@@ -112,8 +118,8 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
             PropertyPaneTextField('qnATrackingListName', {
               label: strings.QnATrackingListNameFieldLabel,
             }),
-            PropertyPaneTextField('newQuestionsEndpointUrl', {
-              label: strings.NewQuestionsEndpointUrlFieldLabel,
+            PropertyPaneTextField('endpointUrl', {
+              label: strings.EndpointUrlFieldLabel,
               
             }),
               ]
@@ -122,6 +128,27 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
         }
       ]
     };
+  }  
+  
+  private getAuthContextOptions(): AuthenticationContext.Options {
+    return this.needsConfiguration() ? {
+        clientId: this.properties.clientId,
+        redirectUri: this.properties.redirectUrl,
+        tenant: this.properties.tenant,
+        popUp: false,
+        extraQueryParameter: `login_hint=${this.context.pageContext.legacyPageContext.userLoginName}`,
+        cacheLocation: "localStorage",
+        endpoints: { endpoint: this.properties.endpointUrl },
+        loadFrameTimeout: 30000
+    } : null;
+  }
+
+  private needsConfiguration(): boolean {
+    return (!!this.properties.title &&
+        !!this.properties.clientId &&
+        !!this.properties.qnAEndpointUrl &&
+        !!this.properties.redirectUrl &&
+        !!this.properties.endpointUrl);
   }
 
 //  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {

@@ -7,6 +7,7 @@ export interface IQnAContainerProps {
   //description: string;
   service: IQnAService;
   endpoints: any;
+  authContextOptions: AuthenticationContext.Options;
 }
 
 export interface IQnAContainerState {

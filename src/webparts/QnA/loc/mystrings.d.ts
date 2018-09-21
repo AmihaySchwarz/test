@@ -9,10 +9,11 @@ declare interface IQnAListWebPartStrings {
   RedirectUrlFieldLabel: string;
   WebUrlFieldLabel: string;
   ClientIdFieldLabel: string;
-  NewQuestionsEndpointUrlFieldLabel: string;
+  EndpointUrlFieldLabel: string;
   QnATrackingListNameFieldLabel: string;
   QnAEndpointUrlFieldLabel: string;
   MasterListNameFieldLabel: string;
+  TenantFieldLabel: string;
 }
 
 declare module 'QnAListWebPartStrings' {

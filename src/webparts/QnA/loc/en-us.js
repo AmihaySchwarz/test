@@ -8,10 +8,11 @@ define([], function() {
     "RedirectUrlFieldLabel": "Redirect URL",
     "WebUrlFieldLabel": "SharePoint QnA Tenant URL",
     "ClientIdFieldLabel": "Client ID",
-    "NewQuestionsEndpointUrlFieldLabel": "Chat Bot DB Endpoint URL",
+    "EndpointUrlFieldLabel": "Endpoint URL",
     "QnATrackingListNameFieldLabel": "QnA List Tracking List Name",
     "QnAEndpointUrlFieldLabel": "QnA List Endpoint URL",
-    "MasterListNameFieldLabel": "QnA Master List Name"
+    "MasterListNameFieldLabel": "QnA Master List Name",
+    "TenantFieldLabel" : "Tenant"
   }
 });
 
