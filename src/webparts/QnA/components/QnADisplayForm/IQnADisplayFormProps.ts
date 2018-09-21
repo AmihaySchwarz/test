@@ -4,6 +4,7 @@ import { IQnAListItem } from "../../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../../models/IQnAListTrackingItem";
 import { IQnAMakerItem } from "../../models/IQnAMakerItem";
 import { INewQuestions } from "../../models/INewQuestions";
+import { ViewType } from '../../../common/enum';
 
 
 export interface IQnADisplayFormProps {
@@ -30,6 +31,8 @@ export interface IQnAFormState {
     filterAll: any;
     isEdit?: boolean;
     selectedDivisionListName: string;
+    isPublish?: boolean;
+    formView: ViewType;
 }
 
 export interface INewQuestionsFormState {

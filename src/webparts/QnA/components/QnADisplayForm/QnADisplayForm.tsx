@@ -12,10 +12,12 @@ import 'react-table/react-table.css'
  import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
  import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
  import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
+import { INewQuestions } from '../../models/INewQuestions';
+import { QnAPublishForm } from "../QnAPublishForm/QnaPublishForm"
+import { ThemeSettingName } from '@uifabric/styling/lib';
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFormState> {
 
-  private isEdit: boolean;
   private actionHandler: QnAActionHandler;
 
   constructor(props) {
@@ -32,12 +34,16 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       isDataLoaded: false,
       filtered: "",
       filterAll: "",
-      isEdit: false
+      isEdit: false,
+      isPublish: false,
+      formView: ViewType.Display
     };
     this.filterAll = this.filterAll.bind(this);
     this.changeToEdit = this.changeToEdit.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
     this.renderEditable = this.renderEditable.bind(this);
+    this.addToQnAList = this.addToQnAList.bind(this);
+    this.changeToPublish = this.changeToPublish.bind(this);
 }
 public componentDidMount() {
   console.log("component did mount in form!");
@@ -91,9 +97,11 @@ public componentWillReceiveProps(newProps): void {
   private onSaveClick(): void {
     // TODO: Save Items
     this.setState({
-      isEdit: false
+      isEdit: false,
+      formView: ViewType.Display
     });
   }
+
 
   public setDivisionDD = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
@@ -109,9 +117,39 @@ public componentWillReceiveProps(newProps): void {
     console.log("edit is clicked");
     //this.props.changeView(ViewType.Edit);
     this.setState({
-      isEdit: true
+      isEdit: true,
+      formView: ViewType.Edit
     });
-    
+  }
+
+  public changeToPublish(): void {
+    console.log("publish form");
+    this.setState({
+      formView: ViewType.Publish
+    });
+  }
+
+  public addToQnAList(item: any): void {
+    console.log("add to QNA List");
+  }
+
+  public deleteNewQuestion(item : any): void {
+    console.log("delete new question");
+    //this.props.actionHandler.
+  }
+
+  public markAsResolved(item: any): void {
+    console.log("mark as resolved");
+  }
+
+  public deleteQnA(item: any): void {
+    console.log("delete QnA");
+
+  }
+
+  public previewQnA(item: any) {
+    console.log("preview QnA");
+    //TODO: display a panel and chatbox type simulation
   }
 
   renderEditable(cellInfo) {
@@ -156,12 +194,9 @@ public componentWillReceiveProps(newProps): void {
     } 
     ]
 
-   return (
-
-      <div>
-      {this.state.isLoading && <LoadingSpinner />}
-        {this.state.isEdit ?  
-        <div>
+    switch(this.state.formView){
+      case ViewType.Edit:
+          return <div>
           <div className={styles.controlMenu}> 
             <span> Division: { this.state.selectedDivision} </span>
 
@@ -174,9 +209,10 @@ public componentWillReceiveProps(newProps): void {
               text='Save and Publish'
               primary={ true }
               href='#'
+              onClick={this.changeToPublish}
             />
         </div>
-    
+
         <div>New Questions </div>
         <span> Filter New Questions:  </span><input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
@@ -200,9 +236,9 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Actions",
                   accessor: "newQuestionsActions",
-                  Cell: ({row}) => (<div><button>Add to QnA List</button> <br />
+                  Cell: ({row}) => (<div><button>Add to QnA List</button> <br /> 
                     <button>Delete Question</button><br />
-                    <button>Mark as Resolved</button></div>) // onClick={this.editRow({value})}
+                    <button>Mark as Resolved</button></div>) //onClick={this.addToQnAList({row})}
                 }
               ]
             }
@@ -254,92 +290,283 @@ public componentWillReceiveProps(newProps): void {
         <br />
           
 
-        </div> : 
-        <div>
-          <div className={styles.controlMenu}> 
-            <span> Division: </span>
+        </div>;
+    case ViewType.Display:
+    return <div>
+        <div className={styles.controlMenu}> 
+          <span> Division: </span>
 
-            <Dropdown
-              
-              placeHolder="Select Division"
-              id="division"
-              options={this.state.division}
-              selectedKey={selectedDivision ? selectedDivision.key : undefined}
-              onChanged={this.setDivisionDD}
-              
-            /> 
-            <DefaultButton
-              text='Edit'
-              primary={ true }
-              onClick={this.changeToEdit}
-            />
-            <DefaultButton
-              text='Publish'
-              primary={ true }
-              href='#'
-            />
-        </div>
+          <Dropdown
+            
+            placeHolder="Select Division"
+            id="division"
+            options={this.state.division}
+            selectedKey={selectedDivision ? selectedDivision.key : undefined}
+            onChanged={this.setDivisionDD}
+            
+          /> 
+          <DefaultButton
+            text='Edit'
+            primary={ true }
+            onClick={this.changeToEdit}
+          />
+          <DefaultButton
+            text='Publish'
+            primary={ true }
+            href='#'
+            onClick={this.changeToPublish}
+          />
+      </div>
+
+      <div>New Questions </div>
+      Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
+      <ReactTable
+        PaginationComponent={Pagination}
+        columns={[
+          {
+            columns: [
+              {
+                Header: "Question",
+                accessor: "question"
+              },
+              {
+                Header: "Posted Date",
+                id: "postedDate"
+              },
+              {
+                Header: "Posted By",
+                id: "postedBy"
+              }
+            ]
+          }
+        ]}
+        defaultPageSize={10}
+        className="-striped -highlight"
+      />
+      <br />
+
+
+      <div> QnA </div> 
+      Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
+      <ReactTable
+        data={this.state.qnaItems}
+        
+        
+        PaginationComponent={Pagination}
+        columns={[
+          {
+            columns: [
+              {
+                Header: "Questions",
+                accessor: "Questions"
+              },
+              {
+                Header: "Answer",
+                accessor: "Answer"
+              },
+              {
+                Header: "Classification",
+                accessor: "Classification"
+              }
+            ]
+          }
+        ]}
+        defaultPageSize={10}
+        className="-striped -highlight"
+      />
+      <br />
+    </div>;
+    case ViewType.Publish:
+      return <QnAPublishForm qnaItems={this.state.qnaItems}/>;
+    default: 
+        return null;
+    }
+
+  //  return (
+  //     <div>
+  //     {this.state.isLoading && <LoadingSpinner />}
+  //       {this.state.isEdit  ?  
+  //       <div>
+  //         <div className={styles.controlMenu}> 
+  //           <span> Division: { this.state.selectedDivision} </span>
+
+  //           <DefaultButton
+  //             text='Save'
+  //             primary={ true }
+  //             onClick={this.onSaveClick}
+  //           />
+  //           <DefaultButton
+  //             text='Save and Publish'
+  //             primary={ true }
+  //             href='#'
+  //           />
+  //       </div>
     
-        <div>New Questions </div>
-        Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
-        <ReactTable
-          PaginationComponent={Pagination}
-          columns={[
-            {
-              columns: [
-                {
-                  Header: "Question",
-                  accessor: "question"
-                },
-                {
-                  Header: "Posted Date",
-                  id: "postedDate"
-                },
-                {
-                  Header: "Posted By",
-                  id: "postedBy"
-                }
-              ]
-            }
-          ]}
-          defaultPageSize={10}
-          className="-striped -highlight"
-        />
-        <br />
+  //       <div>New Questions </div>
+  //       <span> Filter New Questions:  </span><input value={this.state.filterAll} onChange={this.filterAll} />  
+  //       <ReactTable
+  //         PaginationComponent={Pagination}
+  //         data={mockNewQuestions[0].Items}
+  //         columns={[
+  //           {
+  //             columns: [
+  //               {
+  //                 Header: "Question",
+  //                 accessor: "question"
+  //               },
+  //               {
+  //                 Header: "Posted Date",
+  //                 accessor: "postedDate"
+  //               },
+  //               {
+  //                 Header: "Posted By",
+  //                 accessor: "postedBy"
+  //               },
+  //               {
+  //                 Header: "Actions",
+  //                 accessor: "newQuestionsActions",
+  //                 Cell: ({row}) => (<div><button>Add to QnA List</button> <br /> 
+  //                   <button>Delete Question</button><br />
+  //                   <button>Mark as Resolved</button></div>) //onClick={this.addToQnAList({row})}
+  //               }
+  //             ]
+  //           }
+  //         ]}
+  //         defaultPageSize={10}
+  //         className="-striped -highlight"
+  //       />
+  //       <br />
 
 
-        <div> QnA </div> 
-        Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
-        <ReactTable
-          data={this.state.qnaItems}
+  //       <div> QnA </div> 
+  //       Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
+  //       <ReactTable
+  //         data={this.state.qnaItems}
           
           
-          PaginationComponent={Pagination}
-          columns={[
-            {
-              columns: [
-                {
-                  Header: "Questions",
-                  accessor: "Questions"
-                },
-                {
-                  Header: "Answer",
-                  accessor: "Answer"
-                },
-                {
-                  Header: "Classification",
-                  accessor: "Classification"
-                }
-              ]
-            }
-          ]}
-          defaultPageSize={10}
-          className="-striped -highlight"
-        />
-        <br />
-      </div>
-      }
-      </div>
-    );
+  //         PaginationComponent={Pagination}
+  //         columns={[
+  //           {
+  //             columns: [
+  //               {
+  //                 Header: "Questions",
+  //                 accessor: "Questions",
+  //                 Cell: this.renderEditable
+  //               },
+  //               {
+  //                 Header: "Answer",
+  //                 accessor: "Answer",
+  //                 Cell: this.renderEditable
+  //               },
+  //               {
+  //                 Header: "Classification",
+  //                 accessor: "Classification",
+  //                 Cell: this.renderEditable
+  //               },
+  //               {
+  //                 Header: "Actions",
+  //                 accessor: "Actions",
+  //                 Cell: ({value}) => (<div>
+  //                   <button>Delete Question</button>
+  //                   <button>Preview</button></div>)
+  //               }
+  //             ]
+  //           }
+  //         ]}
+  //         defaultPageSize={10}
+  //         className="-striped -highlight"
+  //       />
+  //       <br />
+          
+
+  //       </div> : 
+  //       <div>
+  //         <div className={styles.controlMenu}> 
+  //           <span> Division: </span>
+
+  //           <Dropdown
+              
+  //             placeHolder="Select Division"
+  //             id="division"
+  //             options={this.state.division}
+  //             selectedKey={selectedDivision ? selectedDivision.key : undefined}
+  //             onChanged={this.setDivisionDD}
+              
+  //           /> 
+  //           <DefaultButton
+  //             text='Edit'
+  //             primary={ true }
+  //             onClick={this.changeToEdit}
+  //           />
+  //           <DefaultButton
+  //             text='Publish'
+  //             primary={ true }
+  //             href='#'
+  //           />
+  //       </div>
+    
+  //       <div>New Questions </div>
+  //       Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
+  //       <ReactTable
+  //         PaginationComponent={Pagination}
+  //         columns={[
+  //           {
+  //             columns: [
+  //               {
+  //                 Header: "Question",
+  //                 accessor: "question"
+  //               },
+  //               {
+  //                 Header: "Posted Date",
+  //                 id: "postedDate"
+  //               },
+  //               {
+  //                 Header: "Posted By",
+  //                 id: "postedBy"
+  //               }
+  //             ]
+  //           }
+  //         ]}
+  //         defaultPageSize={10}
+  //         className="-striped -highlight"
+  //       />
+  //       <br />
+
+
+  //       <div> QnA </div> 
+  //       Filter QnA: <input value={this.state.filterAll} onChange={this.filterAll} />  
+  //       <ReactTable
+  //         data={this.state.qnaItems}
+          
+          
+  //         PaginationComponent={Pagination}
+  //         columns={[
+  //           {
+  //             columns: [
+  //               {
+  //                 Header: "Questions",
+  //                 accessor: "Questions"
+  //               },
+  //               {
+  //                 Header: "Answer",
+  //                 accessor: "Answer"
+  //               },
+  //               {
+  //                 Header: "Classification",
+  //                 accessor: "Classification"
+  //               }
+  //             ]
+  //           }
+  //         ]}
+  //         defaultPageSize={10}
+  //         className="-striped -highlight"
+  //       />
+  //       <br />
+  //     </div>
+      
+  //     }
+      
+  //     </div>
+  //   );
   }
 }

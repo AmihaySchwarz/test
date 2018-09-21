@@ -4,6 +4,6 @@ export interface INewQuestions {
     Question: string;
     PostedDate: Date;
     PostedBy: any[];
-    Contact: any[]
+    Contact: any[];
 }
 

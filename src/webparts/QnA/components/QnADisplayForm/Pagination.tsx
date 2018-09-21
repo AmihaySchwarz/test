@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IPaginationPropsss } from './IPaginationProps';
+import { IPaginationProps } from './IPaginationProps';
 import "react-table/react-table.css";
 import styles from './QnADisplayForm.module.scss';
 
@@ -27,7 +27,7 @@ export class Pagination extends React.Component<any,any> {
 
   public filterPages = (visiblePages: any, totalPages:number) => {
     return visiblePages.filter(page => page <= totalPages);
-  };
+  }
 
   public getVisiblePages = (page, total) => {
     if (total < 7) {
@@ -41,7 +41,7 @@ export class Pagination extends React.Component<any,any> {
         return [1, 2, 3, 4, 5, total];
       }
     }
-  };
+  }
 
   public changePage(page: number )  {
     const activePage = this.props.page + 1;

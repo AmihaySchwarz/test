@@ -4,5 +4,6 @@ export interface IQnAMakerItem {
     Classification: string;
     Division: string;
     SPID: number;
+    Question: string;
 }
 

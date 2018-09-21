@@ -177,7 +177,7 @@ export class MockQnAService extends BaseService {
     
     public getMasterListItems(currentUser: string, url : string, masterListName: string): Promise<any[]> {
         const masterItems = this.masterListData[0].Items;
-        console.log(masterItems, "mast items", currentUser)
+        console.log(masterItems, "mast items", currentUser);
         return new Promise<any[]>((resolve) => {
         //     setTimeout(() => masterItems.forEach((data) => {data.Editors.filter((item) => {
         //        if(item.toString() == currentUser.toString()){
@@ -186,14 +186,14 @@ export class MockQnAService extends BaseService {
         //        }
         //     })
         //  }) ,300 )
-           setTimeout(() => resolve(this.masterListData[0].Items) ,300 )
+           setTimeout(() => resolve(this.masterListData[0].Items) ,300 );
         });
     }
 
     public getNewQuestions(): Promise<any[]> {
         //get 
         return new Promise<any[]>((resolve) => {
-            setTimeout(() => resolve(this.mockNewQuestionsData) ,300 )
+            setTimeout(() => resolve(this.mockNewQuestionsData) ,300 );
         });
     }
 

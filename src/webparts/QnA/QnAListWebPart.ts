@@ -57,12 +57,13 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
       QnAContainer,
       {
         service: this.service,
+        tenant: this.properties.tenant,
+        clientId: this.properties.clientId,
         endpoints: [{
           masterListName: this.properties.masterListName,
           endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
-          webUrl: this.properties.webUrl, 
-          tenant: this.properties.tenant
+          webUrl: this.properties.webUrl
         }],
         authContextOptions: this.getAuthContextOptions(),
 
@@ -97,9 +98,9 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
               PropertyPaneTextField('apiServiceEndpoint', {
                   label: strings.ApiServiceEndpointFieldLabel,
               }),
-             // PropertyPaneTextField('clientId', {
-             //   label: strings.ClientIdFieldLabel,
-            //}),
+             PropertyPaneTextField('clientId', {
+               label: strings.ClientIdFieldLabel,
+            }),
             PropertyPaneTextField('webUrl', {
                 label: strings.WebUrlFieldLabel,
             }),
@@ -112,7 +113,7 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
             PropertyPaneTextField('masterListName', {
                 label: strings.MasterListNameFieldLabel,
             }),
-            // PropertyPaneTextField('qnAEndpointUrl', {
+            // PropertyPaneTextField('sharepointEndpointUrl', {
             //   label: strings.QnAEndpointUrlFieldLabel,
             // }),
             PropertyPaneTextField('qnATrackingListName', {
