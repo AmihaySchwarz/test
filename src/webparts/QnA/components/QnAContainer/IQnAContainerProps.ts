@@ -7,9 +7,9 @@ export interface IQnAContainerProps {
   //description: string;
   service: IQnAService;
   endpoints: any;
-  clientId: any;
-  tenant: any;
-  authContextOptions: AuthenticationContext.Options;
+  //clientId: any;
+  //tenant: any;
+  //authContextOptions: AuthenticationContext.Options;
 }
 
 export interface IQnAContainerState {

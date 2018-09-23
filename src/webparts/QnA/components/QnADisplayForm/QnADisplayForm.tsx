@@ -13,7 +13,6 @@ import 'react-table/react-table.css'
  import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
  import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 import { INewQuestions } from '../../models/INewQuestions';
-import { QnAPublishForm } from "../QnAPublishForm/QnaPublishForm"
 import { ThemeSettingName } from '@uifabric/styling/lib';
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFormState> {
@@ -36,7 +35,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       filterAll: "",
       isEdit: false,
       isPublish: false,
-      formView: ViewType.Display
+      formView: ViewType.Display,
+      newQuestions: []
     };
     this.filterAll = this.filterAll.bind(this);
     this.changeToEdit = this.changeToEdit.bind(this);
@@ -44,6 +44,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
     this.renderEditable = this.renderEditable.bind(this);
     this.addToQnAList = this.addToQnAList.bind(this);
     this.changeToPublish = this.changeToPublish.bind(this);
+    this.publishQnA = this.publishQnA.bind(this);
 }
 public componentDidMount() {
   console.log("component did mount in form!");
@@ -51,7 +52,7 @@ public componentDidMount() {
 public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
 
-   this.setState({ qnaItems: newProps.qnaItems });
+   this.setState({ qnaItems: newProps.qnaItems, newQuestions: newProps.newQuestions  });
     this.setState({
       division: newProps.masterItems.map(divisionItem => ({
         key: divisionItem.QnAListName,
@@ -67,7 +68,7 @@ public componentWillReceiveProps(newProps): void {
       qnaItems: await this.props.actionHandler.getQnAItems(divisionListName,this.props.endpoints[0].webUrl),
       isDataLoaded: true,
     });
-    console.log(this.state.qnaItems, "qna items!");
+    //console.log(this.state.qnaItems, "qna items!");
   }
 
   onFilteredChange(filtered) {
@@ -92,16 +93,6 @@ public componentWillReceiveProps(newProps): void {
     // NOTE: this completely clears any COLUMN filters
     this.setState({ filterAll, filtered });
   }
-
-
-  private onSaveClick(): void {
-    // TODO: Save Items
-    this.setState({
-      isEdit: false,
-      formView: ViewType.Display
-    });
-  }
-
 
   public setDivisionDD = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
@@ -135,9 +126,16 @@ public componentWillReceiveProps(newProps): void {
 
   public deleteNewQuestion(item : any): void {
     console.log("delete new question");
-    //this.props.actionHandler.
+    //this.props.actionHandler.deleteFromNewQuestion()
   }
 
+  private onSaveClick(): void {
+    // TODO: Save Items
+    this.setState({
+      isEdit: false,
+      formView: ViewType.Display
+    });
+  }
   public markAsResolved(item: any): void {
     console.log("mark as resolved");
   }
@@ -150,6 +148,15 @@ public componentWillReceiveProps(newProps): void {
   public previewQnA(item: any) {
     console.log("preview QnA");
     //TODO: display a panel and chatbox type simulation
+  }
+
+  public publishQnA(): void {
+    //await this.props.actionHandler.publishQnAMakerItem()
+
+    console.log("published qna");
+    this.setState({
+      formView: ViewType.Display
+    });
   }
 
   renderEditable(cellInfo) {
@@ -170,29 +177,33 @@ public componentWillReceiveProps(newProps): void {
     );
   }
 
+  renderNQEditable(cellInfo) {
+    return (
+      <div
+        style={{ backgroundColor: "#fafafa" }}
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={e => {
+          const qnaItems = [...this.state.qnaItems];
+          qnaItems[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
+          this.setState({ qnaItems });
+        }}
+        dangerouslySetInnerHTML={{
+          __html: this.state.newQuestions[cellInfo.index][cellInfo.column.id]
+        }}
+      />
+    );
+  }
+
+
   public render() {
 
 
-   console.log(this.state.selectedDivision, "selected division");
-   console.log(this.state.qnaItems, "qna items");
-   console.log(this.state.isEdit);
+  //  console.log(this.state.selectedDivision, "selected division");
+  //  console.log(this.state.qnaItems, "qna items");
+  //  console.log(this.state.isEdit);
    const { selectedDivision } = this.state;    
     
-    let mockNewQuestions = [{
-      Items :[
-        {
-          question: "question 1, question 2",
-          postedDate: "4/11/2018 09:00 AM",
-          postedBy: "Page Tangalin"
-        },
-        {
-          question: "question 3, question 4",
-          postedDate: "9/20/2018 09:00 AM",
-          postedBy: "Page Tangalin"
-        }
-      ]
-    } 
-    ]
 
     switch(this.state.formView){
       case ViewType.Edit:
@@ -217,21 +228,24 @@ public componentWillReceiveProps(newProps): void {
         <span> Filter New Questions:  </span><input value={this.state.filterAll} onChange={this.filterAll} />  
         <ReactTable
           PaginationComponent={Pagination}
-          data={mockNewQuestions[0].Items}
+          data={this.state.newQuestions}
           columns={[
             {
               columns: [
                 {
                   Header: "Question",
-                  accessor: "question"
+                  accessor: "RowKey",
+                 Cell: this.renderNQEditable
                 },
                 {
                   Header: "Posted Date",
-                  accessor: "postedDate"
+                  accessor: "PostedDate",
+                  Cell: this.renderNQEditable
                 },
                 {
                   Header: "Posted By",
-                  accessor: "postedBy"
+                  accessor: "PostedBy",
+                  Cell: this.renderNQEditable
                 },
                 {
                   Header: "Actions",
@@ -322,20 +336,21 @@ public componentWillReceiveProps(newProps): void {
       Filter New Questions: <input value={this.state.filterAll} onChange={this.filterAll} />  
       <ReactTable
         PaginationComponent={Pagination}
+        data={this.state.newQuestions}
         columns={[
           {
             columns: [
               {
                 Header: "Question",
-                accessor: "question"
+                accessor: "RowKey"
               },
               {
                 Header: "Posted Date",
-                id: "postedDate"
+                accessor: "PostedDate"
               },
               {
                 Header: "Posted By",
-                id: "postedBy"
+                accessor: "PostedBy"
               }
             ]
           }
@@ -377,7 +392,51 @@ public componentWillReceiveProps(newProps): void {
       <br />
     </div>;
     case ViewType.Publish:
-      return <QnAPublishForm qnaItems={this.state.qnaItems}/>;
+      return <div>
+          <div className={styles.controlMenu}> 
+
+              <DefaultButton
+                    text='Publish'
+                    primary={ true }
+                    href='#'
+                    onClick={this.publishQnA}
+                  /> 
+
+
+                <ReactTable
+                data={this.state.qnaItems}
+                
+                
+                PaginationComponent={Pagination}
+                columns={[
+                  {
+                    columns: [
+                      {
+                        Header: "Questions",
+                        accessor: "Questions"
+                      },
+                      {
+                        Header: "Answer",
+                        accessor: "Answer"
+                      },
+                      {
+                        Header: "Classification",
+                        accessor: "Classification"
+                      },
+                      {
+                          Header: "Change Type",
+                          accessor: "ChangeType"
+                      }
+                    ]
+                  }
+                ]}
+                defaultPageSize={10}
+                className="-striped -highlight"
+              />
+              </div>
+
+
+      </div>;
     default: 
         return null;
     }

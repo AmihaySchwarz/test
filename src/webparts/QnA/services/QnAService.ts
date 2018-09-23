@@ -1,7 +1,7 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
-import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
+import { HttpClientResponse, HttpClient, AadHttpClient } from '@microsoft/sp-http';
 import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult } from '@pnp/sp';
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
@@ -11,6 +11,7 @@ import { INewQuestions } from "../models/INewQuestions";
 import * as storage from "azure-storage";
 //const storage = require('azure-storage');
 
+//API Service endpoint : https://sitqnaapiservice20180920061357.azurewebsites.net
 
 export class QnAService extends BaseService implements IQnAService {
    
@@ -131,7 +132,7 @@ export class QnAService extends BaseService implements IQnAService {
         console.log(qnaListTrackingListName, "qna tracking list");
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
         .filter("Division eq " +division)
-        .expand("LockedBY")
+        .expand("LockedBy")
         .get().then((items: any[]) => {
             console.log(items);
             return items;
@@ -154,15 +155,136 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     }
 
-    public getNewQuestions(tenant: string, clientId: string, endpoint: string):Promise<any>{
-        
+    public getNewQuestions(endpoint: string):Promise<any>{ //tenant: string, clientId: string, 
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions
+        //GET
+        let getQuestionsEndpoint = endpoint + "/api/newQuestions";
+        return this.context.httpClient.get(getQuestionsEndpoint, HttpClient.configurations.v1, {
+            //credentials: 'include'
+             headers: {
+                 'Content-Type': 'application/json'
+             }
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
         //connect to the api service endpoint created 
-        return null;
+        // return this.context.aadHttpClientFactory
+        // .getClient(clientId)
+        // .then((client: AadHttpClient): void => {
+        // client
+        //     .get(endpoint+'/api/NewQuestions/test', AadHttpClient.configurations.v1)
+        //     .then((response: HttpClientResponse): Promise<any> => {
+        //     return response.json();
+        //     })
+        //     .then((testRes: string): void => {
+        //         console.log(testRes, "TEST RESULT");
+        //        // return testRes;
+        //     });
+        // });
     }
-    
-    public deleteFromNewQuestion: (tenant: string, clientId: string, endpoint: string, item: INewQuestions) => Promise<any>;
-    public updateQnAMakerKB: (tenant: string, clientId: string, endpoint: string,  qnamakerItem: IQnAMakerItem) => Promise<any>;
-    public publishQnAMakerItem: (tenant: string, clientId: string, endpoint: string, qnamakerItem: IQnAMakerItem ) => Promise<any>;
+
+    public deleteFromNewQuestion(tenant: string, clientId: string, endpoint: string, item: INewQuestions): Promise<any>{
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/deleterecord
+        //DELETE
+        let deleteQuestionEndpoint = endpoint + "/api/newquestions/deleterecord";
+        return this.context.httpClient.fetch(deleteQuestionEndpoint, HttpClient.configurations.v1, {
+            credentials: 'include',
+             headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+             }, 
+             method: 'DELETE',
+            body: JSON.stringify({
+                entity : item
+            })
+             
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error deleting");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+    };
+    public updateQnAMakerKB(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem): Promise<any> {
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4
+        //PATCH
+        let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid;
+        return this.context.httpClient.fetch(updateQnAEndpoint, HttpClient.configurations.v1, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }, 
+            method: 'PATCH',
+            body: JSON.stringify({
+                new_kb : ""//the string of the update format below
+            })
+            
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error deleting");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+    };
+    public publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ): Promise<any> {
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4
+        let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid;
+        return this.context.httpClient.post(updateQnAEndpoint, HttpClient.configurations.v1, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            // body: JSON.stringify({
+            //     new_kb : ""//the string of the update format below
+            // })
+            
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error deleting");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+
+    }
     
     
     private Error(e) {

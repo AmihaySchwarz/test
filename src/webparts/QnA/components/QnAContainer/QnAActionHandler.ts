@@ -52,8 +52,8 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async getNewQuestions(tenant: string, clientId: string, endpoint: string): Promise<any>{
-        let res = await this.service.getNewQuestions(tenant, clientId, endpoint);
+    public async getNewQuestions(endpoint: string): Promise<any>{//tenant: string, clientId: string, 
+        let res = await this.service.getNewQuestions(endpoint);
         return res;
     }
 
@@ -62,13 +62,13 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async updateQnAMakerKB(tenant: string, clientId: string, endpoint: string, item: IQnAMakerItem): Promise<any>{
-        let res = await this.service.updateQnAMakerKB(tenant, clientId, endpoint,item );
+    public async updateQnAMakerKB(endpoint: string, kbid: string, item: IQnAMakerItem): Promise<any>{
+        let res = await this.service.updateQnAMakerKB(endpoint,kbid, item );
         return res;
     }
 
-    public async publishQnAMakerItem(tenant: string, clientId: string, endpoint: string, qnamakerItem: IQnAMakerItem ): Promise<any>{
-        let res = await this.service.publishQnAMakerItem(tenant, clientId, endpoint, qnamakerItem);
+    public async publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ): Promise<any>{
+        let res = await this.service.publishQnAMakerItem(endpoint, kbid, qnamakerItem);
 
     }
 

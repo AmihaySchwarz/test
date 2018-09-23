@@ -27,12 +27,12 @@ export interface IQnAListWebPartProps {
   numberOfItems: number;
   clientId: string;
   redirectUrl: string;
-    masterListName: string;
-    endpointUrl: string;
-    qnATrackingListName: string;
-    qnAEndpointUrl: string;
-    webUrl: string;
-    tenant: string;
+  masterListName: string;
+  endpointUrl: string;
+  qnATrackingListName: string;
+  qnAEndpointUrl: string;
+  webUrl: string;
+  tenant: string;
     
 }
 
@@ -57,15 +57,16 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
       QnAContainer,
       {
         service: this.service,
-        tenant: this.properties.tenant,
-        clientId: this.properties.clientId,
+        //tenant: this.properties.tenant,
+        //clientId: this.properties.clientId,
         endpoints: [{
           masterListName: this.properties.masterListName,
           endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
           webUrl: this.properties.webUrl
+          //edirectUrl: this.properties.redirectUrl
         }],
-        authContextOptions: this.getAuthContextOptions(),
+        //authContextOptions: this.getAuthContextOptions(),
 
       }
     );
@@ -92,24 +93,24 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('title', {
-                  label: strings.TitleFieldLabel,
-              }),
-              PropertyPaneTextField('apiServiceEndpoint', {
-                  label: strings.ApiServiceEndpointFieldLabel,
-              }),
-             PropertyPaneTextField('clientId', {
-               label: strings.ClientIdFieldLabel,
-            }),
+                // PropertyPaneTextField('title', {
+                //   label: strings.TitleFieldLabel,
+                // }),
+              // PropertyPaneTextField('apiServiceEndpoint', {
+              //     label: strings.ApiServiceEndpointFieldLabel,
+              // }),
+          //    PropertyPaneTextField('clientId', {
+          //      label: strings.ClientIdFieldLabel,
+          //   }),
             PropertyPaneTextField('webUrl', {
                 label: strings.WebUrlFieldLabel,
             }),
-            PropertyPaneTextField('tenant', {
-              label: strings.TenantFieldLabel,
-          }),
-            //PropertyPaneTextField('redirectUrl', {
+          //   PropertyPaneTextField('tenant', {
+          //     label: strings.TenantFieldLabel,
+          // }),
+            // PropertyPaneTextField('redirectUrl', {
             //    label: strings.RedirectUrlFieldLabel,
-            //}),
+            // }),
             PropertyPaneTextField('masterListName', {
                 label: strings.MasterListNameFieldLabel,
             }),
@@ -145,11 +146,14 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
   }
 
   private needsConfiguration(): boolean {
-    return (!!this.properties.title &&
-        !!this.properties.clientId &&
-        !!this.properties.qnAEndpointUrl &&
+    console.log("needscionfig");
+    let config =  !!this.properties.clientId &&
+        //!!this.properties.qnAEndpointUrl &&
         !!this.properties.redirectUrl &&
-        !!this.properties.endpointUrl);
+        !!this.properties.endpointUrl;
+
+        return config;
+
   }
 
 //  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {

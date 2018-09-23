@@ -8,7 +8,7 @@ define([], function() {
     "RedirectUrlFieldLabel": "Redirect URL",
     "WebUrlFieldLabel": "SharePoint QnA Tenant URL",
     "ClientIdFieldLabel": "Client ID",
-    "EndpointUrlFieldLabel": "Endpoint URL",
+    "EndpointUrlFieldLabel": "API Service Endpoint URL",
     "QnATrackingListNameFieldLabel": "QnA List Tracking List Name",
     "QnAEndpointUrlFieldLabel": "QnA List Endpoint URL",
     "MasterListNameFieldLabel": "QnA Master List Name",

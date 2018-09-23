@@ -16,6 +16,7 @@ export interface IQnADisplayFormProps {
     masterItems?: any[];
     //editItemIndex?: string;
     editItem?: any;
+    properties: any;
 }
 
 export interface IQnAFormState {
@@ -33,6 +34,7 @@ export interface IQnAFormState {
     selectedDivisionListName: string;
     isPublish?: boolean;
     formView: ViewType;
+    newQuestions: INewQuestions[];
 }
 
 export interface INewQuestionsFormState {
