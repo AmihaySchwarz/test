@@ -122,7 +122,7 @@ public componentWillReceiveProps(newProps): void {
 
   public addToQnAList(item: any): void {
     console.log("add to QNA List");
-    
+
   }
 
   public deleteNewQuestion(item : any): void {
@@ -186,9 +186,9 @@ public componentWillReceiveProps(newProps): void {
         contentEditable
         suppressContentEditableWarning
         onBlur={e => {
-          const qnaItems = [...this.state.qnaItems];
-          qnaItems[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
-          this.setState({ qnaItems });
+          const newQuestions = [...this.state.newQuestions];
+          newQuestions[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
+          this.setState({ newQuestions });
         }}
         dangerouslySetInnerHTML={{
           __html: this.state.newQuestions[cellInfo.index][cellInfo.column.id]

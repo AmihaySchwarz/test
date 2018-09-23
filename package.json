@@ -29,6 +29,7 @@
     "react": "15.6.2",
     "react-bootstrap-table-next": "^1.1.4",
     "react-dom": "15.6.2",
+    "react-select": "^2.0.0",
     "react-table": "^6.8.6",
     "typescript": "^3.0.3"
   },
