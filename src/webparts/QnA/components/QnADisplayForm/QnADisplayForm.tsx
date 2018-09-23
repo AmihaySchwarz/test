@@ -122,6 +122,7 @@ public componentWillReceiveProps(newProps): void {
 
   public addToQnAList(item: any): void {
     console.log("add to QNA List");
+    
   }
 
   public deleteNewQuestion(item : any): void {
@@ -133,7 +134,8 @@ public componentWillReceiveProps(newProps): void {
     // TODO: Save Items
     this.setState({
       isEdit: false,
-      formView: ViewType.Display
+      formView: ViewType.Display,
+      //selectedDivision: 
     });
   }
   public markAsResolved(item: any): void {
@@ -250,9 +252,9 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Actions",
                   accessor: "newQuestionsActions",
-                  Cell: ({row}) => (<div><button>Add to QnA List</button> <br /> 
-                    <button>Delete Question</button><br />
-                    <button>Mark as Resolved</button></div>) //onClick={this.addToQnAList({row})}
+                  Cell: ({row}) => (<div><button onClick={()=>this.addToQnAList({row})}>Add to QnA List</button> <br /> 
+                    <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br />
+                    <button onClick={()=>this.markAsResolved({row})}>Mark as Resolved</button></div>) //onClick={this.addToQnAList({row})}
                 }
               ]
             }
@@ -291,9 +293,9 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Actions",
                   accessor: "Actions",
-                  Cell: ({value}) => (<div>
-                    <button>Delete Question</button>
-                    <button>Preview</button></div>)
+                  Cell: ({row}) => (<div>
+                    <button onClick={()=>this.deleteQnA({row})}>Delete Question</button>
+                    <button onClick={()=>this.previewQnA({row})}>Preview</button></div>)
                 }
               ]
             }
