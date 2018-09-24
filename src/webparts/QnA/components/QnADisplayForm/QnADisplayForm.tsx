@@ -135,13 +135,14 @@ public componentWillReceiveProps(newProps): void {
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
     
-    //let listTrackingItem = this.props.actionHandler.checkLockStatus(this.state.selectedDivision,this.props.properties.qnATrackingListName);
-
     this.setState({
       isEdit: true,
       formView: ViewType.Edit,
       listTrackingItem: await this.props.actionHandler.checkLockStatus(this.state.selectedDivision,this.props.properties.qnATrackingListName)
     });
+
+    
+
   }
 
   public changeToPublish(): void {
