@@ -15,6 +15,8 @@ export class QnAActionHandler {
     public async getQnAItems(divisionListName: string, url : string): Promise<any[]> { //accesstoken: string
        let items =  await this.service.getQnAItems(divisionListName, url);
        console.log(items);
+    //    const x = JSON.parse(JSON.stringify(items));
+    //     console.log(x);
        return items;
     }
     public async getMasterListItems(currentUser:any, url: string, listname: string): Promise<any[]> {
@@ -37,6 +39,10 @@ export class QnAActionHandler {
         let items = await this.service.updateItemInQnAList(url,qnaListName,id,qnaListItems);
         return items;
     }
+    public async addQuestionToQnAList(url: string, qnaListName:string, qnaListItem: INewQuestions): Promise<any>{
+        let items = await this.service.addQuestionToQnAList(url, qnaListName, qnaListItem);
+        return items; 
+    }
 
     public async addtoQnaList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         let items = await this.service.addToQnAList(url, qnaListName, qnaListItem);
@@ -57,8 +63,8 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async deleteFromNewQuestion(tenant: string, clientId: string, endpoint: string, item: INewQuestions): Promise<any>{
-        let res = await this.service.deleteFromNewQuestion(tenant, clientId, endpoint,item );
+    public async deleteFromNewQuestion(endpoint: string, item: INewQuestions): Promise<any>{ //tenant: string, clientId: string, 
+        let res = await this.service.deleteFromNewQuestion(endpoint,item);
         return res;
     }
 

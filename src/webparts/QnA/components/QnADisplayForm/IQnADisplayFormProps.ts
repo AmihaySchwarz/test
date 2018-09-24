@@ -9,7 +9,7 @@ import { ViewType } from '../../../common/enum';
 
 export interface IQnADisplayFormProps {
     //service: IQnAService;
-    endpoints?: any;
+    //endpoints?: any;
     actionHandler?: QnAActionHandler;
     newQuestions?: INewQuestions[];
     changeView?: Function;
@@ -35,6 +35,9 @@ export interface IQnAFormState {
     isPublish?: boolean;
     formView: ViewType;
     newQuestions: INewQuestions[];
+    updatedQna: any[];
+    newQuestion: INewQuestions;
+    inputValue: string;
 }
 
 export interface INewQuestionsFormState {

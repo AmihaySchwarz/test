@@ -59,13 +59,13 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
         service: this.service,
         //tenant: this.properties.tenant,
         //clientId: this.properties.clientId,
-        endpoints: [{
+        //endpoints: [{
           masterListName: this.properties.masterListName,
           endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
           webUrl: this.properties.webUrl
           //edirectUrl: this.properties.redirectUrl
-        }],
+        //}],
         //authContextOptions: this.getAuthContextOptions(),
 
       }

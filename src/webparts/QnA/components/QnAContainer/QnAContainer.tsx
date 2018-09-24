@@ -65,29 +65,25 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   private async loadNewQuestions(): Promise<void>{
       this.setState({
-        newQuestions: await this.actionHandler.getNewQuestions(this.props.endpoints[0].endpointUrl)
+        newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl)
       }); //this.props.tenant,this.props.clientId,
   }
 
   private async loadMasterList(currentUser: any): Promise<void> {
-    console.log(this.props.endpoints[0], "ENDPOINTS");
+
 
     this.setState({
-      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.endpoints[0].weburl,this.props.endpoints[0].masterListName ),
+      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName ),
       isDataLoaded: true,
     });
-    console.log(this.state.masterItems, "master items!");
-    
   }
   private changeView(view: ViewType): void {
     this.setState({ view });
   }
 
   public render() {
-    console.log(this.state.masterItems,"lasudlkasdj")
-    
      return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-  changeView={this.changeView} actionHandler={this.actionHandler} endpoints={this.props.endpoints} properties={this.props}/> ;
+  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props}/> ;
     // return( <div> TESTING this i the container</div> );
   }
 }

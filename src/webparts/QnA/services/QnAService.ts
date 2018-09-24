@@ -22,9 +22,6 @@ export class QnAService extends BaseService implements IQnAService {
    
     constructor(webPartContext: WebPartContext) {
         super(webPartContext);
-        //get endpoints
-       // console.log(endpoints);
-       //this.endpoints = endpoints;
        this.context = webPartContext;
     }
 
@@ -99,6 +96,23 @@ export class QnAService extends BaseService implements IQnAService {
         //     return i
         // });
     }
+
+    public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
+
+        let jsonQuestion = '[ {"question": "'+ newQuestionItem.RowKey.trim()+'"}]';
+
+        return sp.web.lists.getByTitle(qnaListName).items.add({
+            Questions: jsonQuestion,
+            Answer: null,
+            Classification: undefined,
+            QnAID: 0
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            return result;
+        });
+    };
+
+
     public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         // add an item to the list
         return sp.web.lists.getByTitle(qnaListName).items.add({
@@ -110,6 +124,11 @@ export class QnAService extends BaseService implements IQnAService {
             console.log(result);
             return result;
         });
+    }
+
+
+    public deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any> {
+        return null;
     }
     
     public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
@@ -194,7 +213,7 @@ export class QnAService extends BaseService implements IQnAService {
         // });
     }
 
-    public deleteFromNewQuestion(tenant: string, clientId: string, endpoint: string, item: INewQuestions): Promise<any>{
+    public deleteFromNewQuestion(endpoint: string, item: INewQuestions): Promise<any>{ //tenant: string, clientId: string, 
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/deleterecord
         //DELETE
         let deleteQuestionEndpoint = endpoint + "/api/newquestions/deleterecord";

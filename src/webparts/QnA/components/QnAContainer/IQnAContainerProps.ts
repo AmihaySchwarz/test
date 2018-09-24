@@ -6,7 +6,11 @@ import * as AuthenticationContext from 'adal-angular';
 export interface IQnAContainerProps {
   //description: string;
   service: IQnAService;
-  endpoints: any;
+  //endpoints: any;
+  masterListName: string;
+  endpointUrl: string;
+  qnATrackingListName:string;
+  webUrl: string;
   //clientId: any;
   //tenant: any;
   //authContextOptions: AuthenticationContext.Options;

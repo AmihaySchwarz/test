@@ -1,7 +1,8 @@
 
 export interface INewQuestions {
     Id: String;
-    Question: string;
+    Question: string[];
+    RowKey: string;
     PostedDate: Date;
     PostedBy: any[];
     Contact: any[];
