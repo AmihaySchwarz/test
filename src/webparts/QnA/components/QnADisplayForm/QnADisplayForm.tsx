@@ -162,7 +162,7 @@ public componentWillReceiveProps(newProps): void {
     // TODO: Save Items
     //console.log(this.state.selectedDivision);
     this.setState({
-      formView: ViewType.Display,
+      formView: ViewType.Display, 
       selectedDivision: this.state.selectedDivision
     });
   }
