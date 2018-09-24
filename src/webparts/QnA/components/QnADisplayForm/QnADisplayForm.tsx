@@ -15,6 +15,9 @@ import 'react-table/react-table.css'
 import { INewQuestions } from '../../models/INewQuestions';
 import { ThemeSettingName } from '@uifabric/styling/lib';
 import CreatableSelect from 'react-select/lib/Creatable';
+import { QnAPreviewPanel } from '../QnAPreviewPanel/QnAPreviewPanel';
+import ReactTooltip from 'react-tooltip'
+
 
 const components = {
   DropdownIndicator: null,
@@ -154,13 +157,18 @@ public componentWillReceiveProps(newProps): void {
   }
 
   public deleteNewQuestion(item : any): void {
-    console.log("delete new question", item._original);
-    this.props.actionHandler.deleteFromNewQuestion(this.props.properties.endpointUrl,item.row); 
+    console.log("delete new question", item.row._original);
+    this.props.actionHandler.deleteFromNewQuestion(this.props.properties.endpointUrl,item.row._original); 
   }
 
   private onSaveClick(): void {
     // TODO: Save Items
-    //console.log(this.state.selectedDivision);
+    //•	Once clicked, the following flow shall be performed
+    // a.	Validate all QnA pairs
+    // b.	Save changes to SharePoint
+    // c.	Update QnA List Tracking item (Lock Status, Last Updated)
+    // d.	Change to Display Form
+
     this.setState({
       formView: ViewType.Display, 
       selectedDivision: this.state.selectedDivision
@@ -180,7 +188,7 @@ public componentWillReceiveProps(newProps): void {
 
   public deleteQnA(item: any): void {
     console.log("delete QnA");
-
+    this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName, item.row._original); 
   }
 
   public previewQnA(item: any) {
@@ -189,7 +197,7 @@ public componentWillReceiveProps(newProps): void {
   }
 
   public publishQnA(): void {
-    //await this.props.actionHandler.publishQnAMakerItem()
+    //this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl, )
 
     console.log("published qna");
     this.setState({
@@ -341,7 +349,11 @@ public componentWillReceiveProps(newProps): void {
                   accessor: "Actions",
                   Cell: ({row}) => (<div>
                     <button onClick={()=>this.deleteQnA({row})}>Delete Question</button>
-                    <button onClick={()=>this.previewQnA({row})}>Preview</button></div>)
+                    <button data-tip data-event='click focus'> Preview</button>
+                    <ReactTooltip globalEventOff='click' aria-haspopup='true' place="bottom" type="light" effect="solid">
+                        <QnAPreviewPanel qnaItems={row}/>
+                    </ReactTooltip>
+                   </div> )
                 }
               ]
             }

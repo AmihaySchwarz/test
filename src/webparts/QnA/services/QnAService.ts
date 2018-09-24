@@ -128,7 +128,12 @@ export class QnAService extends BaseService implements IQnAService {
 
 
     public deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any> {
-        return null;
+        //return null;
+        return sp.web.lists.getByTitle(qnaListName).items.getById(qnaListItem.Id)
+            .delete().then(res => {
+                console.log(res);
+                return res;
+            });
     }
     
     public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
@@ -218,16 +223,13 @@ export class QnAService extends BaseService implements IQnAService {
         //DELETE
         let deleteQuestionEndpoint = endpoint + "/api/newquestions/deleterecord";
         return this.context.httpClient.fetch(deleteQuestionEndpoint, HttpClient.configurations.v1, {
-            credentials: 'include',
+            //credentials: 'include',
              headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
              }, 
              method: 'DELETE',
-            body: JSON.stringify({
-                entity : item
-            })
-             
+            body: JSON.stringify(item)
         }).then((response: HttpClientResponse) => {
             if (response.ok) {
                 return response.json();
@@ -249,7 +251,7 @@ export class QnAService extends BaseService implements IQnAService {
         //PATCH
         let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid;
         return this.context.httpClient.fetch(updateQnAEndpoint, HttpClient.configurations.v1, {
-            credentials: 'include',
+            //credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -276,10 +278,13 @@ export class QnAService extends BaseService implements IQnAService {
         );
     };
     public publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ): Promise<any> {
+        //NEED TO GET THE kbid, important parameter
+        // foreach?
+        
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4
         let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid;
         return this.context.httpClient.post(updateQnAEndpoint, HttpClient.configurations.v1, {
-            credentials: 'include',
+            //credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             }

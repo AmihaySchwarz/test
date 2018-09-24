@@ -49,6 +49,11 @@ export class QnAActionHandler {
         return items;
     }
 
+    public async deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+        let res = await this.service.deleteFromQnAList(qnaListName, qnaListItem);
+        return res;
+    };
+
     public async updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any> {
         let response =  await this.service.updateQnAListTracking(url, qnaListTrackingListName, qnaListTrackingItem);
         return response;
