@@ -58,8 +58,8 @@ export class QnAActionHandler {
         let response =  await this.service.updateQnAListTracking(url, qnaListTrackingListName, qnaListTrackingItem);
         return response;
     }
-    public async checkLockStatus(url: string, division: string, qnaListTrackingListName: string): Promise<any>{
-        let res = await this.service.checkLockStatus(url,division,qnaListTrackingListName);
+    public async checkLockStatus(division: string, qnaListTrackingListName: string): Promise<any>{
+        let res = await this.service.checkLockStatus(division,qnaListTrackingListName);
         return res;
     }
 

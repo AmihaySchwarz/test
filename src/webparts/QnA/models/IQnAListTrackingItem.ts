@@ -1,6 +1,6 @@
 
 export interface IQnAListTrackingItem {
-    Id: String;
+    Id: number;
     Division: string;
     LastUpdated: Date;
     LastPublished: Date;

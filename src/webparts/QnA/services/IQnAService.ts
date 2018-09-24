@@ -8,7 +8,7 @@ export interface IQnAService {
     getMasterListItems: (currentUser: any[],url: string,  masterListName: string) => Promise<any>;
     getNewQuestions: (endpoint: string) => Promise<any>; //tenant: string, clientId: string, 
     deleteFromNewQuestion:(endpoint: string, item: INewQuestions) =>Promise<any>; //tenant: string, clientId: string, 
-    checkLockStatus:(url:string, division: string, qnaListTrackingListName: string) => Promise<any>;
+    checkLockStatus:(division: string, qnaListTrackingListName: string) => Promise<any>;
     lockList:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     updateItemInQnAList:(url: string, qnaListName:string, id:number, qnaListItems: IQnAListItem[]) => Promise<any>;
     addQuestionToQnAList:(url: string, qnaListName:string, qnaListItem: INewQuestions) => Promise<any>;

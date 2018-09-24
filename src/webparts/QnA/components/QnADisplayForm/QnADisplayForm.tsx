@@ -52,7 +52,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       newQuestions: props.newQuestions,
       updatedQna: [],
       newQuestion: undefined,
-      inputValue: ''
+      inputValue: '',
+      listTrackingItem: undefined
     };
   
     this.filterAll = this.filterAll.bind(this);
@@ -126,13 +127,20 @@ public componentWillReceiveProps(newProps): void {
     this.loadQnAListData(item.key.toString());
   };
 
-  public changeToEdit(): void {
+  public async changeToEdit(): Promise<void> {
     console.log("edit is clicked", this.state);
-    //this.props.changeView(ViewType.Edit);
+    // a.	Get QnA List Tracking item
+    // b.	Check Lock status
+    // o	If locked, notify user & refresh the data
+    // c.	Lock the list
+    // o	If failed to lock the list, notify user & refresh the data
+    
+    //let listTrackingItem = this.props.actionHandler.checkLockStatus(this.state.selectedDivision,this.props.properties.qnATrackingListName);
 
     this.setState({
       isEdit: true,
-      formView: ViewType.Edit
+      formView: ViewType.Edit,
+      listTrackingItem: await this.props.actionHandler.checkLockStatus(this.state.selectedDivision,this.props.properties.qnATrackingListName)
     });
   }
 

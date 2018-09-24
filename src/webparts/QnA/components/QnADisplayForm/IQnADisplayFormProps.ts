@@ -38,10 +38,12 @@ export interface IQnAFormState {
     updatedQna: any[];
     newQuestion: INewQuestions;
     inputValue: string;
+    listTrackingItem: IQnAListTrackingItem;
 }
 
 export interface INewQuestionsFormState {
     Questions: string [];
     PostedDate: Date;
     PostedBy: string;
+   
 }
