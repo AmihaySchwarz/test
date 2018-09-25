@@ -129,35 +129,35 @@ public componentWillReceiveProps(newProps): void {
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
   
-    this.setState({
-      isEdit: true,
-      formView: ViewType.Edit
-    });
-
-
-    // this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName)
-    // .then((items) => {
-    //   this.setState({
-    //     listTrackingItem: items[0], 
-    //   })
-    //   console.log(this.state.listTrackingItem); 
-    //   if(this.state.listTrackingItem.LockedBy !== undefined){
-    //     //show notification and refresh data
-    //     console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
-    //   } else {
-    //     let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
-    //       if (res == "fail"){
-    //         //alert user if lock fail then refresh data
-    //         console.log("failed to lock the item");
-    //       } else {
-    //         this.setState({
-    //           isEdit: true,
-    //           formView: ViewType.Edit
-    //         });
-    //       }
-    //     }); 
-    //   }
+    // this.setState({
+    //   isEdit: true,
+    //   formView: ViewType.Edit
     // });
+
+
+    this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName)
+    .then((items) => {
+      this.setState({
+        listTrackingItem: items[0], 
+      })
+      console.log(this.state.listTrackingItem); 
+      if(this.state.listTrackingItem.LockedBy !== undefined){
+        //show notification and refresh data
+        console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+      } else {
+        let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
+          if (res == "fail"){
+            //alert user if lock fail then refresh data
+            console.log("failed to lock the item");
+          } else {
+            this.setState({
+              isEdit: true,
+              formView: ViewType.Edit
+            });
+          }
+        }); 
+      }
+    });
   }
 
   public changeToPublish(): void {
@@ -256,7 +256,7 @@ public componentWillReceiveProps(newProps): void {
     let qnaItems = [...this.state.qnaItems];
     let item = {
       ...qnaItems[index],
-      Questions: data
+      Questions: JSON.stringify(data)
     }   
     qnaItems[index] = item;
     this.setState({qnaItems});

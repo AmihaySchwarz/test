@@ -1,7 +1,7 @@
 
 export interface IQnAListItem {
     Id: number;
-    Questions: string[];
+    Questions: string;
     Answer: string;
     Classification: string;
     QnAID: number;

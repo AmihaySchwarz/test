@@ -157,12 +157,13 @@ export class QnAService extends BaseService implements IQnAService {
             .expand("LockedBy")
             .get()
             .then((items: any[]) => {
-                console.log(items);
                 if(items.length == 0) {
+                    console.log(items, "item does nto exist. creating now");
                     return this.createLockItem(currentUser, division, qnaListTrackingListName).then(res => {
                        return res;
                    });
                 } else {
+                    console.log(items, "item exists. returning");
                     return items;
                 }            
         }).catch((error) => {
@@ -181,8 +182,12 @@ export class QnAService extends BaseService implements IQnAService {
             LockedById: currentUser.Id,
             LockedReleaseTime: d.toDateString()
         }).then((result: ItemAddResult) => {
-            console.log(result.item);
-           return result.item;
+            console.log(result.data);
+           //return result.item;
+           return sp.web.lists.getByTitle(qnaListTrackingListName).items
+           .getById(result.data.LockedById)
+           .select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
+           .expand('LockedBy').get().then(res => {return res});
         });
        // return res;
     }
