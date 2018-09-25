@@ -32,12 +32,6 @@ export class QnAService extends BaseService implements IQnAService {
         });
     }
     public getMasterListItems(currentUser: any, url: string, masterListName: string): Promise<any>{
-        // return this.webPartContext.httpClient.get(`${url}/_api/web/lists/GetByTitle('${masterListName}')/Items?$expand=Editors`, HttpClient.configurations.v1)  
-        // .then((response: HttpClientResponse) => {   
-        //   //debugger;  
-        //   return response.json();  
-        // });  
-
         return sp.web.lists.getByTitle(masterListName).renderListDataAsStream({
             RenderOptions: RenderListDataOptions.ListData,
             ViewXml :  `<View>
@@ -158,12 +152,11 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
-        console.log(qnaListTrackingListName, "qna tracking list");
-        let createdItem;
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
             .filter("Division eq '" +division+"'")
             .expand("LockedBy")
-            .get().then((items: any[]) => {
+            .get()
+            .then((items: any[]) => {
                 console.log(items);
                 if(items.length == 0) {
                     return this.createLockItem(currentUser, division, qnaListTrackingListName).then(res => {
@@ -181,17 +174,17 @@ export class QnAService extends BaseService implements IQnAService {
     public createLockItem(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
         let res;
         let d = new Date();
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
             LastUpdated: d.toDateString(),
             LastPublished: null,
             LockedById: currentUser.Id,
             LockedReleaseTime: d.toDateString()
         }).then((result: ItemAddResult) => {
-            console.log(result);
-            res = result;
+            console.log(result.item);
+           return result.item;
         });
-        return res;
+       // return res;
     }
 
     public lockList (currentUser: any, division: string, qnaListTrackingListName: string) : Promise<any>{
@@ -235,7 +228,7 @@ export class QnAService extends BaseService implements IQnAService {
                 console.error(error);
             }
         );
-        //connect to the api service endpoint created 
+      
         // return this.context.aadHttpClientFactory
         // .getClient(clientId)
         // .then((client: AadHttpClient): void => {

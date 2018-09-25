@@ -1,6 +1,6 @@
 import * as React from 'react';
-import styles from './QnADisplayForm.module.scss';
-import { IQnADisplayFormProps,IQnAFormState } from './IQnADisplayFormProps';
+import styles from './QnAForm.module.scss';
+import { IQnAFormProps,IQnAFormState } from './IQnAFormProps';
 import { DialogHeader } from '../../../common/components/DialogHeader';
 import { LoadingSpinner } from '../../../common/components/LoadingSpinner';
 import { ViewType } from '../../../common/enum';
@@ -17,7 +17,7 @@ import { ThemeSettingName } from '@uifabric/styling/lib';
 import CreatableSelect from 'react-select/lib/Creatable';
 import { QnAPreviewPanel } from '../QnAPreviewPanel/QnAPreviewPanel';
 import ReactTooltip from 'react-tooltip'
-
+import Testing from './Testing'
 
 const components = {
   DropdownIndicator: null,
@@ -28,9 +28,10 @@ const createOption = (label: string) => ({
   value: label,
 });
 
-export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFormState> {
 
-  //private actionHandler: QnAActionHandler;
+
+
+export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   constructor(props) {
     super(props);
@@ -74,15 +75,15 @@ public componentDidMount() {
 }
 public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
-
     this.setState({
       qnaItems: newProps.qnaItems, 
       newQuestions: newProps.newQuestions,
       currentUser: newProps.currentUser,
-      division: newProps.masterItems.map(divisionItem => ({
-        key: divisionItem.QnAListName,
-        text: divisionItem.Division.Label
-      }))
+      // division : newProps.masterItems.map(divisionItem => ({
+      //   key: divisionItem.QnAListName,
+      //   text: divisionItem.Division.Label
+      // }))
+      division: newProps.masterItems
     })
   }
 
@@ -128,29 +129,35 @@ public componentWillReceiveProps(newProps): void {
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
   
-    
-    this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName).then((items) => {
-      this.setState({
-        listTrackingItem: items[0],
-      })
-      console.log(this.state.listTrackingItem.LockedBy);
-      if(this.state.listTrackingItem.LockedBy !== undefined){
-        //show notification and refresh data
-        console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
-      } else {
-        let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
-          if (res == "fail"){
-            //alert user if lock fail then refresh data
-            console.log("failed to lock the item");
-          } else {
-            this.setState({
-              isEdit: true,
-              formView: ViewType.Edit
-            });
-          }
-        }); 
-      }
+    this.setState({
+      isEdit: true,
+      formView: ViewType.Edit
     });
+
+
+    // this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName)
+    // .then((items) => {
+    //   this.setState({
+    //     listTrackingItem: items[0], 
+    //   })
+    //   console.log(this.state.listTrackingItem); 
+    //   if(this.state.listTrackingItem.LockedBy !== undefined){
+    //     //show notification and refresh data
+    //     console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+    //   } else {
+    //     let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
+    //       if (res == "fail"){
+    //         //alert user if lock fail then refresh data
+    //         console.log("failed to lock the item");
+    //       } else {
+    //         this.setState({
+    //           isEdit: true,
+    //           formView: ViewType.Edit
+    //         });
+    //       }
+    //     }); 
+    //   }
+    // });
   }
 
   public changeToPublish(): void {
@@ -243,17 +250,24 @@ public componentWillReceiveProps(newProps): void {
     );
   }
 
+ public updateQuestions=(data,index)=> {
+    console.log(data, index);
 
-  renderQuestionsEdit(cellInfo) {
+    let qnaItems = [...this.state.qnaItems];
+    let item = {
+      ...qnaItems[index],
+      Questions: data
+    }   
+    qnaItems[index] = item;
+    this.setState({qnaItems});
+  }
+
+  renderQuestionsEdit = cellInfo => {
+    console.log(cellInfo.original);
     let parsedQ = JSON.parse(cellInfo.original.Questions);
-
-    //const { Question } = this.state.newQuestions[0].Question;
-    //const { inputValue } = this.state;
+    console.log(parsedQ)
     return (
-     <div 
-        style={{ backgroundColor: "#0000" }}
-        contentEditable
-     />
+      <Testing value={parsedQ} onChange={(data) => this.updateQuestions(data, cellInfo.index)}/>
     );
   }
 
@@ -262,7 +276,7 @@ public componentWillReceiveProps(newProps): void {
     return parsedQ.map(question => {
       return (
         <div>
-          <span style={{ border: "#000" }}> {question.question} </span>
+          <span style={{ border: "#000" }}> {question.label} </span>
         </div>
       )
     })
@@ -302,17 +316,14 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Question",
                   accessor: "Question"
-                 //Cell: this.renderNQEditable
                 },
                 {
                   Header: "Posted Date",
                   accessor: "PostedDate"
-                  //Cell: this.renderNQEditable
                 },
                 {
                   Header: "Posted By",
                   accessor: "PostedBy"
-                  //Cell: this.renderNQEditable
                 },
                 {
                   Header: "Actions",
@@ -348,8 +359,8 @@ public componentWillReceiveProps(newProps): void {
               columns: [
                 {
                   Header: "Questions",
-                  accessor: "Questions"
-                 // Cell: this.renderQuestionsEdit
+                  accessor: "Questions",
+                 Cell: this.renderQuestionsEdit
                 },
                 {
                   Header: "Answer",
@@ -359,7 +370,7 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Classification",
                   accessor: "Classification",
-                  Cell: this.renderEditable
+                  //Cell: this.renderEditableDropdown
                 },
                 {
                   Header: "Actions",

@@ -7,7 +7,7 @@ import { INewQuestions } from "../../models/INewQuestions";
 import { ViewType } from '../../../common/enum';
 
 
-export interface IQnADisplayFormProps {
+export interface IQnAFormProps {
     //service: IQnAService;
     //endpoints?: any;
     actionHandler?: QnAActionHandler;

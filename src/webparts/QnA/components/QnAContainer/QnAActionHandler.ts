@@ -14,14 +14,10 @@ export class QnAActionHandler {
     }
     public async getQnAItems(divisionListName: string, url : string): Promise<any[]> { //accesstoken: string
        let items =  await this.service.getQnAItems(divisionListName, url);
-       console.log(items);
-    //    const x = JSON.parse(JSON.stringify(items));
-    //     console.log(x);
        return items;
     }
     public async getMasterListItems(currentUser:any, url: string, listname: string): Promise<any[]> {
         let items =  await this.service.getMasterListItems(currentUser,url, listname);
-        console.log(items);
         return items;
     }
 

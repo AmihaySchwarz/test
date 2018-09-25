@@ -4,7 +4,7 @@ import styles from './QnAContainer.module.scss';
 import { IQnAContainerProps, IQnAContainerState } from './IQnAContainerProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { ViewType } from '../../../common/enum';
-import { QnADisplayForm } from '../QnADisplayForm';
+import { QnAForm } from '../QnAForm';
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 import { Division } from '../../../common/enum/Division';
 
@@ -59,19 +59,25 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   }
 
   private async loadMasterList(currentUser: any): Promise<void> {
-
+    let masterListItems = await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName );
+    let divisionList = masterListItems.map(divisionItem => ({
+      key: divisionItem.QnAListName,
+      text: divisionItem.Division.Label
+    }));
 
     this.setState({
-      masterItems: await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName ),
+      masterItems: divisionList,
       isDataLoaded: true,
     });
+
+
   }
   private changeView(view: ViewType): void {
     this.setState({ view });
   }
 
   public render() {
-     return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
+     return <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
   changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser}/> ;
   }
 }
