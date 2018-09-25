@@ -5,10 +5,10 @@ import { INewQuestions } from "../../models/INewQuestions";
 
 export interface IQnAPreviewPanelFormProps {
     newQuestions?: INewQuestions[];
-    qnaItems: IQnAListItem[];
+    qnaItem: IQnAListItem;
 }
 
 export interface IQnAPreviewPanelFormState{
-    qnaItems: IQnAListItem[];
+    qnaItem: IQnAListItem;
 }
 

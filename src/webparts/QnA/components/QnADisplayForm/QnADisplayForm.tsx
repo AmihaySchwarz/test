@@ -53,7 +53,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnAFo
       updatedQna: [],
       newQuestion: undefined,
       inputValue: '',
-      listTrackingItem: undefined
+      listTrackingItem: undefined,
+      currentUser: props.currentUser
     };
   
     this.filterAll = this.filterAll.bind(this);
@@ -74,15 +75,15 @@ public componentDidMount() {
 public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
 
-   this.setState({ qnaItems: newProps.qnaItems, newQuestions: newProps.newQuestions  });
     this.setState({
+      qnaItems: newProps.qnaItems, 
+      newQuestions: newProps.newQuestions,
+      currentUser: newProps.currentUser,
       division: newProps.masterItems.map(divisionItem => ({
         key: divisionItem.QnAListName,
         text: divisionItem.Division.Label
       }))
     })
-
-    console.log(this.state.division, "division")
   }
 
   public async loadQnAListData(divisionListName: string): Promise<void> {
@@ -90,17 +91,10 @@ public componentWillReceiveProps(newProps): void {
       qnaItems: await this.props.actionHandler.getQnAItems(divisionListName,this.props.properties.webUrl),
       isDataLoaded: true,
     });
-    //console.log(this.state.qnaItems, "qna items!");
   }
 
   onFilteredChange(filtered) {
-    // console.log('filtered:',filtered);
-    // const { sortedData } = this.reactTable.getResolvedState();
-    // console.log('sortedData:', sortedData);
-
-    // extra check for the "filterAll"
     if (filtered.length > 1 && this.state.filterAll.length) {
-      // NOTE: this removes any FILTER ALL filter
       const filterAll = '';
       this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
     }
@@ -112,7 +106,6 @@ public componentWillReceiveProps(newProps): void {
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: 'all', value: filterAll }];
-    // NOTE: this completely clears any COLUMN filters
     console.log(filtered, "filtered");
     this.setState({ filterAll, filtered });
   }
@@ -128,21 +121,36 @@ public componentWillReceiveProps(newProps): void {
   };
 
   public async changeToEdit(): Promise<void> {
-    console.log("edit is clicked", this.state);
+    console.log("edit is clicked");
     // a.	Get QnA List Tracking item
     // b.	Check Lock status
     // o	If locked, notify user & refresh the data
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
+  
     
-    this.setState({
-      isEdit: true,
-      formView: ViewType.Edit,
-      listTrackingItem: await this.props.actionHandler.checkLockStatus(this.state.selectedDivision,this.props.properties.qnATrackingListName)
+    this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName).then((items) => {
+      this.setState({
+        listTrackingItem: items[0],
+      })
+      console.log(this.state.listTrackingItem.LockedBy);
+      if(this.state.listTrackingItem.LockedBy !== undefined){
+        //show notification and refresh data
+        console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+      } else {
+        let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
+          if (res == "fail"){
+            //alert user if lock fail then refresh data
+            console.log("failed to lock the item");
+          } else {
+            this.setState({
+              isEdit: true,
+              formView: ViewType.Edit
+            });
+          }
+        }); 
+      }
     });
-
-    
-
   }
 
   public changeToPublish(): void {
@@ -182,6 +190,8 @@ public componentWillReceiveProps(newProps): void {
       formView: ViewType.Display, 
       selectedDivision: this.state.selectedDivision
     });
+
+
   }
 
   private saveNewQnA(): void {
@@ -193,6 +203,7 @@ public componentWillReceiveProps(newProps): void {
 
   public markAsResolved(item: any): void {
     console.log("mark as resolved");
+    this.props.actionHandler.resolveQuestion(this.props.properties.endpointUrl,item);
   }
 
   public deleteQnA(item: any): void {
@@ -233,8 +244,9 @@ public componentWillReceiveProps(newProps): void {
   }
 
 
-  renderQuestion(cellInfo) {
-    //render tag like view for questions
+  renderQuestionsEdit(cellInfo) {
+    let parsedQ = JSON.parse(cellInfo.original.Questions);
+
     //const { Question } = this.state.newQuestions[0].Question;
     //const { inputValue } = this.state;
     return (
@@ -257,10 +269,6 @@ public componentWillReceiveProps(newProps): void {
   }
 
   public render() {
-
-  //  console.log(this.state.selectedDivision, "selected division");
-  //  console.log(this.state.qnaItems, "qna items");
-  //  console.log(this.state.isEdit);
    const { selectedDivision } = this.state;    
     
 
@@ -293,7 +301,7 @@ public componentWillReceiveProps(newProps): void {
               columns: [
                 {
                   Header: "Question",
-                  accessor: "RowKey"
+                  accessor: "Question"
                  //Cell: this.renderNQEditable
                 },
                 {
@@ -310,7 +318,7 @@ public componentWillReceiveProps(newProps): void {
                   Header: "Actions",
                   accessor: "newQuestionsActions",
                   Cell: ({row}) => (<div><button onClick={()=>this.addToQnAList({row})}>Add to QnA List</button> <br /> 
-                    <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br />
+                    {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
                     <button onClick={()=>this.markAsResolved({row})}>Mark as Resolved</button></div>) //onClick={this.addToQnAList({row})}
                 }
               ]
@@ -341,17 +349,17 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Questions",
                   accessor: "Questions"
-                 // Cell: this.renderQuestion
+                 // Cell: this.renderQuestionsEdit
                 },
                 {
                   Header: "Answer",
-                  accessor: "Answer"
-                 // Cell: this.renderEditable
+                  accessor: "Answer",
+                  Cell: this.renderEditable
                 },
                 {
                   Header: "Classification",
-                  accessor: "Classification"
-                 // Cell: this.renderEditable
+                  accessor: "Classification",
+                  Cell: this.renderEditable
                 },
                 {
                   Header: "Actions",
@@ -360,7 +368,7 @@ public componentWillReceiveProps(newProps): void {
                     <button onClick={()=>this.deleteQnA({row})}>Delete Question</button>
                     <button data-tip data-event='click focus'> Preview</button>
                     <ReactTooltip globalEventOff='click' aria-haspopup='true' place="bottom" type="light" effect="solid">
-                        <QnAPreviewPanel qnaItems={row}/>
+                        <QnAPreviewPanel qnaItem={row}/>
                     </ReactTooltip>
                    </div> )
                 }
@@ -411,7 +419,7 @@ public componentWillReceiveProps(newProps): void {
             columns: [
               {
                 Header: "Question",
-                accessor: "RowKey",
+                accessor: "Question",
               },
               {
                 Header: "Posted Date",
@@ -522,9 +530,8 @@ public componentWillReceiveProps(newProps): void {
 
           <div>
               <ReactTable
-              //data={this.state.qnaItems}
-              
-              
+              data={[]}
+
               PaginationComponent={Pagination}
               columns={[
                 {
@@ -542,7 +549,7 @@ public componentWillReceiveProps(newProps): void {
                     {
                       Header: "Classification",
                       accessor: "Classification",
-                      Cell: this.renderEditable
+                     // Cell: this.renderEditableDropDown
                     },
                     {
                       Header: "Actions",

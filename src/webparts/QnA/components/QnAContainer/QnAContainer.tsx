@@ -31,17 +31,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.loadData = this.loadData.bind(this);
 
-    // if (this.props.authContextOptions) {
-    //   if ((window as any)._adalInstance) {
-    //       this.authContext = (window as any)._adalInstance;
-    //       console.log("adal");
-    //   } else {
-    //       this.authContext = new AuthenticationContext(this.props.authContextOptions);
-    //       console.log(this.authContext, "auth context!");
-
-    //   }
-    //}
-
   }
   public async componentWillReceiveProps(newProps): Promise<void>
   {
@@ -66,7 +55,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   private async loadNewQuestions(): Promise<void>{
       this.setState({
         newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl)
-      }); //this.props.tenant,this.props.clientId,
+      }); 
   }
 
   private async loadMasterList(currentUser: any): Promise<void> {
@@ -83,7 +72,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   public render() {
      return <QnADisplayForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props}/> ;
-    // return( <div> TESTING this i the container</div> );
+  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser}/> ;
   }
 }

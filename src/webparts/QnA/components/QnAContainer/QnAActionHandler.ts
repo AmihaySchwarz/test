@@ -58,9 +58,26 @@ export class QnAActionHandler {
         let response =  await this.service.updateQnAListTracking(url, qnaListTrackingListName, qnaListTrackingItem);
         return response;
     }
-    public async checkLockStatus(division: string, qnaListTrackingListName: string): Promise<any>{
-        let res = await this.service.checkLockStatus(division,qnaListTrackingListName);
+    public async checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
+        let res = await this.service.checkLockStatus(currentUser, division,qnaListTrackingListName);
         return res;
+    }
+
+    public async createLockItem (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let res = await this.service.createLockItem(currentUser, division, qnaListTrackingListName);
+        return res;
+    }
+
+    public async lockList (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let response;
+        this.service.lockList(currentUser, division, qnaListTrackingListName).then(res => {
+            if (res == null){
+                response = "success";
+            } else {
+                response = "error";
+            }
+        });
+        return response;
     }
 
     public async getNewQuestions(endpoint: string): Promise<any>{//tenant: string, clientId: string, 
@@ -70,6 +87,11 @@ export class QnAActionHandler {
 
     public async deleteFromNewQuestion(endpoint: string, item: INewQuestions): Promise<any>{ //tenant: string, clientId: string, 
         let res = await this.service.deleteFromNewQuestion(endpoint,item);
+        return res;
+    }
+
+    public async resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
+        let res = await this.service.resolveQuestion(endpoint,item);
         return res;
     }
 

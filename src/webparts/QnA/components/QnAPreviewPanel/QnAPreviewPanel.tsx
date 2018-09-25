@@ -15,7 +15,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   constructor(props: IQnAPreviewPanelFormProps, state: IQnAPreviewPanelFormState) {
     super(props);
     this.state = {
-        qnaItems: []
+        qnaItem: undefined
     };
 
 
@@ -23,7 +23,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   public async componentWillReceiveProps(newProps): Promise<void>
   {
     this.setState({
-        qnaItems: this.props.qnaItems
+        qnaItem: this.props.qnaItem
     })
   }
 
@@ -31,13 +31,27 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   {
     console.log("componentdsd did mount");
     this.setState({
-        qnaItems: this.props.qnaItems
+        qnaItem: this.props.qnaItem
     })
 
   }
 
 
   public render() {
-    return( <div> TESTING this i the preview panel for QnA</div> );
+    return( <div> 
+      
+      <div className={styles.chatInput}>
+          TEST INPUT
+      </div>
+
+      <div className={styles.chatOutput} id="chat-output">
+        <div className={styles.userMessage}>
+          <div className={styles.message}>TEST ANSWER</div>
+        </div>
+      </div>
+
+
+
+    </div> );
   }
 }

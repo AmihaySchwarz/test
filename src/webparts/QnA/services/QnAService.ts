@@ -138,11 +138,16 @@ export class QnAService extends BaseService implements IQnAService {
     
     public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
         let res; 
+        let d = new Date();
         sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + qnaListTrackingItem.Division).get().then((items: any[]) => {
             // see if we got something
             if (items.length > 0) {
                 return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     Title: "Updated Title",
+                    LockedById: null,
+                    LockedReleaseTime: d.toLocaleTimeString(),
+                    LastUpdated: d.toDateString(),
+                    LastPublished: d.toDateString()
                 }).then(result => {
                     console.log(JSON.stringify(result));
                     res = result;
@@ -152,26 +157,54 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     }
 
-    public checkLockStatus(division: string, qnaListTrackingListName: string): Promise<any>{
+    public checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
         console.log(qnaListTrackingListName, "qna tracking list");
+        let createdItem;
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
-        .filter("Division eq " +division)
-        .expand("LockedBy")
-        .get().then((items: any[]) => {
-            console.log(items);
-            return items;
+            .filter("Division eq '" +division+"'")
+            .expand("LockedBy")
+            .get().then((items: any[]) => {
+                console.log(items);
+                if(items.length == 0) {
+                    return this.createLockItem(currentUser, division, qnaListTrackingListName).then(res => {
+                       return res;
+                   });
+                } else {
+                    return items;
+                }            
+        }).catch((error) => {
+            console.log(error);
+            return error;
         });
+    }
+
+    public createLockItem(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let res;
+        let d = new Date();
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
+            Division: division,
+            LastUpdated: d.toDateString(),
+            LastPublished: null,
+            LockedById: currentUser.Id,
+            LockedReleaseTime: d.toDateString()
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            res = result;
+        });
+        return res;
     }
 
     public lockList (currentUser: any, division: string, qnaListTrackingListName: string) : Promise<any>{
         let res; 
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + division).get().then((items: any[]) => {
+        let d = new Date();
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
             // see if we got something
             if (items.length > 0) {
                 return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
-                    LockedBY: currentUser.Id,
+                    LockedById: currentUser.Id,
+                    LastUpdated: d.toDateString()
                 }).then(result => {
-                    console.log(JSON.stringify(result));
+                    console.log(result);
                     res = result;
                 });
             }
@@ -182,7 +215,7 @@ export class QnAService extends BaseService implements IQnAService {
     public getNewQuestions(endpoint: string):Promise<any>{ //tenant: string, clientId: string, 
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions
         //GET
-        let getQuestionsEndpoint = endpoint + "/api/newQuestions";
+        let getQuestionsEndpoint = endpoint + "/api/newquestions/allquestions";
         return this.context.httpClient.get(getQuestionsEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include'
              headers: {
@@ -219,9 +252,9 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public deleteFromNewQuestion(endpoint: string, item: INewQuestions): Promise<any>{ //tenant: string, clientId: string, 
-        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/deleterecord
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/question
         //DELETE
-        let deleteQuestionEndpoint = endpoint + "/api/newquestions/deleterecord";
+        let deleteQuestionEndpoint = endpoint + "/api/newquestions/question";
         return this.context.httpClient.fetch(deleteQuestionEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include',
              headers: {
@@ -246,6 +279,36 @@ export class QnAService extends BaseService implements IQnAService {
             }
         );
     };
+
+    public resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/question
+        //PATCH
+        let deleteQuestionEndpoint = endpoint + "/api/newquestions/question";
+        return this.context.httpClient.fetch(deleteQuestionEndpoint, HttpClient.configurations.v1, {
+            //credentials: 'include',
+             headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+             }, 
+             method: 'PATCH',
+            body: JSON.stringify(item)
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error resolving");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+    }
+
     public updateQnAMakerKB(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem): Promise<any> {
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4
         //PATCH

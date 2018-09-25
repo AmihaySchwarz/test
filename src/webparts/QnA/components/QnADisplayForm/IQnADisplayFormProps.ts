@@ -17,6 +17,7 @@ export interface IQnADisplayFormProps {
     //editItemIndex?: string;
     editItem?: any;
     properties: any;
+    currentUser: any;
 }
 
 export interface IQnAFormState {
@@ -39,6 +40,7 @@ export interface IQnAFormState {
     newQuestion: INewQuestions;
     inputValue: string;
     listTrackingItem: IQnAListTrackingItem;
+    currentUser: any;
 }
 
 export interface INewQuestionsFormState {
