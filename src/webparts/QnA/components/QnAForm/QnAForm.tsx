@@ -304,7 +304,7 @@ public updateQuestions=(data,index)=> {
   public renderDateField(cellInfo) {
     return (
       <div>
-        <Moment date={cellInfo.original.PostedDate} />
+        <Moment format={"MMMM Do YYYY, h:mm:ss a"} date={cellInfo.original.PostedDate} />
       </div>
     )
   }
