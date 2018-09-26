@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { IPaginationProps } from './IPaginationProps';
 import "react-table/react-table.css";
-import styles from './QnADisplayForm.module.scss';
 
 const defaultButton = props => <button {...props}>{props.children}</button>;
 

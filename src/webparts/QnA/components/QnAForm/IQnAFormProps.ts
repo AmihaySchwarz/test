@@ -18,6 +18,7 @@ export interface IQnAFormProps {
     editItem?: any;
     properties: any;
     currentUser: any;
+    defaultDivision: any;
 }
 
 export interface IQnAFormState {

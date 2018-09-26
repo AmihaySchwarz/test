@@ -40,15 +40,17 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   public render() {
     return( <div> 
       
-      <div className={styles.chatInput}>
-          TEST INPUT
-      </div>
-
       <div className={styles.chatOutput} id="chat-output">
         <div className={styles.userMessage}>
-          <div className={styles.message}>TEST ANSWER</div>
+          <div className={styles.message}>TEST QUESTION</div>
         </div>
       </div>
+
+      <div className={styles.botMessage}>
+        <div className={styles.message}>TEST ANSWER</div>
+      </div>
+
+      
 
 
 

@@ -65,14 +65,14 @@ export class QnAActionHandler {
     }
 
     public async lockList (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
-        let response;
-        this.service.lockList(currentUser, division, qnaListTrackingListName).then(res => {
-            if (res == null){
-                response = "success";
-            } else {
-                response = "error";
-            }
-        });
+        
+        let response = this.service.lockList(currentUser, division, qnaListTrackingListName);//.then(res => {
+            // if (res == null){
+            //     response = "success";
+            // } else {
+            //     response = "error";
+            // }
+       // });
         return response;
     }
 

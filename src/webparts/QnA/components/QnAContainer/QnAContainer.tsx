@@ -78,6 +78,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   public render() {
      return <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser}/> ;
+  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser} defaultDivision={this.state.masterItems[0]}/> ;
   }
 }

@@ -17,7 +17,8 @@ import { ThemeSettingName } from '@uifabric/styling/lib';
 import CreatableSelect from 'react-select/lib/Creatable';
 import { QnAPreviewPanel } from '../QnAPreviewPanel/QnAPreviewPanel';
 import ReactTooltip from 'react-tooltip'
-import Testing from './Testing'
+import QuestionInput from '../QnAQuestionInput/QuestionInput';
+
 
 const components = {
   DropdownIndicator: null,
@@ -66,7 +67,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.changeToPublish = this.changeToPublish.bind(this);
     this.publishQnA = this.publishQnA.bind(this);
     this.saveNewQnA = this.saveNewQnA.bind(this);
-    this.changeToAdd = this.changeToAdd.bind(this);
+    this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
 }
 
 
@@ -79,12 +80,11 @@ public componentWillReceiveProps(newProps): void {
       qnaItems: newProps.qnaItems, 
       newQuestions: newProps.newQuestions,
       currentUser: newProps.currentUser,
-      // division : newProps.masterItems.map(divisionItem => ({
-      //   key: divisionItem.QnAListName,
-      //   text: divisionItem.Division.Label
-      // }))
-      division: newProps.masterItems
-    })
+      division: newProps.masterItems,
+     // selectedDivision: newProps.defaultDivision.text,
+     // selectedDivisionListName: newProps.defaultDivision.key
+    });
+    //this.loadQnAListData(this.state.selectedDivisionListName);
   }
 
   public async loadQnAListData(divisionListName: string): Promise<void> {
@@ -128,20 +128,14 @@ public componentWillReceiveProps(newProps): void {
     // o	If locked, notify user & refresh the data
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
-  
-    // this.setState({
-    //   isEdit: true,
-    //   formView: ViewType.Edit
-    // });
-
-
     this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName)
     .then((items) => {
       this.setState({
         listTrackingItem: items[0], 
       })
       console.log(this.state.listTrackingItem); 
-      if(this.state.listTrackingItem.LockedBy !== undefined){
+      let currentUserEmail = this.state.currentUser.Email;
+      if((this.state.listTrackingItem.LockedBy !== undefined) && (this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail)){
         //show notification and refresh data
         console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
       } else {
@@ -168,11 +162,9 @@ public componentWillReceiveProps(newProps): void {
   }
 
 
-  public changeToAdd(): void {
+  public addNewQnaToTable(): void {
     console.log("add inline form");
-    this.setState({
-      formView: ViewType.Add
-    });
+    //add new editable row to table
   }
 
   public addToQnAList(item: any): void {
@@ -267,7 +259,7 @@ public componentWillReceiveProps(newProps): void {
     let parsedQ = JSON.parse(cellInfo.original.Questions);
     console.log(parsedQ)
     return (
-      <Testing value={parsedQ} onChange={(data) => this.updateQuestions(data, cellInfo.index)}/>
+      <QuestionInput value={parsedQ} onChange={(data) => this.updateQuestions(data, cellInfo.index)}/>
     );
   }
 
@@ -344,7 +336,7 @@ public componentWillReceiveProps(newProps): void {
               text='Add QnA Pair'
               primary={ true }
               href='#'
-              onClick={this.changeToAdd}
+              onClick={this.addNewQnaToTable}
             />
 
         <div> QnA </div> 
@@ -524,60 +516,6 @@ public componentWillReceiveProps(newProps): void {
                 className="-striped -highlight"
               />
           </div>
-
-
-      </div>;
-    case ViewType.Add:
-    return <div>
-          <div className={styles.controlMenu}> 
-
-            <DefaultButton
-                  text='Save'
-                  primary={ true }
-                  href='#'
-                  onClick={this.saveNewQnA}
-                /> 
-          </div>
-
-          <div>
-              <ReactTable
-              data={[]}
-
-              PaginationComponent={Pagination}
-              columns={[
-                {
-                  columns: [
-                    {
-                      Header: "Questions",
-                      accessor: "Questions",
-                      Cell: this.renderEditable
-                    },
-                    {
-                      Header: "Answer",
-                      accessor: "Answer",
-                      Cell: this.renderEditable
-                    },
-                    {
-                      Header: "Classification",
-                      accessor: "Classification",
-                     // Cell: this.renderEditableDropDown
-                    },
-                    {
-                      Header: "Actions",
-                      accessor: "Actions",
-                      Cell: ({row}) => (<div>
-                        <button onClick={()=>this.deleteQnA({row})}>Delete Question</button>
-                        <button onClick={()=>this.previewQnA({row})}>Preview</button></div>)
-                    }
-                  ]
-                }
-              ]}
-              defaultPageSize={10}
-              className="-striped -highlight"
-            />
-          </div>        
-
-
       </div>;
     default: 
         return null;

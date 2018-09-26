@@ -10,7 +10,7 @@ const components = {
     value: label,
   });
   
-  export default class CreatableInputOnly extends React.Component<any,any> {
+  export default class QuestionInput extends React.Component<any,any> {
     //props 
     // value
     // onChange

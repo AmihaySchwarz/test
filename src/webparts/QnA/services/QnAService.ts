@@ -93,7 +93,7 @@ export class QnAService extends BaseService implements IQnAService {
 
     public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
 
-        let jsonQuestion = '[ {"question": "'+ newQuestionItem.RowKey.trim()+'"}]';
+        let jsonQuestion = '[ {"label": "'+ newQuestionItem.Question+'", "value": "'+ newQuestionItem.Question+'" }]';
 
         return sp.web.lists.getByTitle(qnaListName).items.add({
             Questions: jsonQuestion,
@@ -140,8 +140,8 @@ export class QnAService extends BaseService implements IQnAService {
                     Title: "Updated Title",
                     LockedById: null,
                     LockedReleaseTime: d.toLocaleTimeString(),
-                    LastUpdated: d.toDateString(),
-                    LastPublished: d.toDateString()
+                    LastUpdated: d.toLocaleDateString(),
+                    LastPublished: d.toLocaleDateString()
                 }).then(result => {
                     console.log(JSON.stringify(result));
                     res = result;
@@ -177,15 +177,15 @@ export class QnAService extends BaseService implements IQnAService {
         let d = new Date();
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
-            LastUpdated: d.toDateString(),
+            LastUpdated: d.toLocaleDateString(),
             LastPublished: null,
             LockedById: currentUser.Id,
-            LockedReleaseTime: d.toDateString()
+            //LockedReleaseTime: d.toLocaleTimeString()
         }).then((result: ItemAddResult) => {
-            console.log(result.data);
+            console.log(result.item);
            //return result.item;
            return sp.web.lists.getByTitle(qnaListTrackingListName).items
-           .getById(result.data.LockedById)
+           .filter("LockedById eq '" + result.data.LockedById + "'")
            .select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
            .expand('LockedBy').get().then(res => {return res});
         });
@@ -200,10 +200,13 @@ export class QnAService extends BaseService implements IQnAService {
             if (items.length > 0) {
                 return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: currentUser.Id,
-                    LastUpdated: d.toDateString()
+                    LastUpdated: d.toLocaleDateString()
                 }).then(result => {
                     console.log(result);
                     res = result;
+                }).catch(error => {
+                    console.log();
+                    res = error;
                 });
             }
         });
