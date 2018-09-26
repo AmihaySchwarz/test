@@ -28,6 +28,7 @@ export interface IQnAFormState {
     classification: string;
     division: any[];
     selectedDivision:any;
+    selectedDivisionText: string;
     isLoading?: boolean;
     isDataLoaded?: boolean;
     filtered: any;

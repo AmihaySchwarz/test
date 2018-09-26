@@ -15,7 +15,9 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   constructor(props: IQnAPreviewPanelFormProps, state: IQnAPreviewPanelFormState) {
     super(props);
     this.state = {
-        qnaItem: undefined
+        qnaItem: undefined,
+        questions: "",
+        answer: ""
     };
 
 
@@ -23,37 +25,45 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
   public async componentWillReceiveProps(newProps): Promise<void>
   {
     this.setState({
-        qnaItem: this.props.qnaItem
+        qnaItem: this.props.qnaItem,
+        questions: this.props.qnaItem.Questions,
+        answer: this.props.qnaItem.Answer
     })
   }
 
   public async componentDidMount() : Promise<void>
   {
-    console.log("componentdsd did mount");
+    console.log("componentdsd did mount", this.props.qnaItem);
     this.setState({
-        qnaItem: this.props.qnaItem
+        qnaItem: this.props.qnaItem,
+        answer: this.props.qnaItem.Answer
     })
 
+    let arrayQ = JSON.parse(this.props.qnaItem.Questions);
+    this.setState({
+      questions: arrayQ[0].value
+    })
   }
 
 
   public render() {
-    return( <div> 
-      
-      <div className={styles.chatOutput} id="chat-output">
-        <div className={styles.userMessage}>
-          <div className={styles.message}>TEST QUESTION</div>
-        </div>
-      </div>
+    
+    return( 
+    <div className={styles.chatPanel}> 
+       {this.state.qnaItem  && 
+            <div>
+              <div className={styles.chatOutput} id="chat-output">
+                <div className={styles.userMessage}>
+                  <div className={styles.message}>{this.state.questions}</div>  
+                </div>
+              </div>  
+          
 
-      <div className={styles.botMessage}>
-        <div className={styles.message}>TEST ANSWER</div>
-      </div>
-
-      
-
-
-
+              <div className={styles.botMessage}>
+                <div className={styles.message}> {this.state.answer} </div>
+              </div>
+        </div> 
+        }
     </div> );
   }
 }

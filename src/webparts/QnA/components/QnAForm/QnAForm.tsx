@@ -11,25 +11,16 @@ import 'react-table/react-table.css'
  import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
  import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
  import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+ import { TextField } from 'office-ui-fabric-react/lib/TextField';
  import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 import { INewQuestions } from '../../models/INewQuestions';
 import { ThemeSettingName } from '@uifabric/styling/lib';
 import CreatableSelect from 'react-select/lib/Creatable';
 import { QnAPreviewPanel } from '../QnAPreviewPanel/QnAPreviewPanel';
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from 'react-tooltip';
 import QuestionInput from '../QnAQuestionInput/QuestionInput';
-
-
-const components = {
-  DropdownIndicator: null,
-};
-
-const createOption = (label: string) => ({
-  label,
-  value: label,
-});
-
-
+import QnAClassificationInput from '../QnAClassificationInput/QnAClassificationInput';
+import Moment from 'react-moment';
 
 
 export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
@@ -43,6 +34,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       classification: "",
       division: [],
       selectedDivision: undefined,
+      selectedDivisionText: "",
       selectedDivisionListName: "",
       qnaItems: [],
       isDataLoaded: false,
@@ -66,7 +58,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.addToQnAList = this.addToQnAList.bind(this);
     this.changeToPublish = this.changeToPublish.bind(this);
     this.publishQnA = this.publishQnA.bind(this);
-    this.saveNewQnA = this.saveNewQnA.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
 }
 
@@ -76,15 +67,21 @@ public componentDidMount() {
 }
 public componentWillReceiveProps(newProps): void {
     console.log(newProps, "in recevied props");
-    this.setState({
-      qnaItems: newProps.qnaItems, 
-      newQuestions: newProps.newQuestions,
-      currentUser: newProps.currentUser,
-      division: newProps.masterItems,
-     // selectedDivision: newProps.defaultDivision.text,
-     // selectedDivisionListName: newProps.defaultDivision.key
-    });
-    //this.loadQnAListData(this.state.selectedDivisionListName);
+    
+    if((newProps.masterItems.length !== 0) && (newProps.newQuestions.length !== 0)) {
+      console.log(newProps.defaultDivision)
+      this.setState({
+        qnaItems: newProps.qnaItems, 
+        newQuestions: newProps.newQuestions,
+        currentUser: newProps.currentUser,
+        division: newProps.masterItems,
+        selectedDivision: newProps.defaultDivision,
+        selectedDivisionText: newProps.defaultDivision.text,
+        selectedDivisionListName: newProps.defaultDivision.key
+      });
+
+      this.loadQnAListData(newProps.defaultDivision.key);
+    }
   }
 
   public async loadQnAListData(divisionListName: string): Promise<void> {
@@ -114,7 +111,8 @@ public componentWillReceiveProps(newProps): void {
   public setDivisionDD = (item: IDropdownOption): void => {
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
     this.setState({ 
-      selectedDivision: item.text ,
+      selectedDivision: item ,
+      selectedDivisionText: item.text,
       selectedDivisionListName: item.key.toString()
     });
 
@@ -128,7 +126,7 @@ public componentWillReceiveProps(newProps): void {
     // o	If locked, notify user & refresh the data
     // c.	Lock the list
     // o	If failed to lock the list, notify user & refresh the data
-    this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivision,this.props.properties.qnATrackingListName)
+    this.props.actionHandler.checkLockStatus(this.state.currentUser, this.state.selectedDivisionText,this.props.properties.qnATrackingListName)
     .then((items) => {
       this.setState({
         listTrackingItem: items[0], 
@@ -139,13 +137,14 @@ public componentWillReceiveProps(newProps): void {
         //show notification and refresh data
         console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
       } else {
-        let lockStatus = this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivision, this.props.properties.qnATrackingListName).then(res => {
-          if (res == "fail"){
+        this.props.actionHandler.lockList(this.state.currentUser,this.state.selectedDivisionText, this.props.properties.qnATrackingListName).then(res => {
+          console.log(res);
+          if (res.data == undefined){
             //alert user if lock fail then refresh data
             console.log("failed to lock the item");
           } else {
+            console.log(this.state.selectedDivision);
             this.setState({
-              isEdit: true,
               formView: ViewType.Edit
             });
           }
@@ -155,7 +154,7 @@ public componentWillReceiveProps(newProps): void {
   }
 
   public changeToPublish(): void {
-    console.log("publish form");
+    console.log("save to SP then go to publish form");
     this.setState({
       formView: ViewType.Publish
     });
@@ -185,19 +184,18 @@ public componentWillReceiveProps(newProps): void {
     // c.	Update QnA List Tracking item (Lock Status, Last Updated)
     // d.	Change to Display Form
 
+    console.log("SAVE ITEMS", this.state.qnaItems);
+    this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName, this.state.qnaItems).then(res => {
+
+    });
+
+
     this.setState({
       formView: ViewType.Display, 
       selectedDivision: this.state.selectedDivision
     });
 
 
-  }
-
-  private saveNewQnA(): void {
-    //TOD: save new items from inline editor
-    this.setState({
-      formView: ViewType.Display,
-    });
   }
 
   public markAsResolved(item: any): void {
@@ -226,23 +224,35 @@ public componentWillReceiveProps(newProps): void {
 
   renderEditable(cellInfo) {
     return (
-      <div
-        style={{ backgroundColor: "#fafafa" }}
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={e => {
-          const qnaItems = [...this.state.qnaItems];
-          qnaItems[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
-          this.setState({ qnaItems });
-        }}
-        dangerouslySetInnerHTML={{
-          __html: this.state.qnaItems[cellInfo.index][cellInfo.column.id]
-        }}
-      />
+      // <div
+      //   style={{ backgroundColor: "#fafafa" }}
+      //   contentEditable
+      //   suppressContentEditableWarning
+      //   onBlur={e => {
+      //     const qnaItems = [...this.state.qnaItems];
+      //     qnaItems[cellInfo.index][cellInfo.column.id] = e.currentTarget.innerHTML;
+      //     this.setState({ qnaItems });
+      //   }}
+      //   dangerouslySetInnerHTML={{
+      //     __html: this.state.qnaItems[cellInfo.index][cellInfo.column.id]
+      //   }}
+      // />
+      <TextField defaultValue={cellInfo.original.Answer} multiline rows={4} required={true} resizable={true} onChange={(data) => this.updateQnAAnswer(data, cellInfo.index)} />
     );
   }
 
- public updateQuestions=(data,index)=> {
+public updateQnAAnswer = (data, index) => {
+  console.log(data, index);
+  let qnaItems = [...this.state.qnaItems];
+    let item = {
+      ...qnaItems[index],
+      Answer: data
+    }   
+    qnaItems[index] = item;
+    this.setState({qnaItems});
+}
+
+public updateQuestions=(data,index)=> {
     console.log(data, index);
 
     let qnaItems = [...this.state.qnaItems];
@@ -274,6 +284,31 @@ public componentWillReceiveProps(newProps): void {
     })
   }
 
+  renderEditableDropdown = cellInfo => {
+    return (
+      <QnAClassificationInput value={cellInfo.original.Classification} onChange={(data) => this.updateClassification(data,cellInfo.index)} />
+    );
+  }
+
+  public updateClassification = (data, index) => {
+    let qnaItems = [...this.state.qnaItems];
+    let item = {
+      ...qnaItems[index],
+      Classification: data.value//JSON.stringify(data)
+    }   
+    qnaItems[index] = item;
+    this.setState({qnaItems});
+    console.log(this.state.qnaItems[index]);
+  }
+
+  public renderDateField(cellInfo) {
+    return (
+      <div>
+        <Moment date={cellInfo.original.PostedDate} />
+      </div>
+    )
+  }
+
   public render() {
    const { selectedDivision } = this.state;    
     
@@ -282,7 +317,7 @@ public componentWillReceiveProps(newProps): void {
       case ViewType.Edit:
           return <div>
           <div className={styles.controlMenu}> 
-            <span> Division: { this.state.selectedDivision} </span>
+            <span> Division: { this.state.selectedDivisionText} </span>
 
             <DefaultButton
               text='Save'
@@ -295,7 +330,7 @@ public componentWillReceiveProps(newProps): void {
               href='#'
               onClick={this.changeToPublish}
             />
-        </div>
+          </div>
 
         <div>New Questions </div>
         <span> Filter New Questions:  </span><input value={this.state.filterAll} onChange={this.filterAll} />  
@@ -311,7 +346,8 @@ public componentWillReceiveProps(newProps): void {
                 },
                 {
                   Header: "Posted Date",
-                  accessor: "PostedDate"
+                  accessor: "PostedDate",
+                  Cell: this.renderDateField
                 },
                 {
                   Header: "Posted By",
@@ -362,7 +398,7 @@ public componentWillReceiveProps(newProps): void {
                 {
                   Header: "Classification",
                   accessor: "Classification",
-                  //Cell: this.renderEditableDropdown
+                  Cell: this.renderEditableDropdown
                 },
                 {
                   Header: "Actions",
@@ -395,7 +431,7 @@ public componentWillReceiveProps(newProps): void {
             placeHolder="Select Division"
             id="division"
             options={this.state.division}
-            selectedKey={selectedDivision ? selectedDivision.key : this.state.selectedDivision}
+            selectedKey={selectedDivision ? selectedDivision.key : undefined}
             onChanged={this.setDivisionDD}
             
           /> 
@@ -417,6 +453,7 @@ public componentWillReceiveProps(newProps): void {
       <ReactTable
         PaginationComponent={Pagination}
         data={this.state.newQuestions}
+        //resolveData={this.state.newQuestions => this.state.newQuestions.map(row => row)}
         columns={[
           {
             columns: [
@@ -426,7 +463,8 @@ public componentWillReceiveProps(newProps): void {
               },
               {
                 Header: "Posted Date",
-                accessor: "PostedDate"
+                accessor: "PostedDate",
+                Cell: this.renderDateField
               },
               {
                 Header: "Posted By",

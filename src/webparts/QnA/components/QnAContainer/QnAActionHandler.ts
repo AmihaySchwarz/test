@@ -31,8 +31,8 @@ export class QnAActionHandler {
        return user;
     }
 
-    public async updateItemInQnAList(url: string,qnaListName:string, id:number, qnaListItems: IQnAListItem[]): Promise<any>{
-        let items = await this.service.updateItemInQnAList(url,qnaListName,id,qnaListItems);
+    public async updateItemInQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
+        let items = await this.service.updateItemInQnAList(qnaListName,qnaListItems);
         return items;
     }
     public async addQuestionToQnAList(url: string, qnaListName:string, qnaListItem: INewQuestions): Promise<any>{
@@ -40,10 +40,10 @@ export class QnAActionHandler {
         return items; 
     }
 
-    public async addtoQnaList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
-        let items = await this.service.addToQnAList(url, qnaListName, qnaListItem);
-        return items;
-    }
+    // public async addtoQnaList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+    //     let items = await this.service.addToQnAList(url, qnaListName, qnaListItem);
+    //     return items;
+    // }
 
     public async deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         let res = await this.service.deleteFromQnAList(qnaListName, qnaListItem);
@@ -66,13 +66,7 @@ export class QnAActionHandler {
 
     public async lockList (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
         
-        let response = this.service.lockList(currentUser, division, qnaListTrackingListName);//.then(res => {
-            // if (res == null){
-            //     response = "success";
-            // } else {
-            //     response = "error";
-            // }
-       // });
+        let response = await this.service.lockList(currentUser, division, qnaListTrackingListName);
         return response;
     }
 

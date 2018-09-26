@@ -1,5 +1,10 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
+
+.chatPanel {
+  background: #FFF;
+
+}
 .chatOutput {
   flex: 1;
   padding: 20px;
@@ -11,14 +16,14 @@
   }
   .userMessage {
     .message {
-      background: #0FB0DF;
+      background: #0078D7;
       color: white;
     }
   }
   .botMessage {
     text-align: right;
     .message {
-      background: #eee;
+      background: #E6E6E6;
     }
   }
   .message {

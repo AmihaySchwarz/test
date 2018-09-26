@@ -63,32 +63,43 @@ export class QnAService extends BaseService implements IQnAService {
             return items;
         });
     }
-    public updateItemInQnAList(url: string,qnaListName:string, id:number, qnaListItems: IQnAListItem[]): Promise<any>{
+    public updateItemInQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
         //return null;
         let res; 
-        qnaListItems.forEach(item => {
-             sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).update({
-                Questions: item.Questions,
-                Answer: item.Answer,
-                Classification: item.Classification,
-                QnAID: item.QnAID
-            }).then(i => {
-                console.log(i);
-                res = i;
-            });
+        qnaListItems.forEach(item => {    
+        
+            sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).get().then((items: any[]) => {
+                if (items.length > 0){
+                    console.log("item exists. updating...");
+                    sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).update({
+                        Questions: item.Questions,
+                        Answer: item.Answer,
+                        Classification: item.Classification,
+                        QnAID: item.QnAID
+                    }).then(i => {
+                        console.log(i);
+          
+                    }).catch(error => {
+                        console.log(error);
+            
+                    });
+                } else {
+                    console.log("item is new, creating...");
+                    return sp.web.lists.getByTitle(qnaListName).items.add({
+                        Questions: item.Questions,
+                        Answer: item.Answer,
+                        Classification: item.Classification,
+                        QnAID: item.QnAID
+                    }).then((result: ItemAddResult) => {
+                        console.log(result);
+                        return result;
+                    });
+                }
+            })
+             
         });
 
         return res;
-
-        // return sp.web.lists.getByTitle(qnaListName).items.getById(id).update({
-        //     Questions: qnaListItem.Questions,
-        //     Answer: qnaListItem.Answer,
-        //     Classification: qnaListItem.Classification,
-        //     QnAID: qnaListItem.QnAID
-        // }).then(i => {
-        //     console.log(i);
-        //     return i
-        // });
     }
 
     public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
@@ -107,18 +118,18 @@ export class QnAService extends BaseService implements IQnAService {
     };
 
 
-    public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
-        // add an item to the list
-        return sp.web.lists.getByTitle(qnaListName).items.add({
-            Questions: qnaListItem.Questions,
-            Answer: qnaListItem.Answer,
-            Classification: qnaListItem.Classification,
-            QnAID: qnaListItem.QnAID
-        }).then((result: ItemAddResult) => {
-            console.log(result);
-            return result;
-        });
-    }
+    // public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+    //     // add an item to the list
+    //     return sp.web.lists.getByTitle(qnaListName).items.add({
+    //         Questions: qnaListItem.Questions,
+    //         Answer: qnaListItem.Answer,
+    //         Classification: qnaListItem.Classification,
+    //         QnAID: qnaListItem.QnAID
+    //     }).then((result: ItemAddResult) => {
+    //         console.log(result);
+    //         return result;
+    //     });
+    // }
 
 
     public deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any> {
@@ -193,24 +204,24 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public lockList (currentUser: any, division: string, qnaListTrackingListName: string) : Promise<any>{
-        let res; 
+        //let res; 
         let d = new Date();
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
             // see if we got something
             if (items.length > 0) {
-                return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: currentUser.Id,
                     LastUpdated: d.toLocaleDateString()
                 }).then(result => {
                     console.log(result);
-                    res = result;
+                    return result;
                 }).catch(error => {
                     console.log();
-                    res = error;
+                    return error;
                 });
             }
         });
-        return res;
+       // return res;
     }
 
     public getNewQuestions(endpoint: string):Promise<any>{ //tenant: string, clientId: string, 
