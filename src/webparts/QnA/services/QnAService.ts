@@ -141,22 +141,36 @@ export class QnAService extends BaseService implements IQnAService {
             });
     }
     
-    public updateQnAListTracking(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem): Promise<any>{
+    public updateQnAListTracking(qnaListTrackingListName: string,division: string, action: string): Promise<any>{
         let res; 
         let d = new Date();
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + qnaListTrackingItem.Division).get().then((items: any[]) => {
-            // see if we got something
+
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + division).get().then((items: any[]) => {
             if (items.length > 0) {
-                return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
-                    Title: "Updated Title",
-                    LockedById: null,
-                    LockedReleaseTime: d.toLocaleTimeString(),
-                    LastUpdated: d.toLocaleDateString(),
-                    LastPublished: d.toLocaleDateString()
-                }).then(result => {
-                    console.log(JSON.stringify(result));
-                    res = result;
-                });
+                if(action === "save") {
+                    return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                        Title: "Updated Title",
+                        LockedById: null,
+                        LockedReleaseTime: d.toLocaleTimeString(),
+                        LastUpdated: d.toLocaleDateString(),
+                        LastPublished: null
+                    }).then(result => {
+                        console.log(JSON.stringify(result));
+                        res = result;
+                    });
+                } else if (action === "publish"){
+                    return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                        Title: "Updated Title",
+                        LockedById: null,
+                        LockedReleaseTime: d.toLocaleTimeString(),
+                        LastUpdated: d.toLocaleDateString(),
+                        LastPublished: d.toLocaleDateString(),
+                    }).then(result => {
+                        console.log(JSON.stringify(result));
+                        res = result;
+                    });
+                }
+                
             }
         });
         return res;
@@ -184,7 +198,6 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public createLockItem(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
-        let res;
         let d = new Date();
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
@@ -295,8 +308,8 @@ export class QnAService extends BaseService implements IQnAService {
     public resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/question
         //PATCH
-        let deleteQuestionEndpoint = endpoint + "/api/newquestions/question";
-        return this.context.httpClient.fetch(deleteQuestionEndpoint, HttpClient.configurations.v1, {
+        let resolveQuestionEndpoint = endpoint + "/api/newquestions/question";
+        return this.context.httpClient.fetch(resolveQuestionEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include',
              headers: {
                 'Content-Type': 'application/json',

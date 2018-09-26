@@ -1,9 +1,7 @@
+import { IQnAListItem } from "./IQnAListItem";
 
 export interface IQnAMakerItem {
-    Id: String;
-    Classification: string;
-    Division: string;
-    SPID: number;
-    Question: string;
+    kbid: string;
+    QnAItems: any[];
 }
 

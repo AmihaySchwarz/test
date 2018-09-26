@@ -38,11 +38,12 @@ export interface IQnAFormState {
     isPublish?: boolean;
     formView: ViewType;
     newQuestions: INewQuestions[];
-    updatedQna: any[];
+    //updatedQna: IQnAMakerItem;
     newQuestion: INewQuestions;
     inputValue: string;
     listTrackingItem: IQnAListTrackingItem;
     currentUser: any;
+    qnaActionHistory: any[];
 }
 
 export interface INewQuestionsFormState {

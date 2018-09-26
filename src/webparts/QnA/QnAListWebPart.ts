@@ -33,6 +33,7 @@ export interface IQnAListWebPartProps {
   qnAEndpointUrl: string;
   webUrl: string;
   tenant: string;
+  QnAMakerKnowledgeBaseId: string;
     
 }
 
@@ -63,7 +64,8 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
           masterListName: this.properties.masterListName,
           endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
-          webUrl: this.properties.webUrl
+          webUrl: this.properties.webUrl,
+          qnAMakerKnowledgeBaseId: this.properties.QnAMakerKnowledgeBaseId
           //edirectUrl: this.properties.redirectUrl
         //}],
         //authContextOptions: this.getAuthContextOptions(),
@@ -122,6 +124,10 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
             }),
             PropertyPaneTextField('endpointUrl', {
               label: strings.EndpointUrlFieldLabel,
+              
+            }),
+            PropertyPaneTextField('QnAMakerKnowledgeBaseId', {
+              label: strings.QnAMakerKnowledgeBaseIdFieldLabel,
               
             }),
               ]

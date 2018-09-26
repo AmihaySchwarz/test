@@ -12,7 +12,8 @@ define([], function() {
     "QnATrackingListNameFieldLabel": "QnA List Tracking List Name",
     "QnAEndpointUrlFieldLabel": "QnA List Endpoint URL",
     "MasterListNameFieldLabel": "QnA Master List Name",
-    "TenantFieldLabel" : "Tenant"
+    "TenantFieldLabel" : "Tenant",
+    "QnAMakerKnowledgeBaseIdFieldLabel" : "QnAMaker Knowledge Base Id"
   }
 });
 

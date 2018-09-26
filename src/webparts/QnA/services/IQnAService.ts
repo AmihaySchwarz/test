@@ -16,7 +16,7 @@ export interface IQnAService {
     addQuestionToQnAList:(url: string, qnaListName:string, qnaListItem: INewQuestions) => Promise<any>;
     deleteFromQnAList:(qnaListName:string, qnaListItem: IQnAListItem)=> Promise<any>;
     //addToQnAList:(url:string,qnaListName:string,qnaListItem: IQnAListItem ) => Promise<any>;
-    updateQnAListTracking:(url: string, qnaListTrackingListName: string, qnaListTrackingItem: IQnAListTrackingItem ) => Promise<any>;
+    updateQnAListTracking:(qnaListTrackingListName: string, division: string, action: string ) => Promise<any>;
     updateQnAMakerKB:(endpoint: string,kbid: string,  qnamakerItem: IQnAMakerItem) => Promise<any>;
     publishQnAMakerItem:(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ) => Promise<any>;
     getCurrentUser:() => Promise<any>;  
