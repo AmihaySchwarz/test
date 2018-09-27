@@ -217,7 +217,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     // console.log("mark as resolved");
     this.props.actionHandler.resolveQuestion(
       this.props.properties.endpointUrl,
-      item
+      item.row._original
     );
   }
 
@@ -254,12 +254,28 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     // console.log("SAVE ITEMS", this.state.qnaItems);
     //process all changes and save to SP list
     console.log(this.state.qnaActionHistory, "modified items");
+    const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
+    const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
+    const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
 
+    console.log(addItems, modifyItems, deleteItems);
+
+    const addtoList = this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,addItems);
+    const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
+    const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
+    
+    Promise.all([addtoList, updatetoList, deletefromlist]).then(res => {
+      this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText, "save")
+          .then(res => {
+            this.setState({
+                formView: ViewType.Display,
+                selectedDivision: this.state.selectedDivision
+              });
+          })
+    });
 
     //COMMENTED OUT FOR A WHILE
     //foreach sa items then igroup yung mga actions if add call add, edit or delete
-
-
      // this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName, item.row._original)
     // .then(res => {
     //     // console.log(res);

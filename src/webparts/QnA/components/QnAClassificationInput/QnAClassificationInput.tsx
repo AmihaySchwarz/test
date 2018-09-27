@@ -39,15 +39,15 @@ const classificationDropDownOption = [
   
 
     render() {
-      //const { selectedItemText } = this.props.value;
+   
       const { selectedItem } = this.state;
-     // const { selectedItem } =this.props
-     console.log(selectedItem);
+
+     //console.log(selectedItem);
       return (
      <div>
        { selectedItem && 
             <Dropdown 
-            //placeHolder="classification"
+            placeHolder="classification"
             id="Classification"
             ariaLabel="Select Classification"
             options={classificationDropDownOption}

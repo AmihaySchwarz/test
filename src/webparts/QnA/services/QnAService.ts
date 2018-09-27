@@ -102,50 +102,49 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     }
 
-    public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
-
-        let jsonQuestion = '[ {"label": "'+ newQuestionItem.Question+'", "value": "'+ newQuestionItem.Question+'" }]';
-
-        return sp.web.lists.getByTitle(qnaListName).items.add({
-            Questions: jsonQuestion,
-            Answer: null,
-            Classification: undefined,
-            QnAID: 0
-        }).then((result: ItemAddResult) => {
-            console.log(result);
-            return result;
-        });
-    };
-
-
-    public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+    public addToQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
         // add an item to the list
-        return sp.web.lists.getByTitle(qnaListName).items.add({
-            Questions: qnaListItem.Questions,
-            Answer: qnaListItem.Answer,
-            Classification: qnaListItem.Classification,
-            QnAID: qnaListItem.QnAID
-        }).then((result: ItemAddResult) => {
-            console.log(result);
-            return result;
+        let res; 
+        qnaListItems.forEach(qnaListItem => {   
+
+            sp.web.lists.getByTitle(qnaListName).items.add({
+                Questions: qnaListItem.Questions,
+                Answer: qnaListItem.Answer,
+                Classification: qnaListItem.Classification,
+                QnAID: qnaListItem.QnAID
+            }).then((result: ItemAddResult) => {
+                console.log(result);
+                res = result;
+            }).catch(error => {
+                console.log(error);
+                res = error;
+            });
         });
+        return res;
     }
 
 
-    public deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any> {
+    public deleteFromQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any> {
         //return null;
-        return sp.web.lists.getByTitle(qnaListName).items.getById(qnaListItem.Id)
-            .delete().then(res => {
-                console.log(res);
-                return res;
-            });
+        let res; 
+        qnaListItems.forEach(qnaListItem => {   
+             sp.web.lists.getByTitle(qnaListName).items.getById(qnaListItem.Id)
+                .delete().then(res => {
+                    console.log(res);
+                    res =  res;
+                }).catch(error => {
+                    console.log(error);
+                    res = error;
+                });
+        });
+        return res
     }
     
     public updateQnAListTracking(qnaListTrackingListName: string,division: string, action: string): Promise<any>{
         let res; 
         let d = new Date();
 
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq " + division).get().then((items: any[]) => {
+        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division+"'").get().then((items: any[]) => {
             if (items.length > 0) {
                 if(action === "save") {
                     return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
@@ -236,6 +235,21 @@ export class QnAService extends BaseService implements IQnAService {
         });
        // return res;
     }
+
+    public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
+
+        let jsonQuestion = '[ {"label": "'+ newQuestionItem.Question+'", "value": "'+ newQuestionItem.Question+'" }]';
+
+        return sp.web.lists.getByTitle(qnaListName).items.add({
+            Questions: jsonQuestion,
+            Answer: null,
+            Classification: undefined,
+            QnAID: 0
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            return result;
+        });
+    };
 
     public getNewQuestions(endpoint: string):Promise<any>{ //tenant: string, clientId: string, 
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions
