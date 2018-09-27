@@ -49,6 +49,7 @@ const classificationDropDownOption = [
             <Dropdown 
             placeHolder="classification"
             id="Classification"
+            required={true}
             ariaLabel="Select Classification"
             options={classificationDropDownOption}
             //selectedKeys={selectedItem ? selectedItem.key : undefined}
