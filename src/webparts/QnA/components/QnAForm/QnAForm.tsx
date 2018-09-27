@@ -342,12 +342,22 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     //   //update edit history
     // }
 
+    //check if item exist in action history
     const historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
+    
+    //if it does not exist on history then create history item
+
+    //check if item id exist on current state, if it has id then edit
+    //if not then add 
+
+    let action;
     
     const historyItem = {
       qnaItem: { ...item, identifier: index },
       action: "add"
     }
+
+ 
 
     if (historyIndex >= 0) {
       this.setState(oldState => {

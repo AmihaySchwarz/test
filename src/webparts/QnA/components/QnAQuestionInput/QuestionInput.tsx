@@ -19,7 +19,7 @@ const components = {
     }
     state = {
       inputValue: '',
-      // value: this.props.value,
+       value: [],
     };
 
     handleChange = (value: any, actionMeta: any) => {
@@ -29,6 +29,7 @@ const components = {
       console.log(`action: ${actionMeta.action}`);
       console.groupEnd();
       this.setState({ value });
+      this.props.onChange([...value])
     };
     handleInputChange = (inputValue: string) => {
       console.log(inputValue)
@@ -36,7 +37,6 @@ const components = {
       this.setState({ inputValue });
     };
     handleKeyDown = (event) => {
-      console.log('what i do')
       const { inputValue } = this.state;
       const { value } = this.props
       console.log(inputValue)
@@ -44,13 +44,17 @@ const components = {
       switch (event.key) {
         case 'Enter':
         case 'Tab':
-          // console.group('Value Added');
-          // console.log(value);
-          // console.groupEnd();
+          console.group('Value Added');
+          console.log(value);
+          console.groupEnd();
           // this.setState({
           //   inputValue: '',
           //   value: [...value, createOption(inputValue)],
           // });
+          this.setState({
+            inputValue: '',
+            //value: [...value, createOption(inputValue)]
+          })
           this.props.onChange([...value,createOption(inputValue)])
           event.preventDefault();
       }
