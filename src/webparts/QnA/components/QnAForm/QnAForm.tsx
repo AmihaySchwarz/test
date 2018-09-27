@@ -279,7 +279,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
     //NOT WORKING!
     let array = [...this.state.qnaItems];
-    let index = item.row;
+    //let index = item.row;
+    let index = array.findIndex(d => d.Id == item.row._original.Id)
     array.splice(index, 1);
     this.setState({ qnaItems: array });
 
