@@ -15,7 +15,7 @@ const components = {
     // value
     // onChange
     componentDidMount(){
-      console.log(this.props)
+     // console.log(this.props)
     }
     state = {
       inputValue: '',

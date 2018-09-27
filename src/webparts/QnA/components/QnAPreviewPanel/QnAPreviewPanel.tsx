@@ -33,7 +33,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
 
   public async componentDidMount() : Promise<void>
   {
-    console.log("componentdsd did mount", this.props.qnaItem);
+    //console.log("componentdsd did mount", this.props.qnaItem);
     this.setState({
         qnaItem: this.props.qnaItem,
         answer: this.props.qnaItem.Answer

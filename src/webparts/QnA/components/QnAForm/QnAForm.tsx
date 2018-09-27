@@ -458,9 +458,12 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   renderEditableDropdown = cellInfo => {
+
+    let selectedItemOption = {"text": cellInfo.original.Classification , "key": cellInfo.original.Classification};
+
     return (
       <QnAClassificationInput
-        value={cellInfo.original.Classification}
+        value={selectedItemOption}
         onChange={data => this.updateClassification(data, cellInfo.index)}
       />
     );
