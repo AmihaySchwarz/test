@@ -118,18 +118,18 @@ export class QnAService extends BaseService implements IQnAService {
     };
 
 
-    // public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
-    //     // add an item to the list
-    //     return sp.web.lists.getByTitle(qnaListName).items.add({
-    //         Questions: qnaListItem.Questions,
-    //         Answer: qnaListItem.Answer,
-    //         Classification: qnaListItem.Classification,
-    //         QnAID: qnaListItem.QnAID
-    //     }).then((result: ItemAddResult) => {
-    //         console.log(result);
-    //         return result;
-    //     });
-    // }
+    public addToQnAList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+        // add an item to the list
+        return sp.web.lists.getByTitle(qnaListName).items.add({
+            Questions: qnaListItem.Questions,
+            Answer: qnaListItem.Answer,
+            Classification: qnaListItem.Classification,
+            QnAID: qnaListItem.QnAID
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            return result;
+        });
+    }
 
 
     public deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any> {

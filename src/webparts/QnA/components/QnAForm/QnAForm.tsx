@@ -175,24 +175,25 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     //console.log("save to SP then go to publish form", this.state.qnaItems);
     //create qnamakeritem from state qnaitems
 
-    this.props.actionHandler
-      .updateItemInQnAList(
-        this.state.selectedDivisionListName,
-        this.state.qnaItems
-      )
-      .then(res => {
-        this.props.actionHandler
-          .updateQnAListTracking(
-            this.props.properties.qnATrackingListName,
-            this.state.selectedDivisionText,
-            "save"
-          )
-          .then(res => {
-            this.setState({
-              formView: ViewType.Publish
-            });
-          });
-      });
+    //COMMENT OUT FOR A WHILE
+    // this.props.actionHandler
+    //   .updateItemInQnAList(
+    //     this.state.selectedDivisionListName,
+    //     this.state.qnaItems
+    //   )
+    //   .then(res => {
+    //     this.props.actionHandler
+    //       .updateQnAListTracking(
+    //         this.props.properties.qnATrackingListName,
+    //         this.state.selectedDivisionText,
+    //         "save"
+    //       )
+    //       .then(res => {
+    //         this.setState({
+    //           formView: ViewType.Publish
+    //         });
+    //       });
+    //   });
   }
 
   public addNewQuestionToQnAList(item: any): void {
@@ -253,7 +254,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     // console.log("SAVE ITEMS", this.state.qnaItems);
     //process all changes and save to SP list
     console.log(this.state.qnaActionHistory, "modified items");
+
+
     //COMMENTED OUT FOR A WHILE
+    //foreach sa items then igroup yung mga actions if add call add, edit or delete
+
+
+     // this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName, item.row._original)
+    // .then(res => {
+    //     // console.log(res);
+    //   //  console.log(this.state.qnaActionHistory);
+    // })
+
     // this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName, this.state.qnaItems).then(res => {
     //     this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText, "save")
     //     .then(res => {
@@ -267,27 +279,43 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public deleteQnA(item: any): void {
-    // console.log("delete QnA");
-    let itemDeleteActionHistory = {
-      qnaItem: item.row._original,
-      action: "delete"
-    };
+    if (item.row._original.Id !== null){
+      let itemDeleteActionHistory = {
+        qnaItem: item.row._original,
+        action: "delete"
+      };
 
-    this.setState(oldstate => ({
-      qnaActionHistory: [...oldstate.qnaActionHistory, itemDeleteActionHistory]
-    }));
+      console.log(this.state.qnaActionHistory);
+      const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.Id == item.row._original.Id);
 
+
+      if (historyIndex >= 0) {
+        //item exist in history
+        this.setState(oldState => {
+              let history = [...oldState.qnaActionHistory]
+              history[historyIndex] = itemDeleteActionHistory 
+              return {
+                qnaActionHistory: history
+              }
+            });
+      } else {
+        this.setState(oldstate => ({
+          qnaActionHistory: [...oldstate.qnaActionHistory, itemDeleteActionHistory]
+        }));
+      }
+    } else {
+      //item is new so we also need to delete the item from qnaActionHistory state
+      let historyArray = [...this.state.qnaActionHistory];
+      let index = historyArray.findIndex(d => d.Id == item.row._original.Id)
+      historyArray.splice(index, 1);
+      this.setState({ qnaActionHistory: historyArray });
+    }
+   
+    //remove from qnaState array
     let array = [...this.state.qnaItems];
-    //let index = item.row;
     let index = array.findIndex(d => d.Id == item.row._original.Id)
     array.splice(index, 1);
     this.setState({ qnaItems: array });
-
-    // this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName, item.row._original)
-    // .then(res => {
-    //     // console.log(res);
-    //   //  console.log(this.state.qnaActionHistory);
-    // })
   }
 
   public publishQnA(): void {
@@ -311,7 +339,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public renderEditable = (cellInfo) => {
     return (
-      // <input value={cellInfo.original.Answer} onChange={data => this.updateQnAAnswer(data, cellInfo.index)} />
       <TextField
         value={cellInfo.original.Answer}
         multiline
@@ -321,6 +348,51 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         onChanged={data => this.updateQnAAnswer(data, cellInfo.index)}
       />
     );
+  }
+
+  public updateActionHistory = (item, index) => {
+    let historyItem;
+    let historyIndex;
+
+    const itemId = item.Id;
+    if((itemId == null)){
+      //item does not have id, so add
+      historyItem = {
+        qnaItem: { ...item, identifier: index },
+        action: "add"
+      }
+
+      console.log(this.state.qnaActionHistory, "actionhistory");
+      //check if item exist in action history
+     historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
+
+    } else  {
+      //item has id so edit
+      historyItem = {
+        qnaItem: { ...item },
+        action: "update"
+      }
+      console.log(this.state.qnaActionHistory, "actionhistory");
+      //check if item exist in action history
+      historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
+
+    }
+
+    if (historyIndex >= 0) {
+      //item exist in history
+      this.setState(oldState => {
+            let history = [...oldState.qnaActionHistory]
+            history[historyIndex] = historyItem 
+            return {
+              qnaActionHistory: history
+            }
+          });
+    } else {
+      //create new index
+      this.setState(oldstate => ({
+        qnaActionHistory: [...oldstate.qnaActionHistory, historyItem]
+      }));
+    }
   }
 
   public updateQnAAnswer = (data, index) => {
@@ -333,50 +405,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     qnaItems[index] = item;
     this.setState({ qnaItems });
 
-    // //add to history
-    // if (this.state.qnaActionHistory.find( data => data.item.indetifier != index)) {
-    //   this.setState(oldState => {
-    //     qnaActionHistory: [...oldState.qnaActionHistory,item];
-    //   });
-    // } else {
-    //   //update edit history
-    // }
-
-    //check if item exist in action history
-    const historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
-    
-    //if it does not exist on history then create history item
-    if (historyIndex == -1) {
-      //item does not exist in history index
-        //check if item id exist on current state, if it has id then edit
-      //const stateIndex = this.state.qnaItems.find();
-      if((stateIndex == null) || (stateIndex == undefined)|| (stateIndex == -1)){
-        //item does not have id in the 
-      }
-    }
-
-  
-    //if not then add 
-
-    let action;
-    
-    const historyItem = {
-      qnaItem: { ...item, identifier: index },
-      action: "add"
-    }
-
- 
-
-    if (historyIndex >= 0) {
-      this.setState(oldState => {
-            let history = [...oldState.qnaActionHistory]
-            history[historyIndex] = historyItem 
-            return {
-              qnaActionHistory: history
-            }
-          });
-    }
-  };
+    this.updateActionHistory(item,index);
+  }
 
   public updateQuestions = (data, index) => {
     console.log(data, index, "update question");
@@ -388,6 +418,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     };
     qnaItems[index] = item;
     this.setState({ qnaItems });
+
+    this.updateActionHistory(item,index);
   };
 
   public updateClassification = (data, index) => {
@@ -398,6 +430,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     };
     qnaItems[index] = item;
     this.setState({ qnaItems });
+
+    this.updateActionHistory(item,index);
   };
 
   renderQuestionsEdit = cellInfo => {

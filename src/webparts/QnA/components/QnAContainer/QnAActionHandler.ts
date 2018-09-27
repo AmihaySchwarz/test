@@ -40,10 +40,10 @@ export class QnAActionHandler {
         return items; 
     }
 
-    // public async addtoQnaList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
-    //     let items = await this.service.addToQnAList(url, qnaListName, qnaListItem);
-    //     return items;
-    // }
+    public async addtoQnaList(url: string, qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+        let items = await this.service.addToQnAList(url, qnaListName, qnaListItem);
+        return items;
+    }
 
     public async deleteFromQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         let res = await this.service.deleteFromQnAList(qnaListName, qnaListItem);
