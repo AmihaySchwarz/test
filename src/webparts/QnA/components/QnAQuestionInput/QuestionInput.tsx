@@ -24,8 +24,6 @@ const components = {
 
     handleChange = (value: any, actionMeta: any) => {
       console.log(value,actionMeta)
-
-      console.log('whatidid')
       console.group('Value Changed');
       console.log(value);
       console.log(`action: ${actionMeta.action}`);

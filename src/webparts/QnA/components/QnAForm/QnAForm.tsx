@@ -277,7 +277,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       qnaActionHistory: [...oldstate.qnaActionHistory, itemDeleteActionHistory]
     }));
 
-    //NOT WORKING!
     let array = [...this.state.qnaItems];
     //let index = item.row;
     let index = array.findIndex(d => d.Id == item.row._original.Id)
@@ -343,9 +342,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     //   //update edit history
     // }
 
-   
-
-    const historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index)
+    const historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
     
     const historyItem = {
       qnaItem: { ...item, identifier: index },
@@ -364,7 +361,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   };
 
   public updateQuestions = (data, index) => {
-    // console.log(data, index);
+    console.log(data, index, "update question");
 
     let qnaItems = [...this.state.qnaItems];
     let item = {
