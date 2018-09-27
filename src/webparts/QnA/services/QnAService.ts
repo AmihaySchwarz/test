@@ -5,7 +5,6 @@ import { HttpClientResponse, HttpClient, AadHttpClient } from '@microsoft/sp-htt
 import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult } from '@pnp/sp';
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
-import { IQnAMakerItem } from "../models/IQnAMakerItem";
 import { INewQuestions } from "../models/INewQuestions";
 //import * as moment from 'moment-mini';
 import * as storage from "azure-storage";
@@ -14,8 +13,7 @@ import * as storage from "azure-storage";
 //API Service endpoint : https://sitqnaapiservice20180920061357.azurewebsites.net
 
 export class QnAService extends BaseService implements IQnAService {
-   
-    
+
     public endpoints: Object;
     private context: WebPartContext;
     public webPartContext: WebPartContext;
@@ -63,40 +61,26 @@ export class QnAService extends BaseService implements IQnAService {
             return items;
         });
     }
+
+    public updateQnAIDinSPlist(qnaListName: string, qnaListItem: IQnAListItem, qnaid: string): Promise<any> {
+        return null;
+    }
+
     public updateItemInQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
         //return null;
         let res; 
         qnaListItems.forEach(item => {    
-        
-            sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).get().then((items: any[]) => {
-                if (items.length > 0){
-                    console.log("item exists. updating...");
-                    sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).update({
-                        Questions: item.Questions,
-                        Answer: item.Answer,
-                        Classification: item.Classification,
-                        QnAID: item.QnAID
-                    }).then(i => {
-                        console.log(i);
-          
-                    }).catch(error => {
-                        console.log(error);
-            
-                    });
-                } else {
-                    console.log("item is new, creating...");
-                    return sp.web.lists.getByTitle(qnaListName).items.add({
-                        Questions: item.Questions,
-                        Answer: item.Answer,
-                        Classification: item.Classification,
-                        QnAID: item.QnAID
-                    }).then((result: ItemAddResult) => {
-                        console.log(result);
-                        return result;
-                    });
-                }
-            })
-             
+            sp.web.lists.getByTitle(qnaListName).items.getById(item.Id).update({
+                Questions: item.Questions,
+                Answer: item.Answer,
+                Classification: item.Classification,
+                QnAID: item.QnAID
+            }).then(i => {
+                console.log(i);
+
+            }).catch(error => {
+                console.log(error);
+            });         
         });
 
         return res;
@@ -348,7 +332,7 @@ export class QnAService extends BaseService implements IQnAService {
         );
     }
 
-    public updateQnAMakerKB(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem): Promise<any> {
+    public updateQnAMakerKB(endpoint: string, kbid: string, publishJSON: string): Promise<any> {
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4
         //PATCH
         let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid;
@@ -360,14 +344,16 @@ export class QnAService extends BaseService implements IQnAService {
             }, 
             method: 'PATCH',
             body: JSON.stringify({
-                new_kb : ""//the string of the update format below
+                new_kb : publishJSON //the string of the update format below
             })
             
         }).then((response: HttpClientResponse) => {
             if (response.ok) {
                 return response.json();
+                
+                
             } else {
-                console.log(response, "error deleting");
+                console.log(response, "error");
                 console.error(response.statusText);
             }
         }).then((json: any): any[] => {
@@ -379,7 +365,7 @@ export class QnAService extends BaseService implements IQnAService {
             }
         );
     };
-    public publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ): Promise<any> {
+    public publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItems: IQnAListItem[] ): Promise<any> {
         //NEED TO GET THE kbid, important parameter
         // foreach?
         
@@ -398,7 +384,7 @@ export class QnAService extends BaseService implements IQnAService {
             if (response.ok) {
                 return response.json();
             } else {
-                console.log(response, "error deleting");
+                console.log(response, "error");
                 console.error(response.statusText);
             }
         }).then((json: any): any[] => {

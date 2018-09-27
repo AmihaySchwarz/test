@@ -2,7 +2,6 @@ import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 import { IQnAService } from '../../services';
 import { IQnAListItem } from "../../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../../models/IQnAListTrackingItem";
-import { IQnAMakerItem } from "../../models/IQnAMakerItem";
 import { INewQuestions } from "../../models/INewQuestions";
 import { ViewType } from '../../../common/enum';
 
@@ -38,7 +37,7 @@ export interface IQnAFormState {
     isPublish?: boolean;
     formView: ViewType;
     newQuestions: INewQuestions[];
-    //updatedQna: IQnAMakerItem;
+    //updatedQnA: any[];
     newQuestion: INewQuestions;
     inputValue: string;
     listTrackingItem: IQnAListTrackingItem;

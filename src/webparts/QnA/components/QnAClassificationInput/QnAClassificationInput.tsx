@@ -4,8 +4,9 @@ import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'offi
 //Placeholder where will we get this data?
 
 const classificationDropDownOption = [  
-  {key: 'Class1', text: 'Class1'},
-  {key: 'Class2', text: 'Class2'}
+  {key: 'Staff', text: 'Staff'},
+  {key: 'Public', text: 'Public'},
+  {key: 'Student', text: 'Student'}
 ];
   
 
@@ -34,7 +35,7 @@ const classificationDropDownOption = [
         selectedItem: item,
         selectedItemText: item.key
       });
-      this.props.onChange(this.state.selectedItemText);
+      this.props.onChange(item.key);
     };
   
 
