@@ -231,8 +231,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   public publishQnA(): void {
     // console.log("published qna", this.state.updatedQna);
     //contruct json data to be passed to backend
-
-    const etoban = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
+    let updateKBArray;
+    this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
       console.log(currentItem);
       switch(currentItem.action){
         case "add": 
@@ -251,6 +251,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           };
           newObject.add.qnaDocuments.push(formatItem);
           console.log(newObject);
+          updateKBArray.push(newObject);
         case "update":
           newObject["update"] = {
          
@@ -264,8 +265,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       }
     },{});
 
-    console.log(etoban); //add the newObject in etoban :) 
-    let publishQnAJSOn = JSON.stringify(etoban);
+    console.log(updateKBArray); //add the newObject in etoban :) 
+    let publishQnAJSOn = JSON.stringify(updateKBArray);
     console.log(publishQnAJSOn);
 
     this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn)
