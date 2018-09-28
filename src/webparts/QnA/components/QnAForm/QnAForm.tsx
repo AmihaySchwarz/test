@@ -216,7 +216,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     // console.log("published qna", this.state.updatedQna);
     //contruct json data to be passed to backend
     let publishQnAJSON = JSON.stringify(this.state.qnaActionHistory);
-
+    //.reduce sa history array
+    //sa loob non make a switch depends if add, update, edit,
+    //if add ilagay sa array na add
     console.log(publishQnAJSON);
 
     this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSON)
@@ -471,6 +473,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   renderQuestionsDisplay(cellInfo) {
     let parsedQ = JSON.parse(cellInfo.original.Questions);
+    return parsedQ.map(question => {
+      return (
+        <div>
+          <span style={{ border: "#000" }}> {question.label} </span>
+        </div>
+      );
+    });
+  }
+
+  renderQuestionsPublish(cellInfo) {
+    console.log(cellInfo.original.qnaItem.Questions);
+    let parsedQ = JSON.parse(cellInfo.original.qnaItem.Questions);
     return parsedQ.map(question => {
       return (
         <div>
@@ -750,7 +764,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                       {
                         Header: "Questions",
                         accessor: "qnaItem.Questions",
-                        //Cell: this.renderQuestionsDisplay
+                        Cell: this.renderQuestionsPublish
                       },
                       {
                         Header: "Answer",
