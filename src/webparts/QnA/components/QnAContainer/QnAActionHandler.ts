@@ -5,7 +5,6 @@ import { IQnAService } from '../../services';
 import { IQnAListItem } from "../../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../../models/IQnAListTrackingItem"; 
 import { INewQuestions } from "../../models/INewQuestions";
-import { IQnAMakerItem } from "../../models/IQnAMakerItem";
 import { Item } from "@pnp/sp";
 
 export class QnAActionHandler {
@@ -29,6 +28,11 @@ export class QnAActionHandler {
         let user =  await this.service.getCurrentUser();
        console.log(user, "current user");
        return user;
+    }
+
+    public async updateQnAIDinSPlist (qnaListName: string, qnaListItem: IQnAListItem, qnaid: string): Promise<any>{
+        let items = await this.service.updateQnAIDinSPlist(qnaListName,qnaListItem, qnaid);
+        return items;
     }
 
     public async updateItemInQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
@@ -85,12 +89,12 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async updateQnAMakerKB(endpoint: string, kbid: string, item: IQnAMakerItem): Promise<any>{
+    public async updateQnAMakerKB(endpoint: string, kbid: string, item: string): Promise<any>{
         let res = await this.service.updateQnAMakerKB(endpoint,kbid, item );
         return res;
     }
 
-    public async publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ): Promise<any>{
+    public async publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAListItem[] ): Promise<any>{
         let res = await this.service.publishQnAMakerItem(endpoint, kbid, qnamakerItem);
 
     }

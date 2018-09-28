@@ -1,6 +1,5 @@
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
-import { IQnAMakerItem } from "../models/IQnAMakerItem";
 import { INewQuestions } from "../models/INewQuestions";
 
 export interface IQnAService {
@@ -12,14 +11,14 @@ export interface IQnAService {
     checkLockStatus:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     createLockItem:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     lockList:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
+    updateQnAIDinSPlist:(qnaListName: string, qnaListItem: IQnAListItem, qnaid: string) =>  Promise<any>;
     updateItemInQnAList:(qnaListName:string, qnaListItems: IQnAListItem[]) => Promise<any>;
     addQuestionToQnAList:(url: string, qnaListName:string, qnaListItem: INewQuestions) => Promise<any>;
     deleteFromQnAList:(qnaListName:string, qnaListItem: IQnAListItem[])=> Promise<any>;
     addToQnAList:(qnaListName:string,qnaListItem: IQnAListItem[] ) => Promise<any>;
     updateQnAListTracking:(qnaListTrackingListName: string, division: string, action: string ) => Promise<any>;
-    updateQnAMakerKB:(endpoint: string,kbid: string,  qnamakerItem: IQnAMakerItem) => Promise<any>;
-    publishQnAMakerItem:(endpoint: string, kbid: string, qnamakerItem: IQnAMakerItem ) => Promise<any>;
+    updateQnAMakerKB:(endpoint: string,kbid: string,  qnamakerItem: string) => Promise<any>;
+    publishQnAMakerItem:(endpoint: string, kbid: string, qnamakerItem: IQnAListItem[] ) => Promise<any>;
     getCurrentUser:() => Promise<any>;  
-    //markQuestionAsResolved... ????
     //updateWebpartProps(propertyPath: string, newValue: any): void;
 }
