@@ -18,7 +18,7 @@ export interface IQnAService {
     addToQnAList:(qnaListName:string,qnaListItem: IQnAListItem ) => Promise<any>;
     updateQnAListTracking:(qnaListTrackingListName: string, division: string, action: string ) => Promise<any>;
     updateQnAMakerKB:(endpoint: string,kbid: string,  qnamakerItem: string) => Promise<any>;
-    publishQnAMakerItem:(endpoint: string, kbid: string, qnamakerItem: IQnAListItem[] ) => Promise<any>;
+    publishQnAMakerItem:(endpoint: string, kbid: string) => Promise<any>;
     getCurrentUser:() => Promise<any>;  
     //updateWebpartProps(propertyPath: string, newValue: any): void;
 }

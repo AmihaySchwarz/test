@@ -32,9 +32,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     super(props);
     console.log(props);
     this.state = {
-      question: [],
-      answers: "",
-      classification: "",
+      // question: [],
+      // answers: "",
+      // classification: "",
       division: [],
       selectedDivision: undefined,
       selectedDivisionText: "",
@@ -43,16 +43,16 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       isDataLoaded: false,
       filtered: "",
       filterAll: "",
-      isEdit: false,
-      isPublish: false,
+      // isEdit: false,
+      // isPublish: false,
       formView: ViewType.Display,
       newQuestions: props.newQuestions,
-      //updatedQnA: undefined,
       newQuestion: undefined,
       inputValue: "",
       listTrackingItem: undefined,
       currentUser: props.currentUser,
-      qnaActionHistory: []
+      qnaActionHistory: [],
+      qnaOriginalCopy: []
     };
 
     this.filterAll = this.filterAll.bind(this);
@@ -91,16 +91,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     }
   }
 
-  public async loadQnAListData(divisionListName: string): Promise<void> {
-    this.setState({
-      qnaItems: await this.props.actionHandler.getQnAItems(
-        divisionListName,
-        this.props.properties.webUrl
-      ),
-      isDataLoaded: true
-    });
-  }
-
   onFilteredChange(filtered) {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = "";
@@ -118,9 +108,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     // console.log(filtered, "filtered");
     this.setState({ filterAll, filtered });
   }
+  
+  public async loadQnAListData(divisionListName: string): Promise<void> {
+    this.setState({
+      qnaItems: await this.props.actionHandler.getQnAItems(
+        divisionListName,
+        this.props.properties.webUrl
+      ),
+      isDataLoaded: true
+    });
+  }
 
   public setDivisionDD = (item: IDropdownOption): void => {
-    // console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
     this.setState({
       selectedDivision: item,
       selectedDivisionText: item.text,
@@ -131,7 +130,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public async changeToEdit(): Promise<void> {
     //CREATE A COPY OF QNAITEMS ORIGINAL
-    // console.log("edit is clicked");
+    this.setState(oldstate => ({
+      qnaOriginalCopy: [...oldstate.qnaItems]
+    }));
+    
+
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,
@@ -174,9 +177,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public saveAndChangeToPublish(): void {
-    //console.log("save to SP then go to publish form", this.state.qnaItems);
-    //create updatedQnA from state qna history
-
+    
     console.log(this.state.qnaActionHistory, "modified items");
     const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
     const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
@@ -189,7 +190,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     
     addItems.forEach(additem => {
       this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
-          //update id in qnaHistory
+          
           console.log(result.data.Id);
           const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
           let qnaActionHistory = [...this.state.qnaActionHistory];
@@ -222,28 +223,20 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public changeToPublish(): void {
-    //Show publish form with action history
-
     this.setState({
       formView: ViewType.Publish,
       selectedDivision: this.state.selectedDivision
     });
-
-
   }
 
   public publishQnA(): void {
-    // console.log("published qna", this.state.updatedQna);
-    //contruct json data to be passed to backend
-    //let updateKBArray;
     const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
       console.log(currentItem);
       switch(currentItem.action){
-        case "add": 
-        if(currentItem.add){ //assumingcheaslkdj
+        case "add":
           if(!newObject.add){
             newObject["add"] = {
-              "qnaDocuments" : []
+              "qnaList" : []
             }
           }
           let formatItem = {
@@ -252,17 +245,23 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             source: "Editorial", //placeholder where should we get this
             questions: currentItem.qnaItem.Questions,
             metadata: [
-              { "classification" : currentItem.qnaItem.Classificatiom },
-              { "SPID": currentItem.qnaItem.Id }
+              {
+                "name": "classification",
+                "value": currentItem.qnaItem.Classification
+              },
+              {
+                "name": "SPID",
+                "value": currentItem.qnaItem.Id
+              }
             ]
           };
           newObject.add.qnaDocuments.push(formatItem);
           console.log(newObject);
           return newObject;
-        }
+        
         case "update":
           newObject["update"] = {
-         
+            
             
           };
         case "delete":
@@ -284,24 +283,19 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn)
     .then( res => { 
         console.log(res);
+        this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId)
+        .then(res => {
+          //response should be the created items in qnamaker
+            //this.props.actionHandler.updateQnAIDinSPlist(this.state.selectedDivisionListName)
+              this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
+            .then(res => {
+              this.setState({
+                formView: ViewType.Display
+              });
+        })
+      })
     })
 
-
-    // this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,[])
-    //   .then(res => {
-    //     //response should be the created items in qnamaker
-    //       //this.props.actionHandler.updateQnAIDinSPlist(this.state.selectedDivisionListName)
-    //         this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
-    //       .then(res => {
-    //         this.setState({
-    //           formView: ViewType.Display
-    //         });
-    //   })
-    // })
-
-    this.setState({
-      formView: ViewType.Display
-    });
   }
 
   public addNewQuestionToQnAList(item: any): void {

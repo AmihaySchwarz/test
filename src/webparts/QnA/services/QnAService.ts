@@ -126,10 +126,10 @@ export class QnAService extends BaseService implements IQnAService {
     }
     
     public updateQnAListTracking(qnaListTrackingListName: string,division: string, action: string): Promise<any>{
-        let res; 
+        //let res; 
         let d = new Date();
 
-        sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division+"'").get().then((items: any[]) => {
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division+"'").get().then((items: any[]) => {
             if (items.length > 0) {
                 if(action === "save") {
                     return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
@@ -140,7 +140,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LastPublished: null
                     }).then(result => {
                         console.log(result);
-                        res = result;
+                        return result;
                     });
                 } else if (action === "publish"){
                     return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
@@ -151,13 +151,13 @@ export class QnAService extends BaseService implements IQnAService {
                         LastPublished: d.toLocaleDateString(),
                     }).then(result => {
                         console.log(result);
-                        res = result;
+                        return result;
                     });
                 }
                 
             }
         });
-        return res;
+        //return res;
     }
 
     public checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
@@ -366,7 +366,7 @@ export class QnAService extends BaseService implements IQnAService {
             }
         );
     };
-    public publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItems: IQnAListItem[] ): Promise<any> {
+    public publishQnAMakerItem(endpoint: string, kbid: string): Promise<any> {
         //NEED TO GET THE kbid, important parameter
         // foreach?
         

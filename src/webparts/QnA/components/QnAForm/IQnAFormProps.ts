@@ -22,9 +22,9 @@ export interface IQnAFormProps {
 
 export interface IQnAFormState {
     qnaItems: IQnAListItem[];
-    question: string[];
-    answers: string;
-    classification: string;
+    // question: string[];
+    // answers: string;
+    // classification: string;
     division: any[];
     selectedDivision:any;
     selectedDivisionText: string;
@@ -32,9 +32,9 @@ export interface IQnAFormState {
     isDataLoaded?: boolean;
     filtered: any;
     filterAll: any;
-    isEdit?: boolean;
+    //isEdit?: boolean;
     selectedDivisionListName: string;
-    isPublish?: boolean;
+    //isPublish?: boolean;
     formView: ViewType;
     newQuestions: INewQuestions[];
     //updatedQnA: any[];
@@ -43,6 +43,7 @@ export interface IQnAFormState {
     listTrackingItem: IQnAListTrackingItem;
     currentUser: any;
     qnaActionHistory: any[];
+    qnaOriginalCopy: IQnAListItem[]
 }
 
 export interface INewQuestionsFormState {

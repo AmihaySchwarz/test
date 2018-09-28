@@ -94,8 +94,8 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async publishQnAMakerItem(endpoint: string, kbid: string, qnamakerItem: IQnAListItem[] ): Promise<any>{
-        let res = await this.service.publishQnAMakerItem(endpoint, kbid, qnamakerItem);
+    public async publishQnAMakerItem(endpoint: string, kbid: string): Promise<any>{
+        let res = await this.service.publishQnAMakerItem(endpoint, kbid);
 
     }
 
