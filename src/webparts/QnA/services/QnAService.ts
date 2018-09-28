@@ -11,6 +11,7 @@ import * as storage from "azure-storage";
 //const storage = require('azure-storage');
 
 //API Service endpoint : https://sitqnaapiservice20180920061357.azurewebsites.net
+//kbid: 3fd5349a-7f39-4599-bbb2-6f3e041703b4
 
 export class QnAService extends BaseService implements IQnAService {
 
@@ -86,25 +87,25 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     }
 
-    public addToQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
+    public addToQnAList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
         // add an item to the list
-        let res; 
-        qnaListItems.forEach(qnaListItem => {   
+       // let res; 
+        //qnaListItems.forEach(qnaListItem => {   
 
-            sp.web.lists.getByTitle(qnaListName).items.add({
-                Questions: qnaListItem.Questions,
-                Answer: qnaListItem.Answer,
-                Classification: qnaListItem.Classification,
-                QnAID: qnaListItem.QnAID
-            }).then((result: ItemAddResult) => {
-                console.log(result);
-                res = result;
-            }).catch(error => {
-                console.log(error);
-                res = error;
-            });
+        return sp.web.lists.getByTitle(qnaListName).items.add({
+            Questions: qnaListItem.Questions,
+            Answer: qnaListItem.Answer,
+            Classification: qnaListItem.Classification,
+            QnAID: qnaListItem.QnAID
+        }).then((result: ItemAddResult) => {
+            console.log(result);
+            return result;
+        }).catch(error => {
+            console.log(error);
+            return error;
         });
-        return res;
+        //});
+        //return res;
     }
 
 
@@ -138,7 +139,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LastUpdated: d.toLocaleDateString(),
                         LastPublished: null
                     }).then(result => {
-                        console.log(JSON.stringify(result));
+                        console.log(result);
                         res = result;
                     });
                 } else if (action === "publish"){
@@ -149,7 +150,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LastUpdated: d.toLocaleDateString(),
                         LastPublished: d.toLocaleDateString(),
                     }).then(result => {
-                        console.log(JSON.stringify(result));
+                        console.log(result);
                         res = result;
                     });
                 }

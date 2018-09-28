@@ -183,11 +183,27 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
     console.log(addItems, modifyItems, deleteItems);
 
-    const addtoList = this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,addItems);
     const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
     const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
     
-    Promise.all([addtoList, updatetoList, deletefromlist]).then(res => {
+    addItems.forEach(additem => {
+      this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
+          //update id in qnaHistory
+          console.log(result.data.Id);
+          const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+          let qnaActionHistory = [...this.state.qnaActionHistory];
+          let item = {
+            ...qnaActionHistory[historyIndex].qnaItem,
+            Id: result.data.Id
+          };
+          console.log(item);
+          qnaActionHistory[historyIndex] = item;
+          this.setState({ qnaActionHistory });
+      });
+    })
+    
+
+    Promise.all([updatetoList, deletefromlist]).then(res => {
       this.props.actionHandler.updateQnAListTracking(
         this.props.properties.qnATrackingListName, 
         this.state.selectedDivisionText, "save")
@@ -215,13 +231,44 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   public publishQnA(): void {
     // console.log("published qna", this.state.updatedQna);
     //contruct json data to be passed to backend
-    let publishQnAJSON = JSON.stringify(this.state.qnaActionHistory);
-    //.reduce sa history array
-    //sa loob non make a switch depends if add, update, edit,
-    //if add ilagay sa array na add
-    console.log(publishQnAJSON);
 
-    this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSON)
+    const etoban = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
+      console.log(currentItem);
+      switch(currentItem.action){
+        case "add": 
+          newObject["add"] = {
+            "qnaDocuments" : []
+          };
+          let formatItem = {
+            id : currentItem.qnaItem.QnAID,
+            answer: currentItem.qnaItem.Answer,
+            source: "Editorial", //placeholder where should we get this
+            questions: currentItem.qnaItem.Questions,
+            metadata: [
+              { "classification" : currentItem.qnaItem.Classificatiom },
+              { "SPID": currentItem.qnaItem.Id }
+            ]
+          };
+          newObject.add.qnaDocuments.push(formatItem);
+          console.log(newObject);
+        case "update":
+          newObject["update"] = {
+         
+            
+          };
+        case "delete":
+          newObject["update"] = {
+            
+              
+          };
+      }
+    },{});
+
+    console.log(etoban); //add the newObject in etoban :) 
+    let publishQnAJSOn = JSON.stringify(etoban);
+    console.log(publishQnAJSOn);
+
+    this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn)
     .then( res => { 
         console.log(res);
     })
@@ -307,19 +354,19 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
     console.log(addItems, modifyItems, deleteItems);
 
-    const addtoList = this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,addItems);
-    const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
-    const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
+    // const addtoList = this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,addItems);
+    // const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
+    // const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
     
-    Promise.all([addtoList, updatetoList, deletefromlist]).then(res => {
-      this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText, "save")
-          .then(res => {
-            this.setState({
-                formView: ViewType.Display,
-                selectedDivision: this.state.selectedDivision
-              });
-          })
-    });
+    // Promise.all([addtoList, updatetoList, deletefromlist]).then(res => {
+    //   this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText, "save")
+    //       .then(res => {
+    //         this.setState({
+    //             formView: ViewType.Display,
+    //             selectedDivision: this.state.selectedDivision
+    //           });
+    //       })
+    // });
   }
 
   public deleteQnA(item: any): void {

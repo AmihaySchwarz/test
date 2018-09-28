@@ -44,8 +44,8 @@ export class QnAActionHandler {
         return items; 
     }
 
-    public async addtoQnaList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
-        let items = await this.service.addToQnAList(qnaListName, qnaListItems);
+    public async addtoQnaList(qnaListName:string, qnaListItem: IQnAListItem): Promise<any>{
+        let items = await this.service.addToQnAList(qnaListName, qnaListItem);
         return items;
     }
 
