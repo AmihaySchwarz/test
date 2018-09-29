@@ -21,7 +21,7 @@ export interface IQnAContainerState {
     qnaItems: any[];
     newQuestions: any[];
     masterItems: any[];
-    isDataLoaded: boolean;
+    isLoading: boolean;
     view: ViewType;
     error: string;
     //editItem: IMyTasks;

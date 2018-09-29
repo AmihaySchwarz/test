@@ -7,6 +7,7 @@ import { ViewType } from '../../../common/enum';
 import { QnAForm } from '../QnAForm';
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
 import { Division } from '../../../common/enum/Division';
+import { LoadingSpinner } from '../../../common/components/LoadingSpinner/LoadingSpinner';
 
 
 export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContainerState> {
@@ -19,7 +20,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     super(props);
     this.state = {
         qnaItems: [],
-        isDataLoaded: false,
+        isLoading: false,
         view: ViewType.Display,
         error: "",
         setLoading: true,
@@ -43,8 +44,13 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
    this.loadData();
   }
 
+  private setLoading(status: boolean): void {
+    this.setState({ isLoading: status });
+}
+
   private async loadData(): Promise<void>{
     console.log("in load data");
+    this.setLoading(true);
     this.setState({
       currentUser: await this.actionHandler.getCurrentUser()
     });
@@ -54,7 +60,8 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   private async loadNewQuestions(): Promise<void>{
       this.setState({
-        newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl)
+        newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl),
+        isLoading: false,
       }); 
   }
 
@@ -67,7 +74,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
     this.setState({
       masterItems: divisionList,
-      isDataLoaded: true,
+      isLoading: false,
     });
 
 
@@ -77,6 +84,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   }
 
   public render() {
+    {this.state.isLoading && <LoadingSpinner />}
      return <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
   changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser} defaultDivision={this.state.masterItems[0]}/> ;
   }

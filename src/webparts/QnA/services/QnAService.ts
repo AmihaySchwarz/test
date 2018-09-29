@@ -398,6 +398,37 @@ export class QnAService extends BaseService implements IQnAService {
         );
 
     }
+
+    public getQnAMakerItems(endpoint: string, kbid: string, env: string): Promise<any> {
+
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/qnamaker/qna/3fd5349a-7f39-4599-bbb2-6f3e041703b4/test
+        let updateQnAEndpoint = endpoint + "/api/qnamaker/qna/"+kbid +"/"+env;
+        return this.context.httpClient.get(updateQnAEndpoint, HttpClient.configurations.v1, {
+            //credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            // body: JSON.stringify({
+            //     new_kb : ""//the string of the update format below
+            // })
+            
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+
+    }
     
     
     private Error(e) {

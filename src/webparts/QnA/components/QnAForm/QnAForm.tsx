@@ -1,7 +1,6 @@
 import * as React from "react";
 import styles from "./QnAForm.module.scss";
 import { IQnAFormProps, IQnAFormState } from "./IQnAFormProps";
-import { DialogHeader } from "../../../common/components/DialogHeader";
 import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
 import { ViewType } from "../../../common/enum";
 import { escape } from "@microsoft/sp-lodash-subset";
@@ -134,7 +133,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       qnaOriginalCopy: [...oldstate.qnaItems]
     }));
     
-
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,
@@ -230,6 +228,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public publishQnA(): void {
+    let formatItem;
     const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
       console.log(currentItem);
       switch(currentItem.action){
@@ -239,11 +238,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               "qnaList" : []
             }
           }
-          let formatItem = {
+          formatItem = {
             id : currentItem.qnaItem.QnAID,
             answer: currentItem.qnaItem.Answer,
             source: "Editorial", //placeholder where should we get this
-            questions: currentItem.qnaItem.Questions,
+            questions: JSON.parse(currentItem.qnaItem.Questions).map(m => m.label),
             metadata: [
               {
                 "name": "classification",
@@ -252,24 +251,73 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               {
                 "name": "SPID",
                 "value": currentItem.qnaItem.Id
+              },
+              {
+                "name": "Division",
+                "value": this.state.selectedDivisionText
               }
             ]
           };
-          newObject.add.qnaDocuments.push(formatItem);
+          newObject.add.qnaList.push(formatItem);
           console.log(newObject);
           return newObject;
         
         case "update":
-          newObject["update"] = {
+           //find data in qnaOriginalCopy
+           let itemInOrig = this.state.qnaOriginalCopy.find(d => d.Id === currentItem.qnaItem.Id);
+           let origQuestions = JSON.parse(itemInOrig.Questions);
+           let updatedQuestions = JSON.parse(currentItem.qnaItem.Questions)
+           //Find values that are in result1 but not in result2
+          let deletedQuestions = origQuestions.filter(function(obj) {
+            return !updatedQuestions.some(function(obj2) {
+                return obj.value == obj2.value;
+            });
+          });
+          console.log(deletedQuestions);
+          //Find values that are in result2 but not in result1
+          let addedQuestions = updatedQuestions.filter(function(obj) {
+            return !origQuestions.some(function(obj2) {
+                return obj.value == obj2.value;
+            });
+          });
+          console.log(addedQuestions);
+          if(!newObject.update){
+            newObject["update"] = {
+              "qnaList" : []
+            }
+          }
+          formatItem = {
+            id : currentItem.qnaItem.QnAID,
+            answer: currentItem.qnaItem.Answer,
+            source: "Editorial", //placeholder where should we get this
+            questions: {},
             
-            
-          };
-        case "delete":
-          newObject["delete"] = {
-            "ids" : []
-          };
-          newObject.delete.ids.push(currentItem.QnAID);
+          }
+
+          if(addedQuestions.length > 0){
+            formatItem.questions["add"] = addedQuestions.map(m => m.label);
+          }
+          if(deletedQuestions.length > 0) {
+            formatItem.questions["delete"] = addedQuestions.map(m => m.label);
+          }
+          if(itemInOrig.Classification !== currentItem.qnaItem.Classification) {
+            // "dalete" : original
+            // add: currentItem
+            formatItem["metadata"] = {};
+            formatItem.metadata["add"] = currentItem.qnaItem.Classification;
+            formatItem.metadata["delete"] = itemInOrig.Classification;
+          } 
+          newObject.update.qnaList.push(formatItem);
+          console.log(newObject);
           return newObject;
+        case "delete":
+          if(!newObject.delete){
+            newObject["delete"] = {
+              "ids" : []
+            }
+          }
+          newObject.delete.ids.push(currentItem.qnaItem.QnAID);
+          return newObject; 
         default:
           return null;
       }
@@ -299,7 +347,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public addNewQuestionToQnAList(item: any): void {
-    //console.log("add to QNA List", item);
     this.props.actionHandler.addQuestionToQnAList(
       this.props.properties.webUrl,
       this.state.selectedDivisionListName,
@@ -308,7 +355,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public deleteNewQuestion(item: any): void {
-    //console.log("delete new question", item.row._original);
     this.props.actionHandler.deleteFromNewQuestion(
       this.props.properties.endpointUrl,
       item.row._original
@@ -316,11 +362,13 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public markAsResolved(item: any): void {
-    // console.log("mark as resolved");
+    
     this.props.actionHandler.resolveQuestion(
       this.props.properties.endpointUrl,
       item.row._original
     );
+
+    //save the question to sp list as well as the remark in sp list
   }
 
   public addNewQnaToTable(): void {
@@ -522,7 +570,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
-  };
+  }
 
   public updateClassification = (data, index) => {
     let qnaItems = [...this.state.qnaItems];
@@ -534,7 +582,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
-  };
+  }
 
   renderQuestionsEdit = cellInfo => {
     // console.log(cellInfo.original);
@@ -546,7 +594,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         onChange={data => this.updateQuestions(data, cellInfo.index)}
       />
     );
-  };
+  }
 
   renderQuestionsDisplay(cellInfo) {
     let parsedQ = JSON.parse(cellInfo.original.Questions);
@@ -565,7 +613,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     return parsedQ.map(question => {
       return (
         <div>
-          <span style={{ border: "#000" }}> ljhkjh{question.label} </span>
+          <span style={{ border: "#000" }}> {question.label} </span>
         </div>
       );
     });
@@ -581,7 +629,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         onChange={data => this.updateClassification(data, cellInfo.index)}
       />
     );
-  };
+  }
 
   public renderDateField(cellInfo) {
     return (
