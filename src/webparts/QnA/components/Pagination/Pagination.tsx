@@ -85,7 +85,7 @@ public render() {
                 key={page}
                 className={
                   activePage === page
-                    ? "Table__pageButton Table__pageButton--active"
+                    ? "Table__pageButton Table__pageButtonActive"
                     : "Table__pageButton"
                 }
                 onClick={this.changePage.bind(null, page)}

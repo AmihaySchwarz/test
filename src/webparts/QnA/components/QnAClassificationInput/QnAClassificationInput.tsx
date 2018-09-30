@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import { ToastContainer, toast } from 'react-toastify';
 
 //Placeholder where will we get this data?
 
@@ -32,7 +33,11 @@ const classificationDropDownOption = [
         selectedItem: item,
         selectedItemText: item.key
       });
-      this.props.onChange(item.key);
+     // if((item.key == null) || (item.key == "")) {
+      //  toast.warn("Empty classification");
+      //} else {
+        this.props.onChange(item.key);
+      //}
     }
   
     public render() {

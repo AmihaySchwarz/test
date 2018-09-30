@@ -300,19 +300,25 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
            let itemInOrig = this.state.qnaOriginalCopy.find(d => d.Id === currentItem.qnaItem.Id);
            let origQuestions = JSON.parse(itemInOrig.Questions);
            let updatedQuestions = JSON.parse(currentItem.qnaItem.Questions);
-           //Find values that are in result1 but not in result2
-          let deletedQuestions = origQuestions.filter(function(obj) {
-            return !updatedQuestions.some(function(obj2) {
-                return obj.value == obj2.value;
-            });
-          });
+           //Find values that are in result1 but not in result2           
+          // let deletedQuestions = origQuestions.filter(function(obj) {
+          //   return !updatedQuestions.some(function(obj2) {
+          //       return obj.value == obj2.value;
+          //   });
+          // });
+
+          let deletedQuestions = origQuestions.filter( 
+            obj => !updatedQuestions.some(obj2 => obj.value == obj2.value));
           console.log(deletedQuestions);
           //Find values that are in result2 but not in result1
-          let addedQuestions = updatedQuestions.filter(function(obj) {
-            return !origQuestions.some(function(obj2) {
-                return obj.value == obj2.value;
-            });
-          });
+          // let addedQuestions = updatedQuestions.filter(function(obj) {
+          //   return !origQuestions.some(function(obj2) {
+          //       return obj.value == obj2.value;
+          //   });
+          // });
+          let addedQuestions = updatedQuestions.filter(
+            obj => !origQuestions.some(obj2 => obj.vale == obj2.value));
+
           console.log(addedQuestions);
           if(!newObject.update){
             newObject["update"] = {
@@ -482,17 +488,13 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     console.log(this.state.qnaActionHistory, "modified items");
 
     //check if question, answer, and classifications are null, notify user
-
-
-
-
-
     const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
     const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
     const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
 
     console.log(addItems, modifyItems, deleteItems);
-
+//loop additems, use lodash .some, if may nag true dont save
+    
 
 
     const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
@@ -660,6 +662,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public updateClassification = (data, index) => {
     let qnaItems = [...this.state.qnaItems];
+    console.log("NEW CLASS", data);
     let item = {
       ...qnaItems[index],
       Classification: data //JSON.stringify(data)
