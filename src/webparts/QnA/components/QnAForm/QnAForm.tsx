@@ -400,9 +400,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           .then(res => {
                 this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
               .then(res => {
+                toast.success("KB Successfully published");
                 this.setState({
                   formView: ViewType.Display,
-                  isLoading: false 
+                  isLoading: false,
+                  qnaActionHistory: []
                 });
               })
           })
@@ -415,11 +417,20 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public addNewQuestionToQnAList(item: any): void {
+    this.setState({isLoading: true});
     this.props.actionHandler.addQuestionToQnAList(
       this.props.properties.webUrl,
       this.state.selectedDivisionListName,
       item.row
-    );
+    ).then(res => {
+      console.log(res);
+      this.setState(prevState => {
+        return {
+            qnaItems: [...prevState.qnaItems],
+            isLoading: false
+        }
+      });
+    })
   }
 
   public deleteNewQuestion(item: any): void {
