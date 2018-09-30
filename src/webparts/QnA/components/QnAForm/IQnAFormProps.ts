@@ -38,7 +38,7 @@ export interface IQnAFormState {
     formView: ViewType;
     newQuestions: INewQuestions[];
     //updatedQnA: any[];
-    newQuestion: INewQuestions;
+    //newQuestion: INewQuestions;
     inputValue: string;
     listTrackingItem: IQnAListTrackingItem;
     currentUser: any;

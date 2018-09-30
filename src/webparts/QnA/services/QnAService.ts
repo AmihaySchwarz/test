@@ -56,7 +56,7 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public getQnAItems(divisionListName: string): Promise<any> {
-        console.log(divisionListName, "master list item");
+       // console.log(divisionListName, "master list item");
         return sp.web.lists.getByTitle(divisionListName).items.select("ID", "Questions", "Answer", "Classification", "QnAID").getAll().then((items: any[]) => {
             console.log(items);
             return items;
@@ -236,10 +236,10 @@ export class QnAService extends BaseService implements IQnAService {
         });
     };
 
-    public getNewQuestions(endpoint: string):Promise<any>{ //tenant: string, clientId: string, 
+    public getNewQuestions(endpoint: string, division: string):Promise<any>{ //tenant: string, clientId: string, 
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions
         //GET
-        let getQuestionsEndpoint = endpoint + "/api/newquestions/allquestions";
+        let getQuestionsEndpoint = endpoint + "/api/newquestions/allquestions/"+division;
         return this.context.httpClient.get(getQuestionsEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include'
              headers: {
@@ -344,10 +344,7 @@ export class QnAService extends BaseService implements IQnAService {
                 'Accept': 'application/json'
             }, 
             method: 'PATCH',
-            body: JSON.stringify({
-                new_kb : publishJSON //the string of the update format below
-            })
-            
+            body: publishJSON //the string of the update format below
         }).then((response: HttpClientResponse) => {
             if (response.ok) {
                 return response.json();
@@ -420,7 +417,7 @@ export class QnAService extends BaseService implements IQnAService {
                 console.error(response.statusText);
             }
         }).then((json: any): any[] => {
-            console.log(json);
+            //console.log(json);
             return json;
         },
             (error: any) => {

@@ -74,8 +74,8 @@ export class QnAActionHandler {
         return response;
     }
 
-    public async getNewQuestions(endpoint: string): Promise<any>{//tenant: string, clientId: string, 
-        let res = await this.service.getNewQuestions(endpoint);
+    public async getNewQuestions(endpoint: string, division: string): Promise<any>{//tenant: string, clientId: string, 
+        let res = await this.service.getNewQuestions(endpoint, division);
         return res;
     }
 

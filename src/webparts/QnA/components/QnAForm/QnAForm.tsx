@@ -40,13 +40,13 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       selectedDivisionListName: "",
       qnaItems: [],
       isDataLoaded: false,
-      filtered: "",
+      filtered: [],
       filterAll: "",
       // isEdit: false,
       // isPublish: false,
       formView: ViewType.Display,
-      newQuestions: props.newQuestions,
-      newQuestion: undefined,
+      newQuestions: [],
+      //newQuestion: undefined,
       inputValue: "",
       listTrackingItem: undefined,
       currentUser: props.currentUser,
@@ -92,19 +92,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   onFilteredChange(filtered) {
     if (filtered.length > 1 && this.state.filterAll.length) {
-      const filterAll = "";
-      this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
-        filterAll
-      });
-    } else this.setState({ filtered });
+      const filterAll = '';
+      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
+    }
+    else
+      this.setState({ filtered });
   }
 
   public filterAll(e) {
     const { value } = e.target;
     const filterAll = value;
-    const filtered = [{ id: "all", value: filterAll }];
-    // console.log(filtered, "filtered");
+    const filtered = [{ id: 'all', value: filterAll }];
+    // NOTE: this completely clears any COLUMN filters
     this.setState({ filterAll, filtered });
   }
   
@@ -118,6 +117,15 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
+  public async loadNewQuestionsData(division: string): Promise<void> {
+    this.setState({
+      newQuestions: await this.props.actionHandler.getNewQuestions(
+        this.props.properties.endpointUrl, 
+        division
+      ),
+      isDataLoaded: true
+    });
+  }
   public setDivisionDD = (item: IDropdownOption): void => {
     this.setState({
       selectedDivision: item,
@@ -125,6 +133,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       selectedDivisionListName: item.key.toString()
     });
     this.loadQnAListData(item.key.toString());
+    this.loadNewQuestionsData(item.text.toString());
   };
 
   public async changeToEdit(): Promise<void> {
@@ -221,14 +230,54 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public changeToPublish(): void {
-    this.setState({
-      formView: ViewType.Publish,
-      selectedDivision: this.state.selectedDivision
-    });
+    //LOCK LIST , check lock stat, lock , check last updated, 
+    this.props.actionHandler
+      .checkLockStatus(
+        this.state.currentUser,
+        this.state.selectedDivisionText,
+        this.props.properties.qnATrackingListName
+      )
+      .then(items => {
+        this.setState({
+          listTrackingItem: items[0]
+        });
+        // console.log(this.state.listTrackingItem);
+        let currentUserEmail = this.state.currentUser.Email;
+        if (
+          this.state.listTrackingItem.LockedBy !== undefined &&
+          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail
+        ) {
+          //show notification and refresh data
+          // console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+        } else {
+          this.props.actionHandler
+            .lockList(
+              this.state.currentUser,
+              this.state.selectedDivisionText,
+              this.props.properties.qnATrackingListName
+            )
+            .then(res => {
+              //console.log(res);
+              if (res.data == undefined) {
+                //alert user if lock fail then refresh data
+                //console.log("failed to lock the item");
+              } else {
+                this.setState({
+                  formView: ViewType.Publish,
+                  selectedDivision: this.state.selectedDivision
+                });
+              }
+            });
+        }
+      });
+
+
+    
   }
 
   public publishQnA(): void {
     let formatItem;
+    this.setState({isDataLoaded: false });
     const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
       console.log(currentItem);
       switch(currentItem.action){
@@ -304,8 +353,12 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             // "dalete" : original
             // add: currentItem
             formatItem["metadata"] = {};
-            formatItem.metadata["add"] = currentItem.qnaItem.Classification;
-            formatItem.metadata["delete"] = itemInOrig.Classification;
+            formatItem.metadata["add"] = { 
+              "name" : "Classification", 
+              "value": currentItem.qnaItem.Classification };
+            formatItem.metadata["delete"] = { 
+              "name" : "Classification", 
+              "value": itemInOrig.Classification }; 
           } 
           newObject.update.qnaList.push(formatItem);
           console.log(newObject);
@@ -328,20 +381,50 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     let publishQnAJSOn = JSON.stringify(updateKBArray);
     console.log(publishQnAJSOn);
 
-    this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn)
+    this.props.actionHandler.updateQnAMakerKB(
+      this.props.properties.endpointUrl,
+      this.props.properties.qnAMakerKnowledgeBaseId,
+      publishQnAJSOn)
     .then( res => { 
         console.log(res);
-        this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId)
+        this.props.actionHandler.getQnAMakerItems(
+          this.props.properties.endpointUrl,
+          this.props.properties.qnAMakerKnowledgeBaseId,
+          "test")
         .then(res => {
-          //response should be the created items in qnamaker
-            //this.props.actionHandler.updateQnAIDinSPlist(this.state.selectedDivisionListName)
-              this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
-            .then(res => {
-              this.setState({
-                formView: ViewType.Display
-              });
-        })
-      })
+          let kbItems = JSON.parse(res);
+          console.log(kbItems);
+          let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
+          console.log(addedItems );   
+
+          const qnaWithKBID = addedItems.map(addedItem => {
+            console.log(addedItem.qnaItem.Id);
+            let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
+               return kb.metadata[1].value === addedItem.qnaItem.Id.toString() 
+            });
+           console.log(matchKb);
+          addedItem.qnaItem.QnAID = matchKb.id 
+           return addedItem
+          })
+
+          console.log(qnaWithKBID);
+          const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
+
+          this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
+          this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId)
+          .then(res => {
+                this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
+              .then(res => {
+                this.setState({
+                  formView: ViewType.Display,
+                  isDataLoaded: false 
+                });
+              })
+          })
+         
+
+        }) 
+        
     })
 
   }
@@ -375,7 +458,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     console.log("add inline form");
 
     let newQnA = {
-      Questions: '[{"label":"","value":""}]',
+      //Questions: '[{"label":"","value":""}]',
+      Questions: '[]',
       Answer: "",
       Classification: "",
       QnAID: 0,
@@ -512,7 +596,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         action: "add"
       }
 
-      console.log(this.state.qnaActionHistory, "actionhistory");
+     // console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
      historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
 
@@ -522,7 +606,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         qnaItem: { ...item },
         action: "update"
       }
-      console.log(this.state.qnaActionHistory, "actionhistory");
+      //console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
       historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
 
@@ -546,7 +630,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public updateQnAAnswer = (data, index) => {
-    console.log(data)
+    //console.log(data)
     let qnaItems = [...this.state.qnaItems];
     let item = {
       ...qnaItems[index],
@@ -559,7 +643,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public updateQuestions = (data, index) => {
-    console.log(data, index, "update question");
+    //console.log(data, index, "update question");
 
     let qnaItems = [...this.state.qnaItems];
     let item = {
@@ -608,7 +692,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   renderQuestionsPublish(cellInfo) {
-    console.log(cellInfo.original.qnaItem.Questions);
+    //console.log(cellInfo.original.qnaItem.Questions);
     let parsedQ = JSON.parse(cellInfo.original.qnaItem.Questions);
     return parsedQ.map(question => {
       return (
@@ -645,8 +729,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   public render() {
     const { selectedDivision } = this.state;
 
-    console.log("new row added", this.state.qnaItems);
-    console.log("aciton history", this.state.qnaActionHistory);
+    // console.log("new row added", this.state.qnaItems);
+    // console.log("aciton history", this.state.qnaActionHistory);
     switch (this.state.formView) {
       case ViewType.Edit:
         return (
@@ -672,6 +756,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             <ReactTable
               PaginationComponent={Pagination}
               data={this.state.newQuestions}
+              //filtered={this.state.filtered}
+              defaultPageSize={10}
+              className="-striped -highlight"
+              //onFilteredChange={this.onFilteredChange.bind(this)}
+              //filterable
               columns={[
                 {
                   columns: [
@@ -711,8 +800,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                   ]
                 }
               ]}
-              defaultPageSize={10}
-              className="-striped -highlight"
+              
             />
             <br />
             <DefaultButton
@@ -722,7 +810,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               onClick={this.addNewQnaToTable}
             />
             <div> QnA </div>
-            Filter QnA:{" "}
+            Filter QnA:
             <input value={this.state.filterAll} onChange={this.filterAll} />
             <ReactTable
               data={this.state.qnaItems}
@@ -748,22 +836,25 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                     {
                       Header: "Actions",
                       accessor: "Actions",
-                      Cell: ({ row }) => (
+                      Cell: ({ row, index }) => (
                         <div>
-                          <button onClick={() => this.deleteQnA({ row })}>
+                          <button onClick={() => 
+                          this.deleteQnA({ row })
+                        }>
                             Delete Question
                           </button>
-                          <button data-tip data-event="click focus">
-                            {" "}
+                          <button data-tip data-for={index.toString()} data-event='click focus'>
                             Preview
                           </button>
                           <ReactTooltip
+                            id={index.toString()}
                             globalEventOff="click"
                             aria-haspopup="true"
                             place="bottom"
                             type="light"
                             effect="solid"
                           >
+                           {/* <div>{row.row._original.Id}</div> */}
                             <QnAPreviewPanel qnaItem={row} />
                           </ReactTooltip>
                         </div>
@@ -867,7 +958,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>
         );
       case ViewType.Publish:
-        return (
+      {this.state.isLoading && <LoadingSpinner />}
+        return ( 
           <div>
             <div className={styles.controlMenu}>
               <span> Division: {this.state.selectedDivisionText} </span>

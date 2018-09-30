@@ -5,7 +5,7 @@ import { INewQuestions } from "../models/INewQuestions";
 export interface IQnAService {
     getQnAItems: (divisionListName: string, url : string) => Promise<any>;
     getMasterListItems: (currentUser: any[],url: string,  masterListName: string) => Promise<any>;
-    getNewQuestions: (endpoint: string) => Promise<any>; //tenant: string, clientId: string, 
+    getNewQuestions: (endpoint: string, division: string) => Promise<any>; //tenant: string, clientId: string, 
     deleteFromNewQuestion:(endpoint: string, item: INewQuestions) =>Promise<any>; //tenant: string, clientId: string, 
     resolveQuestion:(endpoint: string, item: INewQuestions) => Promise<any>;
     checkLockStatus:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;

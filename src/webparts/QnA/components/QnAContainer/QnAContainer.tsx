@@ -55,15 +55,14 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
       currentUser: await this.actionHandler.getCurrentUser()
     });
     this.loadMasterList(this.state.currentUser);
-    this.loadNewQuestions();
+    //this.loadNewQuestions();
   }
 
-  private async loadNewQuestions(): Promise<void>{
-      this.setState({
-        newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl),
-        isLoading: false,
-      }); 
-  }
+  // private async loadNewQuestions(division: string): Promise<void>{
+  //     this.setState({
+  //       newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl, division)
+  //     }); 
+  // }
 
   private async loadMasterList(currentUser: any): Promise<void> {
     let masterListItems = await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName );
@@ -74,10 +73,9 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
     this.setState({
       masterItems: divisionList,
+      newQuestions: await this.actionHandler.getNewQuestions(this.props.endpointUrl, divisionList[0].text),
       isLoading: false,
     });
-
-
   }
   private changeView(view: ViewType): void {
     this.setState({ view });
