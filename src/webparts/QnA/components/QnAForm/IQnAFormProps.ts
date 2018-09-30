@@ -42,7 +42,7 @@ export interface IQnAFormState {
     listTrackingItem: IQnAListTrackingItem;
     currentUser: any;
     qnaActionHistory: any[];
-    qnaOriginalCopy: IQnAListItem[]
+    qnaOriginalCopy: IQnAListItem[];
 }
 
 export interface INewQuestionsFormState {

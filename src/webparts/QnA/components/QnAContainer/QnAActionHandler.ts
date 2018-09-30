@@ -1,11 +1,10 @@
 import { QnAContainer } from "./QnAContainer";
 import { ViewType } from '../../../common/enum';
-import { sortBy } from "@microsoft/sp-lodash-subset";
 import { IQnAService } from '../../services';
 import { IQnAListItem } from "../../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../../models/IQnAListTrackingItem"; 
 import { INewQuestions } from "../../models/INewQuestions";
-import { Item } from "@pnp/sp";
+
 
 export class QnAActionHandler {
     constructor(private container: QnAContainer, private service: IQnAService) {
@@ -52,7 +51,7 @@ export class QnAActionHandler {
     public async deleteFromQnAList(qnaListName:string, qnaListItems: IQnAListItem[]): Promise<any>{
         let res = await this.service.deleteFromQnAList(qnaListName, qnaListItems);
         return res;
-    };
+    }
 
     public async updateQnAListTracking(qnaListTrackingListName: string, division: string, action: string): Promise<any> {
         let response =  await this.service.updateQnAListTracking(qnaListTrackingListName, division, action);

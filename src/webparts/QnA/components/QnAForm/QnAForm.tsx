@@ -71,10 +71,10 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     }
   }
 
-  onFilteredChange(filtered) {
+  public onFilteredChange(filtered) {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = '';
-      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
+      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll });
     }
     else
       this.setState({ filtered });
@@ -115,7 +115,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
     this.loadQnAListData(item.key.toString());
     this.loadNewQuestionsData(item.text.toString());
-  };
+  }
 
   public async changeToEdit(): Promise<void> {
     //CREATE A COPY OF QNAITEMS ORIGINAL
@@ -194,21 +194,20 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           qnaActionHistory[historyIndex] = item;
           this.setState({ qnaActionHistory });
       });
-    })
+    });
     
 
     Promise.all([updatetoList, deletefromlist]).then(res => {
       this.props.actionHandler.updateQnAListTracking(
         this.props.properties.qnATrackingListName, 
         this.state.selectedDivisionText, "save")
-          .then(res => {
-         
+          .then(resp => { 
             this.setState({
                 formView: ViewType.Publish,
                 selectedDivision: this.state.selectedDivision,
                 isLoading: false
               });
-          })
+          });
     });
   }
 
@@ -270,7 +269,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           if(!newObject.add){
             newObject["add"] = {
               "qnaList" : []
-            }
+            };
           }
           formatItem = {
             id : currentItem.qnaItem.QnAID,
@@ -300,7 +299,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
            //find data in qnaOriginalCopy
            let itemInOrig = this.state.qnaOriginalCopy.find(d => d.Id === currentItem.qnaItem.Id);
            let origQuestions = JSON.parse(itemInOrig.Questions);
-           let updatedQuestions = JSON.parse(currentItem.qnaItem.Questions)
+           let updatedQuestions = JSON.parse(currentItem.qnaItem.Questions);
            //Find values that are in result1 but not in result2
           let deletedQuestions = origQuestions.filter(function(obj) {
             return !updatedQuestions.some(function(obj2) {
@@ -318,15 +317,14 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           if(!newObject.update){
             newObject["update"] = {
               "qnaList" : []
-            }
+            };
           }
           formatItem = {
             id : currentItem.qnaItem.QnAID,
             answer: currentItem.qnaItem.Answer,
             source: "Editorial", //placeholder where should we get this
             questions: {},
-            
-          }
+          };
 
           if(addedQuestions.length > 0){
             formatItem.questions["add"] = addedQuestions.map(m => m.label);
@@ -352,7 +350,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           if(!newObject.delete){
             newObject["delete"] = {
               "ids" : []
-            }
+            };
           }
           newObject.delete.ids.push(currentItem.qnaItem.QnAID);
           return newObject; 
@@ -370,8 +368,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       this.props.properties.endpointUrl,
       this.props.properties.qnAMakerKnowledgeBaseId,
       publishQnAJSOn)
-    .then( res => { 
-        console.log(res);
+    .then( result => { 
+        console.log(result);
         this.props.actionHandler.getQnAMakerItems(
           this.props.properties.endpointUrl,
           this.props.properties.qnAMakerKnowledgeBaseId,
@@ -385,35 +383,34 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           const qnaWithKBID = addedItems.map(addedItem => {
             console.log(addedItem.qnaItem.Id);
             let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
-               return kb.metadata[1].value === addedItem.qnaItem.Id.toString() 
+               return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
             });
            console.log(matchKb);
-          addedItem.qnaItem.QnAID = matchKb.id 
-           return addedItem
-          })
+          addedItem.qnaItem.QnAID = matchKb.id; 
+           return addedItem;
+          });
 
           console.log(qnaWithKBID);
           const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
 
           this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
-          this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId)
-          .then(res => {
+
+          this.props.actionHandler.publishQnAMakerItem(
+            this.props.properties.endpointUrl,
+            this.props.properties.qnAMakerKnowledgeBaseId)
+          .then(r => {
                 this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
-              .then(res => {
+              .then(resp => {
                 toast.success("KB Successfully published");
                 this.setState({
                   formView: ViewType.Display,
                   isLoading: false,
                   qnaActionHistory: []
                 });
-              })
-          })
-         
-
-        }) 
-        
-    })
-
+              });
+          });
+        }); 
+    });
   }
 
   public addNewQuestionToQnAList(item: any): void {
@@ -428,9 +425,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         return {
             qnaItems: [...prevState.qnaItems],
             isLoading: false
-        }
+        };
       });
-    })
+    });
   }
 
   public deleteNewQuestion(item: any): void {
@@ -518,21 +515,21 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           qnaActionHistory[historyIndex] = item;
           this.setState({ qnaActionHistory });
       });
-    })
+    });
     
 
     Promise.all([updatetoList, deletefromlist]).then(res => {
       this.props.actionHandler.updateQnAListTracking(
         this.props.properties.qnATrackingListName, 
         this.state.selectedDivisionText, "save")
-          .then(res => {
+          .then(result => {
             this.setState({
                 formView: ViewType.Display,
                 selectedDivision: this.state.selectedDivision,
                 isLoading: false
               });
               toast.success("QnA Items Saved");
-          })
+          });
     });
   }
 
@@ -554,7 +551,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               history[historyIndex] = itemDeleteActionHistory; 
               return {
                 qnaActionHistory: history
-              }
+              };
             });
       } else {
         this.setState(oldstate => ({
@@ -564,8 +561,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     } else {
       //item is new so we also need to delete the item from qnaActionHistory state
       let historyArray = [...this.state.qnaActionHistory];
-      let index = historyArray.findIndex(d => d.Id == item.row._original.Id);
-      historyArray.splice(index, 1);
+      let histIndex = historyArray.findIndex(d => d.Id == item.row._original.Id);
+      historyArray.splice(histIndex, 1);
       this.setState({ qnaActionHistory: historyArray });
     }
    
@@ -599,7 +596,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       historyItem = {
         qnaItem: { ...item, identifier: index },
         action: "add"
-      }
+      };
 
      // console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
@@ -610,7 +607,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       historyItem = {
         qnaItem: { ...item },
         action: "update"
-      }
+      };
       //console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
       historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
@@ -620,11 +617,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     if (historyIndex >= 0) {
       //item exist in history
       this.setState(oldState => {
-            let history = [...oldState.qnaActionHistory]
-            history[historyIndex] = historyItem 
+            let history = [...oldState.qnaActionHistory];
+            history[historyIndex] = historyItem ;
             return {
               qnaActionHistory: history
-            }
+            };
           });
     } else {
       //create new index
@@ -673,7 +670,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.updateActionHistory(item,index);
   }
 
-  renderQuestionsEdit = cellInfo => {
+  public renderQuestionsEdit = cellInfo => {
     // console.log(cellInfo.original);
     let parsedQ = JSON.parse(cellInfo.original.Questions);
     // console.log(parsedQ)
@@ -685,7 +682,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     );
   }
 
-  renderQuestionsDisplay(cellInfo) {
+  public renderQuestionsDisplay(cellInfo) {
     let parsedQ = JSON.parse(cellInfo.original.Questions);
     return parsedQ.map(question => {
       return (
@@ -696,7 +693,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  renderQuestionsPublish(cellInfo) {
+  public renderQuestionsPublish(cellInfo) {
     //console.log(cellInfo.original.qnaItem.Questions);
     let parsedQ = JSON.parse(cellInfo.original.qnaItem.Questions);
     return parsedQ.map(question => {
@@ -708,7 +705,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  renderEditableDropdown = cellInfo => {
+  public renderEditableDropdown = cellInfo => {
 
     let selectedItemOption = {"text": cellInfo.original.Classification , "key": cellInfo.original.Classification};
 

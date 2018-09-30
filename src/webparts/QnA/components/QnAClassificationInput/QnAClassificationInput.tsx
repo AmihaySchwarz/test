@@ -9,11 +9,9 @@ const classificationDropDownOption = [
   {key: 'Student', text: 'Student'}
 ];
   
-
   export default class QnAClassificationInput extends React.Component<any,any> {
 
-
-    state = {
+    public state = {
       selectedItemText: "",
       selectedItems: [],
       selectedItem: undefined
@@ -24,8 +22,7 @@ const classificationDropDownOption = [
     // console.log(this.props, "CLASSIFICATION INPUT")
       this.setState({
         selectedItem: this.props.value
-      
-      })
+      });
     }
 
 
@@ -36,14 +33,11 @@ const classificationDropDownOption = [
         selectedItemText: item.key
       });
       this.props.onChange(item.key);
-    };
+    }
   
-
-    render() {
-   
+    public render() {
       const { selectedItem } = this.state;
 
-     //console.log(selectedItem);
       return (
      <div>
        { selectedItem && 
@@ -53,13 +47,10 @@ const classificationDropDownOption = [
             required={true}
             ariaLabel="Select Classification"
             options={classificationDropDownOption}
-            //selectedKeys={selectedItem ? selectedItem.key : undefined}
            selectedKey={selectedItem ? selectedItem.key : undefined}
-          // defaultSelectedKey={selectedItem ? selectedItem.key : undefined}
             onChanged={this.changeState}
           />
         }
-          
       </div>
       );
     }

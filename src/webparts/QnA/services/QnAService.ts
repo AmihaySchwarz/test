@@ -195,7 +195,7 @@ export class QnAService extends BaseService implements IQnAService {
            return sp.web.lists.getByTitle(qnaListTrackingListName).items
             .filter("LockedById eq '" + result.data.LockedById + "'")
             .select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
-            .expand('LockedBy').get().then(res => {return res});
+            .expand('LockedBy').get().then(res => {return res;});
         });
        // return res;
     }
@@ -258,7 +258,7 @@ export class QnAService extends BaseService implements IQnAService {
             (error: any) => {
                 console.error(error);
             }
-        )
+        );
       
         // return this.context.aadHttpClientFactory
         // .getClient(clientId)
@@ -362,7 +362,8 @@ export class QnAService extends BaseService implements IQnAService {
                 console.error(error);
             }
         );
-    };
+    }
+
     public publishQnAMakerItem(endpoint: string, kbid: string): Promise<any> {
         //NEED TO GET THE kbid, important parameter
         // foreach?
