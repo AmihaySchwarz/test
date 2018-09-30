@@ -16,7 +16,17 @@
 //     position: absolute;
 //   }
  }
- 
+
+ .actionButtons {
+   float: right;
+ }
+
+ .addQnABtn{
+   float: right;
+ }
+ .divisionLabel {
+  margin-right: 5px;
+ }
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -24,6 +34,7 @@
   }
   .controlMenu {
     padding: 10px;
+    display: inline-flex;
   }
 
   .row {

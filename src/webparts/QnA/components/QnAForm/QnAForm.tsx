@@ -5,7 +5,7 @@ import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
 import { ViewType } from "../../../common/enum";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { Pagination } from "./Pagination";
+import { Pagination } from "../Pagination/Pagination";
 import { DefaultButton } from "office-ui-fabric-react/lib/Button";
 import {
   Dropdown,
@@ -30,7 +30,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       selectedDivisionText: "",
       selectedDivisionListName: "",
       qnaItems: [],
-      isDataLoaded: false,
+      isLoading: false,
       filtered: [],
       filterAll: "",
       formView: ViewType.Display,
@@ -94,7 +94,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         divisionListName,
         this.props.properties.webUrl
       ),
-      isDataLoaded: true
+      isLoading: false
     });
   }
 
@@ -104,7 +104,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         this.props.properties.endpointUrl, 
         division
       ),
-      isDataLoaded: true
+      isLoading: false
     });
   }
   public setDivisionDD = (item: IDropdownOption): void => {
@@ -166,7 +166,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public saveAndChangeToPublish(): void {
-    
+    this.setState({isLoading: true });
     console.log(this.state.qnaActionHistory, "modified items");
     const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
     const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
@@ -205,14 +205,15 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
          
             this.setState({
                 formView: ViewType.Publish,
-                selectedDivision: this.state.selectedDivision
+                selectedDivision: this.state.selectedDivision,
+                isLoading: false
               });
           })
     });
   }
 
   public changeToPublish(): void {
-    //LOCK LIST , check lock stat, lock , check last updated, 
+    this.setState({isLoading: true});
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,
@@ -247,7 +248,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               } else {
                 this.setState({
                   formView: ViewType.Publish,
-                  selectedDivision: this.state.selectedDivision
+                  selectedDivision: this.state.selectedDivision,
+                  isLoading: false
                 });
               }
             });
@@ -260,7 +262,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public publishQnA(): void {
     let formatItem;
-    this.setState({isDataLoaded: false });
+    this.setState({isLoading: true });
     const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
       console.log(currentItem);
       switch(currentItem.action){
@@ -400,7 +402,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               .then(res => {
                 this.setState({
                   formView: ViewType.Display,
-                  isDataLoaded: false 
+                  isLoading: false 
                 });
               })
           })
@@ -468,7 +470,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   private onSaveClick(): void {
-
+    this.setState({isLoading: true});
     console.log(this.state.qnaActionHistory, "modified items");
 
     //check if question, answer, and classifications are null, notify user
@@ -515,7 +517,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           .then(res => {
             this.setState({
                 formView: ViewType.Display,
-                selectedDivision: this.state.selectedDivision
+                selectedDivision: this.state.selectedDivision,
+                isLoading: false
               });
               toast.success("QnA Items Saved");
           })
@@ -727,8 +730,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         return (
           <div>
             <ToastContainer />
+            {this.state.isLoading && <LoadingSpinner />}
             <div className={styles.controlMenu}>
-              <span> Division: {this.state.selectedDivisionText} </span>
+              <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>
 
               <DefaultButton
                 text="Save"
@@ -796,6 +800,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             />
             <br />
             <DefaultButton
+              className={styles.addQnABtn}
               text="Add QnA Pair"
               primary={true}
               href="#"
@@ -865,6 +870,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         return (
           <div>
             <ToastContainer />
+            {this.state.isLoading && <LoadingSpinner />}
             <div className={styles.controlMenu}>
               <span> Division: </span>
 
@@ -877,17 +883,21 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                 }
                 onChanged={this.setDivisionDD}
               />
-              <DefaultButton
-                text="Edit"
-                primary={true}
-                onClick={this.changeToEdit}
-              />
-              <DefaultButton
-                text="Publish"
-                primary={true}
-                href="#"
-                onClick={this.changeToPublish}
-              />
+              <div className={styles.actionButtons}>
+                <DefaultButton
+                  text="Edit"
+                  primary={true}
+                  onClick={this.changeToEdit}
+                />
+                <DefaultButton
+                  text="Publish"
+                  primary={true}
+                  href="#"
+                  onClick={this.changeToPublish}
+                />
+
+              </div>
+              
             </div>
             <div>New Questions </div>
             Filter New Questions:{" "}
@@ -955,7 +965,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         return ( 
           <div>
             <ToastContainer />
-            {this.state.isLoading && <div className={styles.loading}>Processing...</div>}
+            {this.state.isLoading && <LoadingSpinner />}
             <div className={styles.controlMenu}>
               <span> Division: {this.state.selectedDivisionText} </span>
 

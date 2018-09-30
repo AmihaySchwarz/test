@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { IPaginationProps } from './IPaginationProps';
 import "react-table/react-table.css";
+import styles from "./Pagination.module.scss";
 
 const defaultButton = props => <button {...props}>{props.children}</button>;
 
@@ -64,7 +65,7 @@ public render() {
     const activePage = this.props.page + 1;
 
     return (
-      <div className="Table__pagination">
+      <div className={styles.TablePagination}>
         <div className="Table__prevPageWrapper">
           <PageButtonComponent
             className="Table__pageButton"

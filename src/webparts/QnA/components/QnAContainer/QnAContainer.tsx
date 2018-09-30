@@ -84,7 +84,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   public render() {
 
     if (!this.props.isConfigured) {
-        return <div> Kindly configure Webpart Properties! </div>
+        return <div> Kindly configure Webpart Properties! </div>;
     }
 
      return <div> {this.state.isLoading && <LoadingSpinner />} 

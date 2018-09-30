@@ -11,12 +11,6 @@ const components = {
   });
   
   export default class QuestionInput extends React.Component<any,any> {
-    //props 
-    // value
-    // onChange
-    componentDidMount(){
-     // console.log(this.props)
-    }
     state = {
       inputValue: '',
        value: [],
@@ -47,10 +41,6 @@ const components = {
           console.group('Value Added');
           console.log(value);
           console.groupEnd();
-          // this.setState({
-          //   inputValue: '',
-          //   value: [...value, createOption(inputValue)],
-          // });
           this.setState({
             inputValue: '',
             //value: [...value, createOption(inputValue)]
