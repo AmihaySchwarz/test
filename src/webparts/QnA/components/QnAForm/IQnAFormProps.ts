@@ -11,7 +11,6 @@ export interface IQnAFormProps {
     //endpoints?: any;
     actionHandler?: QnAActionHandler;
     newQuestions?: INewQuestions[];
-    changeView?: Function;
     masterItems?: any[];
     //editItemIndex?: string;
     editItem?: any;

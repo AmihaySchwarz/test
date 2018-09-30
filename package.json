@@ -33,6 +33,7 @@
     "react-moment": "^0.8.1",
     "react-select": "^2.0.0",
     "react-table": "^6.8.6",
+    "react-toastify": "^4.3.2",
     "react-tooltip": "^3.8.4",
     "reactjs-popup": "^1.2.0",
     "typescript": "^3.0.3"

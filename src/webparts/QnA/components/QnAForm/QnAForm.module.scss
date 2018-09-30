@@ -1,6 +1,22 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
-
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+//   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+//     /* IE10+ CSS styles go here */
+//     position: absolute;
+//   }
+ }
+ 
   .container {
     max-width: 700px;
     margin: 0px auto;

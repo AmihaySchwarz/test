@@ -65,7 +65,8 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
           endpointUrl: this.properties.endpointUrl,
           qnATrackingListName: this.properties.qnATrackingListName, 
           webUrl: this.properties.webUrl,
-          qnAMakerKnowledgeBaseId: this.properties.QnAMakerKnowledgeBaseId
+          qnAMakerKnowledgeBaseId: this.properties.QnAMakerKnowledgeBaseId,
+          isConfigured: this.needsConfiguration()
           //edirectUrl: this.properties.redirectUrl
         //}],
         //authContextOptions: this.getAuthContextOptions(),
@@ -153,9 +154,10 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
 
   private needsConfiguration(): boolean {
     console.log("needscionfig");
-    let config =  !!this.properties.clientId &&
-        //!!this.properties.qnAEndpointUrl &&
-        !!this.properties.redirectUrl &&
+    let config =  !!this.properties.qnATrackingListName &&
+        !!this.properties.webUrl &&
+        !!this.properties.masterListName &&
+        !!this.properties.QnAMakerKnowledgeBaseId &&
         !!this.properties.endpointUrl;
 
         return config;

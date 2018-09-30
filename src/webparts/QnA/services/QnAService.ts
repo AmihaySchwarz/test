@@ -114,15 +114,15 @@ export class QnAService extends BaseService implements IQnAService {
         let res; 
         qnaListItems.forEach(qnaListItem => {   
              sp.web.lists.getByTitle(qnaListName).items.getById(qnaListItem.Id)
-                .delete().then(res => {
-                    console.log(res);
-                    res =  res;
+                .delete().then(resp => {
+                    console.log(resp);
+                    res =  resp;
                 }).catch(error => {
                     console.log(error);
                     res = error;
                 });
         });
-        return res
+        return res;
     }
     
     public updateQnAListTracking(qnaListTrackingListName: string,division: string, action: string): Promise<any>{
@@ -190,12 +190,12 @@ export class QnAService extends BaseService implements IQnAService {
             LockedById: currentUser.Id,
             //LockedReleaseTime: d.toLocaleTimeString()
         }).then((result: ItemAddResult) => {
-            console.log(result.item);
+            //console.log(result.item);
            //return result.item;
            return sp.web.lists.getByTitle(qnaListTrackingListName).items
-           .filter("LockedById eq '" + result.data.LockedById + "'")
-           .select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
-           .expand('LockedBy').get().then(res => {return res});
+            .filter("LockedById eq '" + result.data.LockedById + "'")
+            .select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
+            .expand('LockedBy').get().then(res => {return res});
         });
        // return res;
     }
@@ -234,7 +234,7 @@ export class QnAService extends BaseService implements IQnAService {
             console.log(result);
             return result;
         });
-    };
+    }
 
     public getNewQuestions(endpoint: string, division: string):Promise<any>{ //tenant: string, clientId: string, 
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions
@@ -258,7 +258,7 @@ export class QnAService extends BaseService implements IQnAService {
             (error: any) => {
                 console.error(error);
             }
-        );
+        )
       
         // return this.context.aadHttpClientFactory
         // .getClient(clientId)
@@ -302,7 +302,7 @@ export class QnAService extends BaseService implements IQnAService {
                 console.error(error);
             }
         );
-    };
+    }
 
     public resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/question

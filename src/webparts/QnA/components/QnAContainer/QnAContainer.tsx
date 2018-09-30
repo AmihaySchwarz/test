@@ -40,7 +40,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   public async componentDidMount() : Promise<void>
   {
-    console.log("componentdsd did mount")
+    console.log("componentdsd did mount");
    this.loadData();
   }
 
@@ -82,8 +82,14 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   }
 
   public render() {
-    {this.state.isLoading && <LoadingSpinner />}
-     return <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
-  changeView={this.changeView} actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser} defaultDivision={this.state.masterItems[0]}/> ;
-  }
+
+    if (!this.props.isConfigured) {
+        return <div> Kindly configure Webpart Properties! </div>
+    }
+
+     return <div> {this.state.isLoading && <LoadingSpinner />} 
+       <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
+        actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser} defaultDivision={this.state.masterItems[0]}/>
+     </div> ;
+    }
 }

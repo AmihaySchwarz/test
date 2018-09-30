@@ -12,6 +12,7 @@ export interface IQnAContainerProps {
   qnATrackingListName:string;
   webUrl: string;
   qnAMakerKnowledgeBaseId: string;
+  isConfigured: boolean;
   //clientId: any;
   //tenant: any;
   //authContextOptions: AuthenticationContext.Options;

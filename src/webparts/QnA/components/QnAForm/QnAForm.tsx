@@ -3,37 +3,28 @@ import styles from "./QnAForm.module.scss";
 import { IQnAFormProps, IQnAFormState } from "./IQnAFormProps";
 import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
 import { ViewType } from "../../../common/enum";
-import { escape } from "@microsoft/sp-lodash-subset";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "./Pagination";
-import { Fabric } from "office-ui-fabric-react/lib/Fabric";
 import { DefaultButton } from "office-ui-fabric-react/lib/Button";
 import {
   Dropdown,
-  IDropdown,
-  DropdownMenuItemType,
   IDropdownOption
 } from "office-ui-fabric-react/lib/Dropdown";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
-import { QnAActionHandler } from "../QnAContainer/QnAActionHandler";
-import { INewQuestions } from "../../models/INewQuestions";
-import { ThemeSettingName } from "@uifabric/styling/lib";
-import CreatableSelect from "react-select/lib/Creatable";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import ReactTooltip from "react-tooltip";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
 import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationInput";
 import Moment from "react-moment";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   constructor(props) {
     super(props);
     console.log(props);
     this.state = {
-      // question: [],
-      // answers: "",
-      // classification: "",
       division: [],
       selectedDivision: undefined,
       selectedDivisionText: "",
@@ -42,11 +33,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       isDataLoaded: false,
       filtered: [],
       filterAll: "",
-      // isEdit: false,
-      // isPublish: false,
       formView: ViewType.Display,
       newQuestions: [],
-      //newQuestion: undefined,
       inputValue: "",
       listTrackingItem: undefined,
       currentUser: props.currentUser,
@@ -57,7 +45,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.filterAll = this.filterAll.bind(this);
     this.changeToEdit = this.changeToEdit.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
-    // this.renderEditable = this.renderEditable.bind(this);
     this.addNewQuestionToQnAList = this.addNewQuestionToQnAList.bind(this);
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.publishQnA = this.publishQnA.bind(this);
@@ -65,17 +52,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.changeToPublish = this.changeToPublish.bind(this);
   }
 
-  public componentDidMount() {
-    // console.log("component did mount in form!");
-  }
   public componentWillReceiveProps(newProps): void {
-    // console.log(newProps, "in recevied props");
-
     if (
       newProps.masterItems.length !== 0 &&
       newProps.newQuestions.length !== 0
     ) {
-      // console.log(newProps.defaultDivision)
       this.setState({
         qnaItems: newProps.qnaItems,
         newQuestions: newProps.newQuestions,
@@ -152,7 +133,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         this.setState({
           listTrackingItem: items[0]
         });
-        // console.log(this.state.listTrackingItem);
         let currentUserEmail = this.state.currentUser.Email;
         if (
           this.state.listTrackingItem.LockedBy !== undefined &&
@@ -160,6 +140,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         ) {
           //show notification and refresh data
           // console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
         } else {
           this.props.actionHandler
             .lockList(
@@ -172,6 +153,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               if (res.data == undefined) {
                 //alert user if lock fail then refresh data
                 //console.log("failed to lock the item");
+                toast.error("Failed to lock item");
               } else {
                 // console.log(this.state.selectedDivision);
                 this.setState({
@@ -249,6 +231,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         ) {
           //show notification and refresh data
           // console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
+          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
         } else {
           this.props.actionHandler
             .lockList(
@@ -260,7 +243,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               //console.log(res);
               if (res.data == undefined) {
                 //alert user if lock fail then refresh data
-                //console.log("failed to lock the item");
+                toast.error("Failed to lock item");
               } else {
                 this.setState({
                   formView: ViewType.Publish,
@@ -487,6 +470,13 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   private onSaveClick(): void {
 
     console.log(this.state.qnaActionHistory, "modified items");
+
+    //check if question, answer, and classifications are null, notify user
+
+
+
+
+
     const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
     const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
     const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
@@ -527,6 +517,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                 formView: ViewType.Display,
                 selectedDivision: this.state.selectedDivision
               });
+              toast.success("QnA Items Saved");
           })
     });
   }
@@ -735,6 +726,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       case ViewType.Edit:
         return (
           <div>
+            <ToastContainer />
             <div className={styles.controlMenu}>
               <span> Division: {this.state.selectedDivisionText} </span>
 
@@ -872,6 +864,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       case ViewType.Display:
         return (
           <div>
+            <ToastContainer />
             <div className={styles.controlMenu}>
               <span> Division: </span>
 
@@ -958,9 +951,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>
         );
       case ViewType.Publish:
-      {this.state.isLoading && <LoadingSpinner />}
+     
         return ( 
           <div>
+            <ToastContainer />
+            {this.state.isLoading && <div className={styles.loading}>Processing...</div>}
             <div className={styles.controlMenu}>
               <span> Division: {this.state.selectedDivisionText} </span>
 
