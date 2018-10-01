@@ -763,16 +763,16 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               />
             </div>
             <div>New Questions </div>
-            <span> Filter New Questions: </span>
-            <input value={this.state.filterAll} onChange={this.filterAll} />
+            {/* <span> Filter New Questions: </span>
+            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <ReactTable
               PaginationComponent={Pagination}
               data={this.state.newQuestions}
-              filtered={this.state.filtered}
               defaultPageSize={10}
               className="-striped -highlight"
-              onFilteredChange={this.onFilteredChange.bind(this)}
-              filterable
+              // filtered={this.state.filtered}
+              // onFilteredChange={this.onFilteredChange.bind(this)}
+              // filterable
               columns={[
                 {
                   columns: [
@@ -823,11 +823,14 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               onClick={this.addNewQnaToTable}
             />
             <div> QnA </div>
-            Filter QnA:
-            <input value={this.state.filterAll} onChange={this.filterAll} />
+            {/* Filter QnA:
+            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <ReactTable
               data={this.state.qnaItems}
               PaginationComponent={Pagination}
+              // filtered={this.state.filtered}
+              // onFilteredChange={this.onFilteredChange.bind(this)}
+              // filterable
               columns={[
                 {
                   columns: [
@@ -916,12 +919,15 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               
             </div>
             <div>New Questions </div>
-            Filter New Questions:{" "}
-            <input value={this.state.filterAll} onChange={this.filterAll} />
+            {/* Filter New Questions:
+            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <ReactTable
               PaginationComponent={Pagination}
               data={this.state.newQuestions}
-              //resolveData={this.state.newQuestions => this.state.newQuestions.map(row => row)}
+              // filtered={this.state.filtered}
+              // onFilteredChange={this.onFilteredChange.bind(this)}
+              // filterable
+      
               columns={[
                 {
                   columns: [
@@ -946,11 +952,14 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             />
             <br />
             <div> QnA </div>
-            Filter QnA:{" "}
-            <input value={this.state.filterAll} onChange={this.filterAll} />
+            {/* Filter QnA:
+            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <ReactTable
               data={this.state.qnaItems}
               PaginationComponent={Pagination}
+              // filtered={this.state.filtered}
+              // onFilteredChange={this.onFilteredChange.bind(this)}
+              // filterable
               columns={[
                 {
                   columns: [

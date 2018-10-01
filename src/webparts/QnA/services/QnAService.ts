@@ -50,7 +50,7 @@ export class QnAService extends BaseService implements IQnAService {
                             </Query>
                         </View>`
         }).then((userDivision) => {
-            console.log(userDivision.Row);
+            //console.log(userDivision.Row);
             return userDivision.Row;
         });
     }
@@ -58,7 +58,7 @@ export class QnAService extends BaseService implements IQnAService {
     public getQnAItems(divisionListName: string): Promise<any> {
        // console.log(divisionListName, "master list item");
         return sp.web.lists.getByTitle(divisionListName).items.select("ID", "Questions", "Answer", "Classification", "QnAID").getAll().then((items: any[]) => {
-            console.log(items);
+           // console.log(items);
             return items;
         });
     }
@@ -77,10 +77,11 @@ export class QnAService extends BaseService implements IQnAService {
                 Classification: item.Classification,
                 QnAID: item.QnAID
             }).then(i => {
-                console.log(i);
-
+               // console.log(i);
+                res = i;
             }).catch(error => {
-                console.log(error);
+               // console.log(error);
+               res = error;
             });         
         });
 
@@ -98,10 +99,10 @@ export class QnAService extends BaseService implements IQnAService {
             Classification: qnaListItem.Classification,
             QnAID: qnaListItem.QnAID
         }).then((result: ItemAddResult) => {
-            console.log(result);
+           // console.log(result);
             return result;
         }).catch(error => {
-            console.log(error);
+           // console.log(error);
             return error;
         });
         //});
@@ -115,10 +116,10 @@ export class QnAService extends BaseService implements IQnAService {
         qnaListItems.forEach(qnaListItem => {   
              sp.web.lists.getByTitle(qnaListName).items.getById(qnaListItem.Id)
                 .delete().then(resp => {
-                    console.log(resp);
+                  //  console.log(resp);
                     res =  resp;
                 }).catch(error => {
-                    console.log(error);
+                  //  console.log(error);
                     res = error;
                 });
         });
@@ -139,7 +140,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LastUpdated: d.toLocaleDateString(),
                         LastPublished: null
                     }).then(result => {
-                        console.log(result);
+                      //  console.log(result);
                         return result;
                     });
                 } else if (action === "publish"){
@@ -150,7 +151,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LastUpdated: d.toLocaleDateString(),
                         LastPublished: d.toLocaleDateString(),
                     }).then(result => {
-                        console.log(result);
+                      //  console.log(result);
                         return result;
                     });
                 }
@@ -210,10 +211,10 @@ export class QnAService extends BaseService implements IQnAService {
                     LockedById: currentUser.Id,
                     LastUpdated: d.toLocaleDateString()
                 }).then(result => {
-                    console.log(result);
+                  //  console.log(result);
                     return result;
                 }).catch(error => {
-                    console.log();
+                  //  console.log();
                     return error;
                 });
             }
@@ -231,7 +232,7 @@ export class QnAService extends BaseService implements IQnAService {
             Classification: undefined,
             QnAID: 0
         }).then((result: ItemAddResult) => {
-            console.log(result);
+           // console.log(result);
             return result;
         });
     }
@@ -252,11 +253,11 @@ export class QnAService extends BaseService implements IQnAService {
                 console.error(response.statusText);
             }
         }).then((json: any): any[] => {
-            console.log(json);
+           // console.log(json);
             return json;
         },
             (error: any) => {
-                console.error(error);
+          //      console.error(error);
             }
         );
       
