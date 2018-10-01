@@ -19,6 +19,7 @@ import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationI
 import Moment from "react-moment";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import * as _ from "lodash";
 
 export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   constructor(props) {
@@ -457,7 +458,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     console.log("add inline form");
 
     let newQnA = {
-      //Questions: '[{"label":"","value":""}]',
       Questions: '[]',
       Answer: "",
       Classification: "",
@@ -493,46 +493,51 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
 
     console.log(addItems, modifyItems, deleteItems);
-//loop additems, use lodash .some, if may nag true dont save
-    
 
-
-    const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
-    const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
+    let isClassificationNull = _.some(addItems, ['Classification', ""]);
+    let isAnswerNull = _.some(addItems, ['Answer', ""]);
+    let isQuestionNull = _.includes(addItems, 'newQnA')  || _.some(addItems, ['Questions', '[]']);
+    if(isQuestionNull || isAnswerNull || isClassificationNull){
+      toast.error("One or more items have empty value");
+      this.setState({
+        isLoading: false
+      })
+    } else {
+      const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
+      const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
     
-    addItems.forEach(additem => {
-      this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
-          //update id in qnaHistory
-          console.log(result.data.Id);
-          const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-          let qnaActionHistory = [...this.state.qnaActionHistory];
-          let item = {
-            ...qnaActionHistory[historyIndex],
-            qnaItem:{
-             ...qnaActionHistory[historyIndex].qnaItem,
-             Id: result.data.Id
-            } 
-          };
-          console.log(item);
-          qnaActionHistory[historyIndex] = item;
-          this.setState({ qnaActionHistory });
+      addItems.forEach(additem => {
+        this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
+            //update id in qnaHistory
+            console.log(result.data.Id);
+            const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+            let qnaActionHistory = [...this.state.qnaActionHistory];
+            let item = {
+              ...qnaActionHistory[historyIndex],
+              qnaItem:{
+              ...qnaActionHistory[historyIndex].qnaItem,
+              Id: result.data.Id
+              } 
+            };
+            console.log(item);
+            qnaActionHistory[historyIndex] = item;
+            this.setState({ qnaActionHistory });
+        });
       });
-    });
-    
-
-    Promise.all([updatetoList, deletefromlist]).then(res => {
-      this.props.actionHandler.updateQnAListTracking(
-        this.props.properties.qnATrackingListName, 
-        this.state.selectedDivisionText, "save")
-          .then(result => {
-            this.setState({
-                formView: ViewType.Display,
-                selectedDivision: this.state.selectedDivision,
-                isLoading: false
-              });
-              toast.success("QnA Items Saved");
-          });
-    });
+      Promise.all([updatetoList, deletefromlist]).then(res => {
+        this.props.actionHandler.updateQnAListTracking(
+          this.props.properties.qnATrackingListName, 
+          this.state.selectedDivisionText, "save")
+            .then(result => {
+              this.setState({
+                  formView: ViewType.Display,
+                  selectedDivision: this.state.selectedDivision,
+                  isLoading: false
+                });
+                toast.success("QnA Items Saved");
+            });
+      });
+    }
   }
 
   public deleteQnA(item: any): void {
@@ -763,11 +768,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             <ReactTable
               PaginationComponent={Pagination}
               data={this.state.newQuestions}
-              //filtered={this.state.filtered}
+              filtered={this.state.filtered}
               defaultPageSize={10}
               className="-striped -highlight"
-              //onFilteredChange={this.onFilteredChange.bind(this)}
-              //filterable
+              onFilteredChange={this.onFilteredChange.bind(this)}
+              filterable
               columns={[
                 {
                   columns: [
