@@ -43,11 +43,13 @@ export interface IQnAFormState {
     currentUser: any;
     qnaActionHistory: any[];
     qnaOriginalCopy: IQnAListItem[];
+    searchNewq: string;
+    searchQnA: string;
 }
 
 export interface INewQuestionsFormState {
     Questions: string [];
     PostedDate: Date;
     PostedBy: string;
-   
+    
 }

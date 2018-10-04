@@ -40,7 +40,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       listTrackingItem: undefined,
       currentUser: props.currentUser,
       qnaActionHistory: [],
-      qnaOriginalCopy: []
+      qnaOriginalCopy: [],
+      searchNewq: "",
+      searchQnA: ""
     };
 
     this.filterAll = this.filterAll.bind(this);
@@ -738,11 +740,29 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public render() {
     const { selectedDivision } = this.state;
-
+    let newQuestions = this.state.newQuestions; 
+    let QnACpy = this.state.qnaItems;
     // console.log("new row added", this.state.qnaItems);
     // console.log("aciton history", this.state.qnaActionHistory);
     switch (this.state.formView) {
       case ViewType.Edit:
+
+
+      
+      if (this.state.searchQnA) {
+        QnACpy = QnACpy.filter(row => {
+          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA)
+        })
+      }
+
+
+        if (this.state.searchNewq) {
+          newQuestions = newQuestions.filter(row => {
+            return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq)
+          })
+        }
+
+
         return (
           <div>
             <ToastContainer />
@@ -752,7 +772,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                 <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>
               </div>
               <div className={styles.actionButtons}>
-                <DefaultButton
+                <DefaultButton 
                   text="Save"
                   primary={true}
                   onClick={this.onSaveClick}
@@ -766,13 +786,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               </div>
             </div>
             
-            {/* <span> Filter New Questions: </span>
-            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <div className={styles.tableCont}>
               <div>New Questions </div>
+              <div className={styles.searchCont}> 
+                <span>Search: </span>
+                <input 
+									value={this.state.searchNewq}
+									onChange={e => this.setState({searchNewq: e.target.value})}
+								/>
+              </div>
               <ReactTable
                 PaginationComponent={Pagination}
-                data={this.state.newQuestions}
+                data={newQuestions} //this.state.newQuestions
                 defaultPageSize={10}
                 className="-striped -highlight"
                 // filtered={this.state.filtered}
@@ -831,16 +856,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             />
             </div>
             
-            {/* Filter QnA:
-            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <div className={styles.tableCont}>
               <div> QnA </div>
+              <div className={styles.searchCont}> 
+                <span>Search: </span>
+                <input 
+									value={this.state.searchQnA}
+									onChange={e => this.setState({searchQnA: e.target.value})}
+								/>
+              </div>
               <ReactTable
-                data={this.state.qnaItems}
+                data={QnACpy} //this.state.qnaItems
                 PaginationComponent={Pagination}
-                // filtered={this.state.filtered}
-                // onFilteredChange={this.onFilteredChange.bind(this)}
-                // filterable
                 columns={[
                   {
                     columns: [
@@ -880,7 +907,6 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
                               type="light"
                               effect="solid"
                             >
-                            {/* <div>{row.row._original.Id}</div> */}
                               <QnAPreviewPanel qnaItem={row} />
                             </ReactTooltip>
                           </div>
@@ -896,6 +922,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>
         );
       case ViewType.Display:
+
+      if (this.state.searchQnA) {
+        QnACpy = QnACpy.filter(row => {
+          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA)
+        })
+      }
+
+      if (this.state.searchNewq) {
+        newQuestions = newQuestions.filter(row => {
+          return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq)
+        })
+      }
         return (
           <div>
             <ToastContainer />
@@ -932,17 +970,18 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
               
             </div>
             
-            {/* Filter New Questions:
-            <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <div className={styles.tableCont}>
               <div>New Questions </div>
+              <div className={styles.searchCont}> 
+                <span>Search: </span>
+                <input 
+									value={this.state.searchNewq}
+									onChange={e => this.setState({searchNewq: e.target.value})}
+								/>
+              </div>
               <ReactTable
                 PaginationComponent={Pagination}
-                data={this.state.newQuestions}
-                // filtered={this.state.filtered}
-                // onFilteredChange={this.onFilteredChange.bind(this)}
-                // filterable
-        
+                data={newQuestions} //this.state.newQuestions
                 columns={[
                   {
                     columns: [
@@ -972,8 +1011,15 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             <input value={this.state.filterAll} onChange={this.filterAll} /> */}
             <div className={styles.tableCont}>
               <div> QnA </div>
+              <div className={styles.searchCont}> 
+                <span>Search: </span>
+                <input 
+									value={this.state.searchQnA}
+									onChange={e => this.setState({searchQnA: e.target.value})}
+								/>
+              </div>
               <ReactTable
-                data={this.state.qnaItems}
+                data={QnACpy} //this.state.qnaItems
                 PaginationComponent={Pagination}
                 // filtered={this.state.filtered}
                 // onFilteredChange={this.onFilteredChange.bind(this)}

@@ -4,7 +4,7 @@ export interface INewQuestions {
     Question: string;
     RowKey: string;
     PostedDate: Date;
-    PostedBy: any[];
+    PostedBy: any;
     Contact: any[];
 }
 
