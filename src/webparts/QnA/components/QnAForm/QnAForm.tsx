@@ -123,6 +123,14 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
+  public onPublishClick(selectedDivision: any[]){
+    //after publish then display
+    this.setState({
+      formView: ViewType.Display,
+      selectedDivision: selectedDivision
+    });
+  }
+
   public render() {
 
     switch (this.state.formView){
@@ -162,6 +170,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             currentUser={this.state.currentUser} 
             defaultDivision={this.props.masterItems[0]}
             qnaActionHistory={this.state.qnaActionHistory}
+            onPublishClick={this.onPublishClick}
           />
           </div>;
     }

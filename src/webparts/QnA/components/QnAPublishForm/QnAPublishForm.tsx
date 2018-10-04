@@ -219,6 +219,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                   isLoading: false,
                   qnaActionHistory: []
                 });
+                this.props.onPublishClick(this.state.selectedDivision);
               });
           });
         }); 

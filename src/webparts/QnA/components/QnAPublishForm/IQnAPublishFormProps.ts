@@ -18,6 +18,7 @@ export interface IQnAPublishFormProps {
     currentUser: any;
     defaultDivision: any;
     qnaActionHistory: any[];
+    onPublishClick: Function;
 }
 
 export interface IQnAPublishFormState {
