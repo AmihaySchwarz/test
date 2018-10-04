@@ -28,7 +28,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
         masterItems: [],
         currentUser: undefined
     };
-    this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.loadData = this.loadData.bind(this);
 
@@ -77,9 +76,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
       isLoading: false,
     });
   }
-  private changeView(view: ViewType): void {
-    this.setState({ view });
-  }
+
 
   public render() {
 
@@ -91,5 +88,5 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
        <QnAForm newQuestions={this.state.newQuestions} masterItems={this.state.masterItems}
         actionHandler={this.actionHandler} properties={this.props} currentUser={this.state.currentUser} defaultDivision={this.state.masterItems[0]}/>
      </div> ;
-    }
+  }
 }
