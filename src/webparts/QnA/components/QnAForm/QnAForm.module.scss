@@ -17,15 +17,35 @@
 //   }
  }
 
+ .dropdownCont {
+   flex: 1;
+ }
+ 
  .actionButtons {
-   float: right;
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
  }
 
+ .addbtnCont{
+    display: flex;
+    flex:1;
+  }
+
  .addQnABtn{
-   float: right;
+  display: flex;
+  justify-content: flex-end;
+  //flex: 1;
  }
+ 
+ .tableCont {
+   padding: 10px;
+ }
+
+
  .divisionLabel {
-  margin-right: 5px;
+    margin-right: 5px;
+    font-size:20px
  }
   .container {
     max-width: 700px;
