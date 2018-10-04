@@ -19,6 +19,7 @@ export interface IQnAPublishFormProps {
     defaultDivision: any;
     qnaActionHistory: any[];
     onPublishClick: Function;
+    qnaOriginalCopy: IQnAListItem[]
 }
 
 export interface IQnAPublishFormState {

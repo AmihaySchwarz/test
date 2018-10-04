@@ -20,6 +20,7 @@ export interface IQnADisplayFormProps {
     qnaActionHistory: any[];
     onEditClick: Function;
     onPublishClick : Function;
+    qnaOriginalCopy;
 }
 
 export interface IQnADisplayFormState {

@@ -138,7 +138,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LockedById: null,
                         LockedReleaseTime: d.toLocaleTimeString(),
                         LastUpdated: d.toLocaleDateString(),
-                        LastPublished: null
+                        //LastPublished: null
                     }).then(result => {
                       //  console.log(result);
                         return result;
@@ -187,7 +187,7 @@ export class QnAService extends BaseService implements IQnAService {
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
             LastUpdated: d.toLocaleDateString(),
-            LastPublished: null,
+            //LastPublished: null,
             LockedById: currentUser.Id,
             //LockedReleaseTime: d.toLocaleTimeString()
         }).then((result: ItemAddResult) => {
