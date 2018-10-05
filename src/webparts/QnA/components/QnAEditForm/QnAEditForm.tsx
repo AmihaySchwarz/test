@@ -64,7 +64,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         selectedDivision: newProps.defaultDivision,
         selectedDivisionText: newProps.defaultDivision.text,
         selectedDivisionListName: newProps.defaultDivision.key,
-        qnaOriginalCopy: newProps.qnaOriginalCopy
+        qnaOriginalCopy: newProps.qnaOriginalCopy,
+        qnaActionHistory: newProps.qnaActionHistory
       });
 
       this.loadQnAListData(newProps.defaultDivision.key);
@@ -85,7 +86,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           selectedDivision: this.props.defaultDivision,
           selectedDivisionText: this.props.defaultDivision.text,
           selectedDivisionListName: this.props.defaultDivision.key,
-          qnaOriginalCopy: this.props.qnaOriginalCopy
+          qnaOriginalCopy: this.props.qnaOriginalCopy,
+          qnaActionHistory: this.props.qnaActionHistory
         });
   
         this.loadQnAListData(this.props.defaultDivision.key);
@@ -164,7 +166,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       Promise.all(promises).then(res => {
         this.props.actionHandler.updateQnAListTracking(
           this.props.properties.qnATrackingListName, 
-          this.state.selectedDivisionText, "save")
+          this.state.selectedDivisionText, 
+          this.state.qnaActionHistory,
+          this.state.qnaOriginalCopy,
+          "save")
             .then(resp => { 
               this.setState({
                   formView: ViewType.Publish,
@@ -174,6 +179,80 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                 this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
             });
       });
+    }
+  }
+
+  private onSaveClick(): void {
+    this.setState({isLoading: true});
+    console.log(this.state.qnaActionHistory, "modified items");
+
+    try {
+      //check if question, answer, and classifications are null, notify user
+      const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
+      const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
+      const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
+
+      //console.log(addItems, modifyItems, deleteItems);
+      const newItem = addItems.find(a => a.newQnA);
+      let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
+      let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
+      let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
+
+
+      if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
+        toast.error("One or more items have empty value");
+        this.setState({
+          isLoading: false
+        })
+      } else {
+
+
+        let promises = [
+          this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems),
+          this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems)
+        ];
+
+        addItems.forEach(additem => {
+          promises.push(
+            this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
+            .then(result => { 
+                console.log(result.data.Id);
+                const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                let qnaActionHistory = [...this.state.qnaActionHistory];
+                let item = {
+                  ...qnaActionHistory[historyIndex],
+                  qnaItem:{
+                  ...qnaActionHistory[historyIndex].qnaItem,
+                  Id: result.data.Id
+                  } 
+                };
+                qnaActionHistory[historyIndex] = item;
+                this.setState({ qnaActionHistory });
+            }));
+        });
+
+        Promise.all(promises).then(() => {
+          this.props.actionHandler.updateQnAListTracking(
+            this.props.properties.qnATrackingListName, 
+            this.state.selectedDivisionText, 
+            this.state.qnaActionHistory,
+            this.state.qnaOriginalCopy,
+            "save")
+              .then(() => {
+                toast.success("QnA Items Saved");
+                this.setState({
+                    formView: ViewType.Display,
+                    selectedDivision: this.state.selectedDivision,
+                    isLoading: false
+                  });
+                  //toast.success("QnA Items Saved");
+                  //console.log(this.state.qnaActionHistory), "acxtion history";
+                  this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
+              });
+        });
+      }
+    } catch (err) {
+      this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "error");
     }
   }
 
@@ -266,97 +345,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     }));
   }
 
-  private onSaveClick(): void {
-    this.setState({isLoading: true});
-    console.log(this.state.qnaActionHistory, "modified items");
-
-    try {
-      //check if question, answer, and classifications are null, notify user
-      const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
-      const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
-      const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
-
-      //console.log(addItems, modifyItems, deleteItems);
-      const newItem = addItems.find(a => a.newQnA);
-      let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
-      let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
-      let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
-
-
-      if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
-        toast.error("One or more items have empty value");
-        this.setState({
-          isLoading: false
-        })
-      } else {
-
-
-        let promises = [
-          this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems),
-          this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems)
-        ];
-
-        addItems.forEach(additem => {
-          promises.push(
-            this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
-            .then(result => { 
-                console.log(result.data.Id);
-                const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-                let qnaActionHistory = [...this.state.qnaActionHistory];
-                let item = {
-                  ...qnaActionHistory[historyIndex],
-                  qnaItem:{
-                  ...qnaActionHistory[historyIndex].qnaItem,
-                  Id: result.data.Id
-                  } 
-                };
-                qnaActionHistory[historyIndex] = item;
-                this.setState({ qnaActionHistory });
-            }));
-        });
-
-        Promise.all(promises).then(() => {
-          this.props.actionHandler.updateQnAListTracking(
-            this.props.properties.qnATrackingListName, 
-            this.state.selectedDivisionText, "save")
-              .then(() => {
-                toast.success("QnA Items Saved");
-                this.setState({
-                    formView: ViewType.Display,
-                    selectedDivision: this.state.selectedDivision,
-                    isLoading: false
-                  });
-                  //toast.success("QnA Items Saved");
-                  //console.log(this.state.qnaActionHistory), "acxtion history";
-                  this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
-              });
-        });
-      }
-    } catch (err) {
-      this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "error");
-    }
-      // const updatetoList = this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems);
-      // const deletefromlist = this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems);
-    
-      // addItems.forEach(additem => {
-      //   this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
-      //       //update id in qnaHistory
-      //       console.log(result.data.Id);
-      //       const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-      //       let qnaActionHistory = [...this.state.qnaActionHistory];
-      //       let item = {
-      //         ...qnaActionHistory[historyIndex],
-      //         qnaItem:{
-      //         ...qnaActionHistory[historyIndex].qnaItem,
-      //         Id: result.data.Id
-      //         } 
-      //       };
-      //       console.log(item);
-      //       qnaActionHistory[historyIndex] = item;
-      //       this.setState({ qnaActionHistory });
-      //   });
-      // });
-  }
+  
 
   public deleteQnA(item: any): void {
     if (item.row._original.Id !== null){
@@ -423,7 +412,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
 
-     // console.log(this.state.qnaActionHistory, "actionhistory");
+      console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
      historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
 
@@ -433,7 +422,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         qnaItem: { ...item },
         action: "update"
       };
-      //console.log(this.state.qnaActionHistory, "actionhistory");
+     
       //check if item exist in action history
       historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
 

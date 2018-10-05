@@ -21,6 +21,7 @@ export interface IQnAEditFormProps {
     onSaveClick: Function;
     onSavePublishClick: Function;
     qnaOriginalCopy: IQnAListItem[];
+    qnaActionHistory: any[];
 }
 
 export interface IQnAEditFormState {

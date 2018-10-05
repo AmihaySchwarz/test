@@ -53,8 +53,8 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async updateQnAListTracking(qnaListTrackingListName: string, division: string, action: string): Promise<any> {
-        let response =  await this.service.updateQnAListTracking(qnaListTrackingListName, division, action);
+    public async updateQnAListTracking(qnaListTrackingListName: string, division: string, qnaActionHistory: any [], qnaOriginalCopy: IQnAListItem[],action: string): Promise<any> {
+        let response =  await this.service.updateQnAListTracking(qnaListTrackingListName, division, qnaActionHistory, qnaOriginalCopy, action);
         return response;
     }
     public async checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{

@@ -53,6 +53,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
       newProps.qnaActionHistory.length !== 0
     ) {
       this.setState({
+        qnaActionHistory: this.props.qnaActionHistory,
         qnaItems: newProps.qnaItems,
         newQuestions: newProps.newQuestions,
         currentUser: newProps.currentUser,
@@ -230,8 +231,13 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
             this.props.actionHandler.publishQnAMakerItem(
               this.props.properties.endpointUrl,
               this.props.properties.qnAMakerKnowledgeBaseId)
-            .then(r => {
-                  this.props.actionHandler.updateQnAListTracking(this.props.properties.qnATrackingListName, this.state.selectedDivisionText,"publish")
+            .then(() => {
+                  this.props.actionHandler.updateQnAListTracking(
+                    this.props.properties.qnATrackingListName, 
+                    this.state.selectedDivisionText,
+                    this.state.qnaActionHistory,
+                    this.state.qnaOriginalCopy,
+                    "publish")
                 .then(() => {
                   toast.success("KB Successfully published");
                   this.setState({

@@ -8,5 +8,7 @@ export interface IQnAListTrackingItem {
     LastPublished: Date;
     LockedBy: IPerson;
     LockedReleaseTime: Date;
+    qnaPublishString: string;
+    qnaOriginalCopy: string;
 }
 

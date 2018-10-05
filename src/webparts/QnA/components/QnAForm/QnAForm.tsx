@@ -71,18 +71,25 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     console.log("componentdsd did mount");
   }
 
-  public onEditClick(selectedDivision: any[], qnaItems: IQnAListItem[], newQuestions:  INewQuestions[], qnaOriginalCopy: IQnAListItem[] ){
+  public onEditClick(selectedDivision: any[], 
+    qnaItems: IQnAListItem[], 
+    newQuestions:  INewQuestions[], 
+    qnaOriginalCopy: IQnAListItem[], 
+    qnaActionHistory : any[]){
     //go to edit form
     this.setState({
       formView: ViewType.Edit,
       qnaItems: qnaItems,
       newQuestions: newQuestions,
       selectedDivision: selectedDivision,
-      qnaOriginalCopy: qnaOriginalCopy
+      qnaOriginalCopy: qnaOriginalCopy,
+      qnaActionHistory: qnaActionHistory
     });
   }
 
-  public onpublishClick(selectedDivision: any[], qnaActionHistory: any[], qnaOriginalCopy: IQnAListItem[]){
+  public onpublishClick(selectedDivision: any[], 
+    qnaActionHistory: any[], 
+    qnaOriginalCopy: IQnAListItem[]){
     //go to publish form
     console.log(qnaActionHistory);
     this.setState({
@@ -93,7 +100,10 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onSaveClick(selectedDivision: any[], qnaActionHistory: any[], qnaOriginalCopy: IQnAListItem[], response : string){
+  public onSaveClick(selectedDivision: any[], 
+    qnaActionHistory: any[], 
+    qnaOriginalCopy: IQnAListItem[], 
+    response : string){
     //get qnahistory then set display
     if(response == "success"){
       toast.success("QnA Item Saved Successfully");
@@ -108,7 +118,10 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onSavePublishClick(selectedDivision: any[] , qnaActionHistory: any[], qnaOriginalCopy: IQnAListItem[], response: string){
+  public onSavePublishClick(selectedDivision: any[] , 
+    qnaActionHistory: any[], 
+    qnaOriginalCopy: IQnAListItem[], 
+    response: string){
     //get historry the set to publish
     if(response == "success"){
       toast.success("QnA Item Saved Successfully");
@@ -147,6 +160,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             onSaveClick={this.onSaveClick}
             onSavePublishClick={this.onSavePublishClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
+            qnaActionHistory={this.state.qnaActionHistory}
           />
           </div>;
       case ViewType.Display:

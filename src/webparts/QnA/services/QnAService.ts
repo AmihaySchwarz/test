@@ -126,8 +126,11 @@ export class QnAService extends BaseService implements IQnAService {
         return res;
     }
     
-    public updateQnAListTracking(qnaListTrackingListName: string,division: string, action: string): Promise<any>{
+    public updateQnAListTracking(qnaListTrackingListName: string,division: string, 
+        qnaActionHistory: any [], qnaOriginalCopy: IQnAListItem[], action: string): Promise<any>{
         //let res; 
+        //PENDIONG SAVE THE ACTION HISTORY ON SAVE (SAVE)
+        //SAVE NULL TO THE QNA PUBLISH STRING AFTER PUBLISHING (PUBLICH)
         let d = new Date();
 
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division+"'").get().then((items: any[]) => {
@@ -138,7 +141,8 @@ export class QnAService extends BaseService implements IQnAService {
                         LockedById: null,
                         LockedReleaseTime: d.toLocaleTimeString(),
                         LastUpdated: d.toLocaleDateString(),
-                        //LastPublished: null
+                        qnaPublishString: JSON.stringify(qnaActionHistory),
+                        qnaOriginalCopy: JSON.stringify(qnaOriginalCopy)
                     }).then(result => {
                       //  console.log(result);
                         return result;
@@ -150,19 +154,22 @@ export class QnAService extends BaseService implements IQnAService {
                         LockedReleaseTime: d.toLocaleTimeString(),
                         LastUpdated: d.toLocaleDateString(),
                         LastPublished: d.toLocaleDateString(),
+                        qnaPublishString: null,
+                        qnaOriginalCopy: null
                     }).then(result => {
                       //  console.log(result);
                         return result;
                     });
                 }
-                
             }
         });
         //return res;
     }
 
     public checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
-        return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division","LastUpdated", "LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedReleaseTime")
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division",
+        "LastUpdated","LastPublished", "LockedBy/Id", "LockedBy/EMail", 
+        "LockedReleaseTime", "qnaPublishString", "qnaOriginalCopy")
             .filter("Division eq '" +division+"'")
             .expand("LockedBy")
             .get()

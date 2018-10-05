@@ -74,7 +74,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
           selectedDivision: this.props.defaultDivision,
           selectedDivisionText: this.props.defaultDivision.text,
           selectedDivisionListName: this.props.defaultDivision.key,
-          qnaActionHistory: this.props.qnaActionHistory,
+          //qnaActionHistory: this.props.qnaActionHistory,
           qnaOriginalCopy: this.props.qnaOriginalCopy
         });
   
@@ -119,7 +119,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       qnaOriginalCopy: [...oldstate.qnaItems],
       isLoading: true
     }));
-    
+
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,
@@ -128,17 +128,23 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       )
       .then(items => {
         this.setState({
-          listTrackingItem: items[0]
+          listTrackingItem: items[0],
         });
+
         let currentUserEmail = this.state.currentUser.Email;
         if (
           this.state.listTrackingItem.LockedBy !== undefined &&
           this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail
         ) {
-          //show notification and refresh data
-          // console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
           toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
         } else {
+          //get qna action history, if it has laman add to current state
+          if(this.state.listTrackingItem.qnaPublishString !== undefined) {
+            this.setState({
+              qnaActionHistory: JSON.parse(this.state.listTrackingItem.qnaPublishString)
+            })
+          }
+
           this.props.actionHandler
             .lockList(
               this.state.currentUser,
@@ -158,7 +164,11 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   isLoading: false
                 });
                 //pass state of newQuestions, qnaItems, selected Division
-                this.props.onEditClick(this.state.selectedDivision, this.state.qnaItems, this.state.qnaItems, this.state.qnaOriginalCopy);
+                this.props.onEditClick(this.state.selectedDivision, 
+                  this.state.qnaItems, 
+                  this.state.qnaItems, 
+                  this.state.qnaOriginalCopy, 
+                  this.state.qnaActionHistory);
               }
             });
         }
@@ -167,6 +177,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
   public changeToPublish(): void {
     this.setState({isLoading: true});
+   
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,
@@ -175,18 +186,22 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       )
       .then(items => {
         this.setState({
-          listTrackingItem: items[0]
-        });
-        // console.log(this.state.listTrackingItem);
+          listTrackingItem: items[0],
+          qnaActionHistory: JSON.parse(items[0].qnaPublishString),
+          qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
+        })
         let currentUserEmail = this.state.currentUser.Email;
         if (
           this.state.listTrackingItem.LockedBy !== undefined &&
           this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail
         ) {
-          //show notification and refresh data
-          // console.log("item is locked by: " +this.state.listTrackingItem.LockedBy.EMail);
           toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
-        } else {
+        }
+        //COMMENT OUT MUNA 
+      //   else if () {
+      //     //TO DO: CHECK THE UPDATED STATUS OF THE DIVISION
+      //  } 
+         else {
           this.props.actionHandler
             .lockList(
               this.state.currentUser,
@@ -205,7 +220,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   isLoading: false
                 });
                 //pass state of selectedDiv, qnaHsitory
-                this.props.onPublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
+                this.props.onPublishClick(this.state.selectedDivision, 
+                  this.state.qnaActionHistory, 
+                  this.state.qnaOriginalCopy);
               }
             });
         }
@@ -253,13 +270,17 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
-          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA)
+          return row.Answer.includes(this.state.searchQnA) || 
+          row.Questions.includes(this.state.searchQnA) || 
+          row.Classification.includes(this.state.searchQnA)
         })
       }
 
       if (this.state.searchNewq) {
         newQuestions = newQuestions.filter(row => {
-          return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq)
+          return row.Question.includes(this.state.searchNewq) || 
+          row.PostedBy.includes(this.state.searchNewq) || 
+          String(row.PostedDate).includes(this.state.searchNewq)
         })
       }
         return (
