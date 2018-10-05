@@ -104,6 +104,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   }
   public setDivisionDD = (item: IDropdownOption): void => {
     this.setState({
+      isLoading: true,
       selectedDivision: item,
       selectedDivisionText: item.text,
       selectedDivisionListName: item.key.toString()

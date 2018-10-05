@@ -161,27 +161,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           }));
       });
 
-
-      // addItems.forEach(additem => {
-      //   this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem).then(result => {
-            
-      //       console.log(result.data.Id);
-      //       const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-      //       let qnaActionHistory = [...this.state.qnaActionHistory];
-      //       let item = {
-      //         ...qnaActionHistory[historyIndex],
-      //        qnaItem:{
-      //         ...qnaActionHistory[historyIndex].qnaItem,
-      //         Id: result.data.Id
-      //        } 
-      //       };
-      //       console.log(item);
-      //       qnaActionHistory[historyIndex] = item;
-      //       this.setState({ qnaActionHistory });
-      //   });
-      // });
-      
-    //[updatetoList, deletefromlist])
       Promise.all(promises).then(res => {
         this.props.actionHandler.updateQnAListTracking(
           this.props.properties.qnATrackingListName, 
@@ -200,19 +179,46 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
   public addNewQuestionToQnAList(item: any): void {
     this.setState({isLoading: true});
-    this.props.actionHandler.addQuestionToQnAList(
-      this.props.properties.webUrl,
-      this.state.selectedDivisionListName,
-      item.row
-    ).then(res => {
-      console.log(res);
-      this.setState(prevState => {
-        return {
-            qnaItems: [...prevState.qnaItems],
-            isLoading: false
-        };
-      });
+    // this.props.actionHandler.addQuestionToQnAList(
+    //   this.props.properties.webUrl,
+    //   this.state.selectedDivisionListName,
+    //   item.row
+    // ).then(res => {
+    //   console.log(res);
+    //   this.setState(prevState => {
+    //     return {
+    //         qnaItems: [...prevState.qnaItems, res.data],
+    //         isLoading: false
+    //     };
+    //   });
+    // });
+
+
+    let newQnA = {
+      Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
+      Answer: "",
+      Classification: "",
+      QnAID: 0,
+      Id: null
+    };
+    let itemAddActionHistory = null;
+
+    this.setState(oldstate => {
+      //create identifier for new question row for history
+      itemAddActionHistory = {
+        qnaItem: { newQnA, identifier: oldstate.qnaItems.length },
+        action: "add"
+      };
+      //return new qnaitems with new question
+      return {
+        qnaItems: [...oldstate.qnaItems, newQnA],
+        isLoading: false
+      };
     });
+
+    this.setState(oldstate => ({
+      qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory]
+    }));
   }
 
   public deleteNewQuestion(item: any): void {
