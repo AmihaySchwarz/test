@@ -116,7 +116,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   public async changeToEdit(): Promise<void> {
     //CREATE A COPY OF QNAITEMS ORIGINAL
     this.setState(oldstate => ({
-      qnaOriginalCopy: [...oldstate.qnaItems]
+      qnaOriginalCopy: [...oldstate.qnaItems],
+      isLoading: true
     }));
     
     this.props.actionHandler
@@ -153,7 +154,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
               } else {
                 // console.log(this.state.selectedDivision);
                 this.setState({
-                  formView: ViewType.Edit
+                  formView: ViewType.Edit,
+                  isLoading: false
                 });
                 //pass state of newQuestions, qnaItems, selected Division
                 this.props.onEditClick(this.state.selectedDivision, this.state.qnaItems, this.state.qnaItems, this.state.qnaOriginalCopy);

@@ -320,6 +320,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             this.props.properties.qnATrackingListName, 
             this.state.selectedDivisionText, "save")
               .then(() => {
+                toast.success("QnA Items Saved");
                 this.setState({
                     formView: ViewType.Display,
                     selectedDivision: this.state.selectedDivision,
