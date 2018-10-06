@@ -136,8 +136,13 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onPublishedClick(selectedDivision: any[]){
+  public onPublishedClick(selectedDivision: any[], response: string){
     //after publish then display
+    if(response == "success"){
+      toast.success("QnA Item Published Successfully");
+    } else {
+      toast.error("Error Encountered");
+    }
     this.setState({
       formView: ViewType.Display,
       selectedDivision: selectedDivision
@@ -189,7 +194,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             currentUser={this.state.currentUser} 
             defaultDivision={this.state.selectedDivision}
             qnaActionHistory={this.state.qnaActionHistory}
-            onPublishClick={this.onPublishedClick}
+            onPublishedClick={this.onPublishedClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
           />
           </div>;

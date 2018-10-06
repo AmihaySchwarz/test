@@ -69,7 +69,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       });
 
       this.loadQnAListData(newProps.defaultDivision.key);
-      this.loadNewQuestionsData(newProps.defaultDivision.text)
+      this.loadNewQuestionsData(newProps.defaultDivision.text);
     }
   }
 
@@ -91,7 +91,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         });
   
         this.loadQnAListData(this.props.defaultDivision.key);
-        this.loadNewQuestionsData(this.props.defaultDivision.text)
+        this.loadNewQuestionsData(this.props.defaultDivision.text);
       }
   }
   
@@ -119,67 +119,74 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public saveAndChangeToPublish(): void {
     this.setState({isLoading: true });
     console.log(this.state.qnaActionHistory, "modified items");
-    const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
-    const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
-    const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
 
-    console.log(addItems, modifyItems, deleteItems);
+    try {
+      const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
+      const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
+      const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
 
-    const newItem = addItems.find(a => a.newQnA);
-    let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
-    let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
-    let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
+      console.log(addItems, modifyItems, deleteItems);
+
+      const newItem = addItems.find(a => a.newQnA);
+      let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
+      let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
+      let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
 
 
-    if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
-      toast.error("One or more items have empty value");
-      this.setState({
-        isLoading: false
-      })
-    } else {
-      // const updatetoList = 
-      // const deletefromlist = 
-      let promises = [
-        this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems),
-        this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems)
-      ];
+      if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
+        toast.error("One or more items have empty value");
+        this.setState({
+          isLoading: false
+        });
+      } else {
+        // const updatetoList = 
+        // const deletefromlist = 
+        let promises = [
+          this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems),
+          this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems)
+        ];
 
-      addItems.forEach(additem => {
-        promises.push(
-          this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
-          .then(result => { 
-              console.log(result.data.Id);
-              const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-              let qnaActionHistory = [...this.state.qnaActionHistory];
-              let item = {
-                ...qnaActionHistory[historyIndex],
-                qnaItem:{
-                ...qnaActionHistory[historyIndex].qnaItem,
-                Id: result.data.Id
-                } 
-              };
-              qnaActionHistory[historyIndex] = item;
-              this.setState({ qnaActionHistory });
-          }));
-      });
+        addItems.forEach(additem => {
+          promises.push(
+            this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
+            .then(result => { 
+                console.log(result.data.Id);
+                const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                let qnaActionHistory = [...this.state.qnaActionHistory];
+                let item = {
+                  ...qnaActionHistory[historyIndex],
+                  qnaItem:{
+                  ...qnaActionHistory[historyIndex].qnaItem,
+                  Id: result.data.Id
+                  } 
+                };
+                qnaActionHistory[historyIndex] = item;
+                this.setState({ qnaActionHistory });
+            }));
+        });
 
-      Promise.all(promises).then(res => {
-        this.props.actionHandler.updateQnAListTracking(
-          this.props.properties.qnATrackingListName, 
-          this.state.selectedDivisionText, 
-          this.state.qnaActionHistory,
-          this.state.qnaOriginalCopy,
-          "save")
-            .then(resp => { 
-              this.setState({
-                  formView: ViewType.Publish,
-                  selectedDivision: this.state.selectedDivision,
-                  isLoading: false
-                });
-                this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
-            });
-      });
+        Promise.all(promises).then(res => {
+          this.props.actionHandler.updateQnAListTracking(
+            this.props.properties.qnATrackingListName, 
+            this.state.selectedDivisionText, 
+            this.state.qnaActionHistory,
+            this.state.qnaOriginalCopy,
+            "save")
+              .then(resp => { 
+                this.setState({
+                    formView: ViewType.Publish,
+                    selectedDivision: this.state.selectedDivision,
+                    isLoading: false
+                  });
+                  this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
+              });
+        });
+      }
+    }catch (error) {
+      this.setState({isLoading: false});
+      this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "error");
     }
+    
   }
 
   private onSaveClick(): void {
@@ -203,7 +210,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         toast.error("One or more items have empty value");
         this.setState({
           isLoading: false
-        })
+        });
       } else {
 
 
@@ -308,11 +315,21 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public markAsResolved(item: any): void {
+    this.setState({isLoading: true});
+
+    try {
+      this.props.actionHandler.resolveQuestion(
+        this.props.properties.endpointUrl,
+        item.row._original
+      ).then(res => {
+        toast.info(res);
+        this.setState({isLoading: false});
+      });
+    }catch (error) {
+      toast.error("an error has occured");
+      this.setState({isLoading: false});
+    }
     
-    this.props.actionHandler.resolveQuestion(
-      this.props.properties.endpointUrl,
-      item.row._original
-    );
     //save the question to sp list as well as the remark in sp list
   }
 
@@ -527,15 +544,15 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
-          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA)
-        })
+          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA);
+        });
       }
 
 
         if (this.state.searchNewq) {
           newQuestions = newQuestions.filter(row => {
-            return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq)
-          })
+            return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq);
+          });
         }
 
 
