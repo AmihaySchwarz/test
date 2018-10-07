@@ -68,7 +68,7 @@ public render() {
       <div className={styles.TablePagination}>
         <div className="Table__prevPageWrapper">
           <PageButtonComponent
-            className="Table__pageButton"
+            className={styles.TablepageButton}
             onClick={() => {
               if (activePage === 1) return;
               this.changePage(activePage - 1);
@@ -83,11 +83,12 @@ public render() {
             return (
               <PageButtonComponent
                 key={page}
-                className={
-                  activePage === page
-                    ? "Table__pageButton Table__pageButtonActive"
-                    : "Table__pageButton"
-                }
+                // className={
+                //   activePage === page
+                //     ? "TablepageButton TablepageButtonActive"
+                //     : "TablepageButton"
+                // }
+                className={activePage === page ? styles.TablepageButtonActive : styles.TablepageButton }
                 onClick={this.changePage.bind(null, page)}
               >
                 {array[index - 1] + 2 < page ? `...${page}` : page}
@@ -97,7 +98,7 @@ public render() {
         </div>
         <div className="Table__nextPageWrapper">
           <PageButtonComponent
-            className="Table__pageButton"
+            className={styles.TablepageButton}
             onClick={() => {
               if (activePage === this.props.pages) return;
               this.changePage(activePage + 1);

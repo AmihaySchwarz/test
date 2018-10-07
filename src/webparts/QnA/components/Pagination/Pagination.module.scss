@@ -9,7 +9,7 @@
     padding: 20px 10px
   }
   
-  .Table__pageButton {
+  .TablepageButton {
     font-size: 15px;
     outline: none;
     border: none;
@@ -17,13 +17,18 @@
     cursor: pointer;
   }
   
-  .Table__pageButton:disabled {
+  .TablepageButton:disabled {
     cursor: not-allowed;
     color: gray;
   }
   
-  .Table__pageButtonActive {
+  .TablepageButtonActive {
     color: #45b3e3;
     font-weight: bold;
+    font-size: 15px;
+    outline: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
   }
   

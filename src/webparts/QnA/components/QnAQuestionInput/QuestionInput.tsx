@@ -22,6 +22,7 @@ const components = {
       // console.log(value);
       console.log(`action: ${actionMeta.action}`);
       console.groupEnd();
+      console.log(value);
       this.setState({ value });
       this.props.onChange([...value]);
     }

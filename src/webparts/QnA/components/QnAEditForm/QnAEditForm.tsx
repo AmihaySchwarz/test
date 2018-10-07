@@ -254,12 +254,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   });
                   //toast.success("QnA Items Saved");
                   //console.log(this.state.qnaActionHistory), "acxtion history";
-                  this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
+                  this.props.onSaveClick(this.state.selectedDivision, 
+                    this.state.qnaActionHistory, 
+                    this.state.qnaOriginalCopy, "success");
               });
         });
       }
     } catch (err) {
-      this.props.onSaveClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "error");
+      this.props.onSaveClick(this.state.selectedDivision, 
+        this.state.qnaActionHistory, 
+        this.state.qnaOriginalCopy, "error");
     }
   }
 
@@ -483,6 +487,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       ...qnaItems[index],
       Questions: JSON.stringify(data)
     };
+    //notworking on search
     qnaItems[index] = item;
     this.setState({ qnaItems });
 
@@ -516,7 +521,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
   public renderEditableDropdown = cellInfo => {
 
-    let selectedItemOption = {"text": cellInfo.original.Classification , "key": cellInfo.original.Classification};
+    let selectedItemOption = {"text": cellInfo.original.Classification , 
+    "key": cellInfo.original.Classification};
 
     return (
       <QnAClassificationInput
@@ -538,20 +544,24 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public render() {
-    const { selectedDivision } = this.state;
+    
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
       
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
-          return row.Answer.includes(this.state.searchQnA) || row.Questions.includes(this.state.searchQnA) || row.Classification.includes(this.state.searchQnA);
+          return row.Answer.includes(this.state.searchQnA) || 
+          row.Questions.includes(this.state.searchQnA) || 
+          row.Classification.includes(this.state.searchQnA);
         });
       }
 
 
         if (this.state.searchNewq) {
           newQuestions = newQuestions.filter(row => {
-            return row.Question.includes(this.state.searchNewq) || row.PostedBy.includes(this.state.searchNewq) || String(row.PostedDate).includes(this.state.searchNewq);
+            return row.Question.includes(this.state.searchNewq) || 
+            row.PostedBy.includes(this.state.searchNewq) || 
+            String(row.PostedDate).includes(this.state.searchNewq);
           });
         }
 
