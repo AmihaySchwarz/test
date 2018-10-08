@@ -198,8 +198,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       const addItems = this.state.qnaActionHistory.filter(items => items.action === "add").map( qna => qna.qnaItem);
       const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
       const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
-
-      //console.log(addItems, modifyItems, deleteItems);
       const newItem = addItems.find(a => a.newQnA);
       let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
       let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
@@ -284,13 +282,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     // });
 
 
-    let newQnA = {
-      Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
-      Answer: "",
-      Classification: "",
-      QnAID: 0,
-      Id: null
-    };
+    let newQnA = null;
     let itemAddActionHistory = null;
 
     this.setState(oldstate => {
@@ -300,14 +292,24 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
       //return new qnaitems with new question
-      return {
-        qnaItems: [...oldstate.qnaItems, newQnA],
-        isLoading: false
+      // return {
+      //   qnaItems: [...oldstate.qnaItems, newQnA],
+      //   isLoading: false
+      // };
+       newQnA = {
+        Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
+        Answer: "",
+        Classification: "",
+        QnAID: 0,
+        Id: null,
+        identifier: oldstate.qnaItems.length
       };
     });
 
     this.setState(oldstate => ({
-      qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory]
+      qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
+      qnaItems: [...oldstate.qnaItems, newQnA],
+      isLoading: false
     }));
   }
 
@@ -340,13 +342,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public addNewQnaToTable(): void {
     console.log("add inline form");
 
-    let newQnA = {
-      Questions: '[]',
-      Answer: "",
-      Classification: "",
-      QnAID: 0,
-      Id: null
-    };
+    let newQnA = null;
     let itemAddActionHistory = null;
 
     this.setState(oldstate => {
@@ -356,13 +352,23 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
       //return new qnaitems with new question
-      return {
-        qnaItems: [...oldstate.qnaItems, newQnA]
+      // return {
+      //   qnaItems: [...oldstate.qnaItems, newQnA]
+      // };
+      newQnA = {
+        Questions: '[]',
+        Answer: "",
+        Classification: "",
+        QnAID: 0,
+        Id: null,
+        identifier: oldstate.qnaItems.length
       };
+
     });
 
     this.setState(oldstate => ({
-      qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory]
+      qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
+      qnaItems: [...oldstate.qnaItems, newQnA]
     }));
   }
 
@@ -393,32 +399,25 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           qnaActionHistory: [...oldstate.qnaActionHistory, itemDeleteActionHistory]
         }));
       }
+      //remove from qnaState array
+      let array = [...this.state.qnaItems];
+      let index = array.findIndex(d => d.Id == item.row._original.Id);
+      array.splice(index, 1);
+      this.setState({ qnaItems: array });
+
     } else {
       //item is new so we also need to delete the item from qnaActionHistory state
       let historyArray = [...this.state.qnaActionHistory];
-      let histIndex = historyArray.findIndex(d => d.Id == item.row._original.Id);
+      let histIndex = historyArray.findIndex(d => d.identifier == item.row._original.identifier);
       historyArray.splice(histIndex, 1);
       this.setState({ qnaActionHistory: historyArray });
-    }
-   
-    //remove from qnaState array
-    let array = [...this.state.qnaItems];
-    let index = array.findIndex(d => d.Id == item.row._original.Id);
-    array.splice(index, 1);
-    this.setState({ qnaItems: array });
-  }
 
-  public renderEditable = (cellInfo) => {
-    return (
-      <TextField
-        value={cellInfo.original.Answer}
-        multiline
-        rows={4}
-        required={true}
-        resizable={true}
-        onChanged={data => this.updateQnAAnswer(data, cellInfo.index)}
-      />
-    );
+      //remove from qnaState array
+      let array = [...this.state.qnaItems];
+      let index = array.findIndex(d => d.identifier == item.row._original.identifier);
+      array.splice(index, 1);
+      this.setState({ qnaItems: array });
+    }
   }
 
   public updateActionHistory = (item, index) => {
@@ -466,9 +465,17 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     }
   }
 
-  public updateQnAAnswer = (data, index) => {
+  public updateQnAAnswer = (data, cellInfo) => {
     //console.log(data)
+
     let qnaItems = [...this.state.qnaItems];
+    let index;
+    if(cellInfo.original.Id != null){
+      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+    } else {
+       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+    }
+
     let item = {
       ...qnaItems[index],
       Answer: data, 
@@ -479,24 +486,40 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.updateActionHistory(item,index);
   }
 
-  public updateQuestions = (data, index) => {
-    //console.log(data, index, "update question");
+  public updateQuestions = (data, cellInfo) => {
+    //console.log(data, cellInfo, "update question");
 
+    let array = [...this.state.qnaItems];
+    let index;
+    if(cellInfo.original.Id != null){
+      index = array.findIndex(d => d.Id == cellInfo.original.Id);
+    } else {
+       index = array.findIndex(d => d.identifier == cellInfo.original.identifier);
+    }
+   
     let qnaItems = [...this.state.qnaItems];
     let item = {
       ...qnaItems[index],
       Questions: JSON.stringify(data)
     };
-    //notworking on search
+ 
     qnaItems[index] = item;
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
   }
 
-  public updateClassification = (data, index) => {
+  public updateClassification = (data, cellInfo) => {
     let qnaItems = [...this.state.qnaItems];
     console.log("NEW CLASS", data);
+
+    let index;
+    if(cellInfo.original.Id != null){
+      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+    } else {
+       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+    }
+
     let item = {
       ...qnaItems[index],
       Classification: data //JSON.stringify(data)
@@ -514,7 +537,20 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     return (
       <QuestionInput
         value={parsedQ}
-        onChange={data => this.updateQuestions(data, cellInfo.index)}
+        onChange={data => this.updateQuestions(data, cellInfo)}
+      />
+    );
+  }
+
+  public renderEditableAnswer = (cellInfo) => {
+    return (
+      <TextField
+        value={cellInfo.original.Answer}
+        multiline
+        rows={4}
+        required={true}
+        resizable={true}
+        onChanged={data => this.updateQnAAnswer(data, cellInfo)}
       />
     );
   }
@@ -527,7 +563,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     return (
       <QnAClassificationInput
         value={selectedItemOption}
-        onChange={data => this.updateClassification(data, cellInfo.index)}
+        onChange={data => this.updateClassification(data, cellInfo)}
       />
     );
   }
@@ -552,7 +588,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         QnACpy = QnACpy.filter(row => {
           return row.Answer.includes(this.state.searchQnA) || 
           row.Questions.includes(this.state.searchQnA) || 
-          row.Classification.includes(this.state.searchQnA);
+          row.Classification == this.state.searchQnA;
         });
       }
 
@@ -682,7 +718,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                       {
                         Header: "Answer",
                         accessor: "Answer",
-                        Cell: this.renderEditable
+                        Cell: this.renderEditableAnswer
                       },
                       {
                         Header: "Classification",

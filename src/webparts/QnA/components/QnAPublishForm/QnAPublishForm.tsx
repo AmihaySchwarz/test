@@ -197,59 +197,96 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
       let publishQnAJSOn = JSON.stringify(updateKBArray);
       console.log(publishQnAJSOn);
   
-      this.props.actionHandler.updateQnAMakerKB(
-        this.props.properties.endpointUrl,
-        this.props.properties.qnAMakerKnowledgeBaseId,
-        publishQnAJSOn)
-      .then( result => { 
-          console.log(result);
-          this.props.actionHandler.getQnAMakerItems(
-            this.props.properties.endpointUrl,
-            this.props.properties.qnAMakerKnowledgeBaseId,
-            "test")
-          .then(res => {
-            let kbItems = JSON.parse(res);
-            console.log(kbItems);
-            let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
-            console.log(addedItems );   
-  
-            const qnaWithKBID = addedItems.map(addedItem => {
-              console.log(addedItem.qnaItem.Id);
-              let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
-                 return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
-              });
-             console.log(matchKb);
-            addedItem.qnaItem.QnAID = matchKb.id; 
-             return addedItem;
-            });
-  
-            console.log(qnaWithKBID);
-            const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
-  
-            this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
-  
-            this.props.actionHandler.publishQnAMakerItem(
-              this.props.properties.endpointUrl,
-              this.props.properties.qnAMakerKnowledgeBaseId)
-            .then(() => {
-                  this.props.actionHandler.updateQnAListTracking(
-                    this.props.properties.qnATrackingListName, 
-                    this.state.selectedDivisionText,
-                    this.state.qnaActionHistory,
-                    this.state.qnaOriginalCopy,
-                    "publish")
-                .then(() => {
-                  toast.success("KB Successfully published");
-                  this.setState({
-                    formView: ViewType.Display,
-                    isLoading: false,
-                    qnaActionHistory: []
-                  });
-                  this.props.onPublishedClick(this.state.selectedDivision, "success");
-                });
-            });
-          }); 
+      (async() => {
+        const updateQnAMakerRes = await this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn);
+        const qnAMakerItems = await this.props.actionHandler.getQnAMakerItems(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId, "test");
+        let kbItems = JSON.parse(qnAMakerItems);
+        console.log(kbItems);
+        let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
+        console.log(addedItems );   
+
+        const qnaWithKBID = addedItems.map(addedItem => {
+          console.log(addedItem.qnaItem.Id);
+          let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
+              return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
+          });
+          console.log(matchKb);
+          addedItem.qnaItem.QnAID = matchKb.id; 
+          return addedItem;
+        });
+        console.log(qnaWithKBID);
+        const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
+
+        const updateQnAList = await this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
+        const publishQnAMaker = await this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId);
+        this.props.actionHandler.updateQnAListTracking( this.props.properties.qnATrackingListName, this.state.selectedDivisionText,this.state.qnaActionHistory, this.state.qnaOriginalCopy,"publish");
+        toast.success("KB Successfully published");
+        this.setState({
+          formView: ViewType.Display,
+          isLoading: false,
+          qnaActionHistory: []
+        });
+        this.props.onPublishedClick(this.state.selectedDivision, "success");
+      })().catch(err=> {
+        toast.error("error in saving master list item")
+        this.setState({isLoading: false});
+        this.props.onPublishedClick(this.state.selectedDivision, "fail");
       });
+
+
+      // this.props.actionHandler.updateQnAMakerKB(
+      //   this.props.properties.endpointUrl,
+      //   this.props.properties.qnAMakerKnowledgeBaseId,
+      //   publishQnAJSOn)
+      // .then( result => { 
+      //     console.log(result);
+      //     this.props.actionHandler.getQnAMakerItems(
+      //       this.props.properties.endpointUrl,
+      //       this.props.properties.qnAMakerKnowledgeBaseId,
+      //       "test")
+      //     .then(res => {
+      //       let kbItems = JSON.parse(res);
+      //       console.log(kbItems);
+      //       let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
+      //       console.log(addedItems );   
+  
+      //       const qnaWithKBID = addedItems.map(addedItem => {
+      //         console.log(addedItem.qnaItem.Id);
+      //         let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
+      //            return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
+      //         });
+      //        console.log(matchKb);
+      //       addedItem.qnaItem.QnAID = matchKb.id; 
+      //        return addedItem;
+      //       });
+  
+      //       console.log(qnaWithKBID);
+      //       const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
+  
+      //       this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
+  
+      //       this.props.actionHandler.publishQnAMakerItem(
+      //         this.props.properties.endpointUrl,
+      //         this.props.properties.qnAMakerKnowledgeBaseId)
+      //       .then(() => {
+      //             this.props.actionHandler.updateQnAListTracking(
+      //               this.props.properties.qnATrackingListName, 
+      //               this.state.selectedDivisionText,
+      //               this.state.qnaActionHistory,
+      //               this.state.qnaOriginalCopy,
+      //               "publish")
+      //           .then(() => {
+      //             toast.success("KB Successfully published");
+      //             this.setState({
+      //               formView: ViewType.Display,
+      //               isLoading: false,
+      //               qnaActionHistory: []
+      //             });
+      //             this.props.onPublishedClick(this.state.selectedDivision, "success");
+      //           });
+      //       });
+      //     }); 
+      // });
     }catch (err){
       console.log(err);
       toast.error("something went wrong");

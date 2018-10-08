@@ -138,11 +138,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
 
   public onPublishedClick(selectedDivision: any[], response: string){
     //after publish then display
-    if(response == "success"){
-      toast.success("QnA Item Published Successfully");
-    } else {
-      toast.error("Error Encountered");
-    }
+    // if(response == "success"){
+    //   toast.success("QnA Item Published Successfully");
+    // } else {
+    //   toast.error("Error Encountered");
+    // }
     this.setState({
       formView: ViewType.Display,
       selectedDivision: selectedDivision
@@ -154,7 +154,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     switch (this.state.formView){
       case ViewType.Edit:
         return <div> {this.state.isLoading && <LoadingSpinner />} 
-        <ToastContainer />
+        
           <QnAEditForm 
             newQuestions={this.state.newQuestions} 
             qnaItems={this.state.qnaItems}
@@ -170,7 +170,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>;
       case ViewType.Display:
         return <div> {this.state.isLoading && <LoadingSpinner />} 
-        <ToastContainer />
+      
           <QnADisplayForm 
             newQuestions={this.state.newQuestions} 
             masterItems={this.props.masterItems}
@@ -186,7 +186,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>;
       case ViewType.Publish:
         return <div> {this.state.isLoading && <LoadingSpinner />} 
-        <ToastContainer />
+ <ToastContainer />
           <QnAPublishForm newQuestions={this.state.newQuestions} 
             masterItems={this.props.masterItems}
             actionHandler={this.props.actionHandler} 
