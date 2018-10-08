@@ -173,18 +173,19 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             this.state.qnaOriginalCopy,
             "save")
               .then(resp => { 
+                toast.success("QnA Items Saved!")
                 this.setState({
-                    formView: ViewType.Publish,
                     selectedDivision: this.state.selectedDivision,
                     isLoading: false
                   });
-                  this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "success");
+                  this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
               });
         });
       }
     }catch (error) {
+      toast.error("Error in Saving Items");
       this.setState({isLoading: false});
-      this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy, "error");
+      this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
     }
     
   }
@@ -246,22 +247,21 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
               .then(() => {
                 toast.success("QnA Items Saved");
                 this.setState({
-                    formView: ViewType.Display,
                     selectedDivision: this.state.selectedDivision,
                     isLoading: false
                   });
-                  //toast.success("QnA Items Saved");
-                  //console.log(this.state.qnaActionHistory), "acxtion history";
                   this.props.onSaveClick(this.state.selectedDivision, 
                     this.state.qnaActionHistory, 
-                    this.state.qnaOriginalCopy, "success");
+                    this.state.qnaOriginalCopy);
               });
         });
       }
     } catch (err) {
+      toast.error("Error in Saving Items");
+      this.setState({isLoading: false});
       this.props.onSaveClick(this.state.selectedDivision, 
         this.state.qnaActionHistory, 
-        this.state.qnaOriginalCopy, "error");
+        this.state.qnaOriginalCopy);
     }
   }
 
@@ -324,18 +324,18 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     //todo create modal to show the remArks
     // this.setState({isLoading: true});
 
-    // try {
-    //   this.props.actionHandler.resolveQuestion(
-    //     this.props.properties.endpointUrl,
-    //     item.row._original
-    //   ).then(res => {
-    //     toast.info(res);
-    //     this.setState({isLoading: false});
-    //   });
-    // }catch (error) {
-    //   toast.error("an error has occured");
-    //   this.setState({isLoading: false});
-    // }
+    try {
+      this.props.actionHandler.resolveQuestion(
+        this.props.properties.endpointUrl,
+        item.row._original
+      ).then(res => {
+        toast.info(res);
+        this.setState({isLoading: false});
+      });
+    }catch (error) {
+      toast.error("an error has occured");
+      this.setState({isLoading: false});
+    }
     
     //save the question to sp list as well as the remark in sp list
   }
@@ -605,8 +605,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
         return (
           <div>
-            <ToastContainer />
+            
             {this.state.isLoading && <LoadingSpinner />}
+            {/* <ToastContainer /> */}
             <div className={styles.controlMenu}>
               <div className={styles.dropdownCont}>
                 <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>

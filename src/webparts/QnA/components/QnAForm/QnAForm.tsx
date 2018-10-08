@@ -3,22 +3,18 @@ import { IQnAFormProps, IQnAFormState } from "./IQnAFormProps";
 import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
 import { ViewType } from "../../../common/enum";
 import "react-table/react-table.css";
-import {
-  Dropdown,
-  IDropdownOption
-} from "office-ui-fabric-react/lib/Dropdown";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Dropdown, IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as _ from "lodash";
-import { QnAEditForm } from '../QnAEditForm/QnAEditForm';
-import { QnADisplayForm } from '../QnADisplayForm/QnADisplayForm';
-import { QnAPublishForm } from '../QnAPublishForm/QnAPublishForm';
+import { QnAEditForm } from "../QnAEditForm/QnAEditForm";
+import { QnADisplayForm } from "../QnADisplayForm/QnADisplayForm";
+import { QnAPublishForm } from "../QnAPublishForm/QnAPublishForm";
 import { IQnAListItem } from "../../models/IQnAListItem";
 import { INewQuestions } from "../../models/INewQuestions";
 
-
 export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       division: [],
@@ -44,11 +40,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.onSaveClick = this.onSaveClick.bind(this);
     this.onSavePublishClick = this.onSavePublishClick.bind(this);
     this.onPublishedClick = this.onPublishedClick.bind(this);
-
   }
 
-  public async componentWillReceiveProps(newProps): Promise<void>
-  {
+  public async componentWillReceiveProps(newProps): Promise<void> {
     console.log(newProps);
     if (
       newProps.masterItems.length !== 0 &&
@@ -66,16 +60,17 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     }
   }
 
-  public async componentDidMount() : Promise<void>
-  {
+  public async componentDidMount(): Promise<void> {
     console.log("componentdsd did mount");
   }
 
-  public onEditClick(selectedDivision: any[], 
-    qnaItems: IQnAListItem[], 
-    newQuestions:  INewQuestions[], 
-    qnaOriginalCopy: IQnAListItem[], 
-    qnaActionHistory : any[]){
+  public onEditClick(
+    selectedDivision: any[],
+    qnaItems: IQnAListItem[],
+    newQuestions: INewQuestions[],
+    qnaOriginalCopy: IQnAListItem[],
+    qnaActionHistory: any[]
+  ) {
     //go to edit form
     this.setState({
       formView: ViewType.Edit,
@@ -87,9 +82,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onpublishClick(selectedDivision: any[], 
-    qnaActionHistory: any[], 
-    qnaOriginalCopy: IQnAListItem[]){
+  public onpublishClick(
+    selectedDivision: any[],
+    qnaActionHistory: any[],
+    qnaOriginalCopy: IQnAListItem[]
+  ) {
     //go to publish form
     console.log(qnaActionHistory);
     this.setState({
@@ -100,16 +97,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onSaveClick(selectedDivision: any[], 
-    qnaActionHistory: any[], 
-    qnaOriginalCopy: IQnAListItem[], 
-    response : string){
-    //get qnahistory then set display
-    if(response == "success"){
-      toast.success("QnA Item Saved Successfully");
-    } else {
-      toast.error("Error Encountered");
-    }
+  public onSaveClick(
+    selectedDivision: any[],
+    qnaActionHistory: any[],
+    qnaOriginalCopy: IQnAListItem[]
+  ) {
     this.setState({
       formView: ViewType.Display,
       selectedDivision: selectedDivision,
@@ -118,16 +110,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onSavePublishClick(selectedDivision: any[] , 
-    qnaActionHistory: any[], 
-    qnaOriginalCopy: IQnAListItem[], 
-    response: string){
-    //get historry the set to publish
-    if(response == "success"){
-      toast.success("QnA Item Saved Successfully");
-    } else {
-      toast.error("Error Encountered");
-    }
+  public onSavePublishClick(
+    selectedDivision: any[],
+    qnaActionHistory: any[],
+    qnaOriginalCopy: IQnAListItem[]
+  ) {
     this.setState({
       formView: ViewType.Publish,
       selectedDivision: selectedDivision,
@@ -136,13 +123,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
-  public onPublishedClick(selectedDivision: any[], response: string){
-    //after publish then display
-    // if(response == "success"){
-    //   toast.success("QnA Item Published Successfully");
-    // } else {
-    //   toast.error("Error Encountered");
-    // }
+  public onPublishedClick(selectedDivision: any[], response: string) {
     this.setState({
       formView: ViewType.Display,
       selectedDivision: selectedDivision
@@ -150,56 +131,53 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public render() {
-    
-    switch (this.state.formView){
-      case ViewType.Edit:
-        return <div> {this.state.isLoading && <LoadingSpinner />} 
-        
-          <QnAEditForm 
-            newQuestions={this.state.newQuestions} 
+    const { isLoading, formView } = this.state;
+    return (
+      <div>
+        {isLoading && <LoadingSpinner />}
+        {formView == ViewType.Edit && (
+          <QnAEditForm
+            newQuestions={this.state.newQuestions}
             qnaItems={this.state.qnaItems}
-            actionHandler={this.props.actionHandler} 
-            properties={this.props.properties} 
-            currentUser={this.state.currentUser} 
+            actionHandler={this.props.actionHandler}
+            properties={this.props.properties}
+            currentUser={this.state.currentUser}
             defaultDivision={this.state.selectedDivision}
             onSaveClick={this.onSaveClick}
             onSavePublishClick={this.onSavePublishClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
             qnaActionHistory={this.state.qnaActionHistory}
           />
-          </div>;
-      case ViewType.Display:
-        return <div> {this.state.isLoading && <LoadingSpinner />} 
-      
-          <QnADisplayForm 
-            newQuestions={this.state.newQuestions} 
+        )}
+        {formView == ViewType.Display && (
+          <QnADisplayForm
+            newQuestions={this.state.newQuestions}
             masterItems={this.props.masterItems}
-            actionHandler={this.props.actionHandler} 
-            properties={this.props.properties} 
-            currentUser={this.state.currentUser} 
+            actionHandler={this.props.actionHandler}
+            properties={this.props.properties}
+            currentUser={this.state.currentUser}
             defaultDivision={this.state.selectedDivision}
             onEditClick={this.onEditClick}
             onPublishClick={this.onpublishClick}
             qnaActionHistory={this.state.qnaActionHistory}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
           />
-          </div>;
-      case ViewType.Publish:
-        return <div> {this.state.isLoading && <LoadingSpinner />} 
-
-          <QnAPublishForm newQuestions={this.state.newQuestions} 
+        )}
+        {formView == ViewType.Publish && (
+          <QnAPublishForm
+            newQuestions={this.state.newQuestions}
             masterItems={this.props.masterItems}
-            actionHandler={this.props.actionHandler} 
-            properties={this.props.properties} 
-            currentUser={this.state.currentUser} 
+            actionHandler={this.props.actionHandler}
+            properties={this.props.properties}
+            currentUser={this.state.currentUser}
             defaultDivision={this.state.selectedDivision}
             qnaActionHistory={this.state.qnaActionHistory}
             onPublishedClick={this.onPublishedClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
           />
-          </div>;
-      default:
-        return null;
-    }
+        )}
+        <ToastContainer />
+      </div>
+    );
   }
 }

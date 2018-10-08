@@ -32,6 +32,7 @@
     "react-bootstrap-table-next": "^1.1.4",
     "react-dom": "15.6.2",
     "react-moment": "^0.8.1",
+    "react-responsive-modal": "^3.4.0",
     "react-select": "^2.0.0",
     "react-table": "^6.8.6",
     "react-toastify": "^4.3.2",

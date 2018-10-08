@@ -11,12 +11,6 @@ import {
   Dropdown,
   IDropdownOption
 } from "office-ui-fabric-react/lib/Dropdown";
-import { TextField } from "office-ui-fabric-react/lib/TextField";
-import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
-import ReactTooltip from "react-tooltip";
-import QuestionInput from "../QnAQuestionInput/QuestionInput";
-import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationInput";
-import Moment from "react-moment";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
@@ -226,11 +220,11 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
           isLoading: false,
           qnaActionHistory: []
         });
-        this.props.onPublishedClick(this.state.selectedDivision, "success");
+        this.props.onPublishedClick(this.state.selectedDivision);
       })().catch(err=> {
         toast.error("error in saving master list item")
         this.setState({isLoading: false});
-        this.props.onPublishedClick(this.state.selectedDivision, "fail");
+        this.props.onPublishedClick(this.state.selectedDivision);
       });
 
 
@@ -309,13 +303,9 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
 
 
   public render() {
-    const { selectedDivision } = this.state;
-    let newQuestions = this.state.newQuestions; 
-    let QnACpy = this.state.qnaItems;
-
         return ( 
           <div>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
             {this.state.isLoading && <LoadingSpinner />}
             <div className={styles.controlMenu}>
               <div className={styles.dropdownCont}>
