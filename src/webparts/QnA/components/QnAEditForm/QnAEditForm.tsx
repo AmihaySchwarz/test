@@ -321,20 +321,21 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public markAsResolved(item: any): void {
-    this.setState({isLoading: true});
+    //todo create modal to show the remArks
+    // this.setState({isLoading: true});
 
-    try {
-      this.props.actionHandler.resolveQuestion(
-        this.props.properties.endpointUrl,
-        item.row._original
-      ).then(res => {
-        toast.info(res);
-        this.setState({isLoading: false});
-      });
-    }catch (error) {
-      toast.error("an error has occured");
-      this.setState({isLoading: false});
-    }
+    // try {
+    //   this.props.actionHandler.resolveQuestion(
+    //     this.props.properties.endpointUrl,
+    //     item.row._original
+    //   ).then(res => {
+    //     toast.info(res);
+    //     this.setState({isLoading: false});
+    //   });
+    // }catch (error) {
+    //   toast.error("an error has occured");
+    //   this.setState({isLoading: false});
+    // }
     
     //save the question to sp list as well as the remark in sp list
   }

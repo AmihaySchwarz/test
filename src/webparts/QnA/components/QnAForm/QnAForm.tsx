@@ -186,7 +186,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
           </div>;
       case ViewType.Publish:
         return <div> {this.state.isLoading && <LoadingSpinner />} 
- <ToastContainer />
+
           <QnAPublishForm newQuestions={this.state.newQuestions} 
             masterItems={this.props.masterItems}
             actionHandler={this.props.actionHandler} 
