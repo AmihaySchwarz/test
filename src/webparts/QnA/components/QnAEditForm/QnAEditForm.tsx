@@ -323,10 +323,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     );
   }
 
-  // public onOpenModal = () => {
-  //   this.setState({ openModal: true });
-  // }
-
   public onCloseModal = () => {
     this.setState({ openModal: false });
   }
@@ -755,7 +751,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             this.deleteQnA({ row })
                           }>
                               Delete Question
-                            </button>
+                            </button> <br />
                             <button data-tip data-for={index.toString()} data-event='click focus'>
                               Preview
                             </button>
