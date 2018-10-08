@@ -222,7 +222,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         });
         this.props.onPublishedClick(this.state.selectedDivision);
       })().catch(err=> {
-        toast.error("error in saving master list item")
+        toast.error("error in saving master list item");
         this.setState({isLoading: false});
         this.props.onPublishedClick(this.state.selectedDivision);
       });

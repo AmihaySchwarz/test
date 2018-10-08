@@ -20,6 +20,8 @@ import Moment from "react-moment";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
+import Modal from "react-responsive-modal";
+import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
   constructor(props) {
@@ -42,7 +44,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       qnaActionHistory: [],
       qnaOriginalCopy: [],
       searchNewq: "",
-      searchQnA: ""
+      searchQnA: "",
+      openModal: false
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -173,7 +176,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             this.state.qnaOriginalCopy,
             "save")
               .then(resp => { 
-                toast.success("QnA Items Saved!")
+                toast.success("QnA Items Saved!");
                 this.setState({
                     selectedDivision: this.state.selectedDivision,
                     isLoading: false
@@ -320,22 +323,35 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     );
   }
 
+  // public onOpenModal = () => {
+  //   this.setState({ openModal: true });
+  // }
+
+  public onCloseModal = () => {
+    this.setState({ openModal: false });
+  }
+
+  public updateRemarks(data:any): void {
+    //save the remarks in qnaitems 
+  }
+
   public markAsResolved(item: any): void {
     //todo create modal to show the remArks
     // this.setState({isLoading: true});
+    this.setState({ openModal: true });
 
-    try {
-      this.props.actionHandler.resolveQuestion(
-        this.props.properties.endpointUrl,
-        item.row._original
-      ).then(res => {
-        toast.info(res);
-        this.setState({isLoading: false});
-      });
-    }catch (error) {
-      toast.error("an error has occured");
-      this.setState({isLoading: false});
-    }
+    // try {
+    //   this.props.actionHandler.resolveQuestion(
+    //     this.props.properties.endpointUrl,
+    //     item.row._original
+    //   ).then(res => {
+    //     toast.info(res);
+    //     this.setState({isLoading: false});
+    //   });
+    // }catch (error) {
+    //   toast.error("an error has occured");
+    //   this.setState({isLoading: false});
+    // }
     
     //save the question to sp list as well as the remark in sp list
   }
@@ -677,6 +693,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             <button onClick={() => this.markAsResolved({ row })}>
                               Mark as Resolved
                             </button>
+                            <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
+                              <RemarksPanel onSubmitRemarks={data => this.updateRemarks(data)} />
+                            </Modal>
                           </div>
                         ) //onClick={this.addToQnAList({row})}
                       }

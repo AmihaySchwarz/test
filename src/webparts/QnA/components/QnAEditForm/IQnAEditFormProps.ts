@@ -50,4 +50,5 @@ export interface IQnAEditFormState {
     qnaOriginalCopy: IQnAListItem[];
     searchNewq: string;
     searchQnA: string;
+    openModal: boolean;
 }
