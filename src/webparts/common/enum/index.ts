@@ -1,2 +1,1 @@
-export { MenuItemType } from './MenuItemType';
-export { ViewType } from './ViewType';
+export { ViewType } from './ViewType'; 

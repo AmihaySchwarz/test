@@ -278,30 +278,31 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     //     };
     //   });
     // });
-    let newQnA = null;
+    //let newQnA = null;
     let itemAddActionHistory = null;
-
-    this.setState(oldstate => {
-      //create identifier for new question row for history
-      itemAddActionHistory = {
-        qnaItem: { newQnA, identifier: oldstate.qnaItems.length },
-        action: "add"
-      };
+    let identifierNum = parseInt(Math.random().toString().slice(2,11));
+    //this.setState(oldstate => {
+     
       //return new qnaitems with new question
       // return {
       //   qnaItems: [...oldstate.qnaItems, newQnA],
       //   isLoading: false
       // };
-       newQnA = {
+      let newQnA = {
         Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
         Answer: "",
         Classification: "",
         QnAID: 0,
         Id: null,
         Remarks: "",
-        identifier: oldstate.qnaItems.length
+        identifier: identifierNum
       };
-    });
+       //create identifier for new question row for history
+       itemAddActionHistory = {
+        qnaItem: { newQnA, identifier: identifierNum}, //oldstate.qnaItems.length 
+        action: "add"
+      };
+    //});
 
     this.setState(oldstate => ({
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
@@ -355,30 +356,30 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public addNewQnaToTable(): void {
     console.log("add inline form");
 
-    let newQnA = null;
+   // let newQnA = null;
     let itemAddActionHistory = null;
+    let identifierNum = parseInt(Math.random().toString().slice(2,11));
+    //this.setState(oldstate => {
 
-    this.setState(oldstate => {
-      //create identifier for new question row for history
-      itemAddActionHistory = {
-        qnaItem: { newQnA, identifier: oldstate.qnaItems.length },
-        action: "add"
-      };
       //return new qnaitems with new question
       // return {
       //   qnaItems: [...oldstate.qnaItems, newQnA]
       // };
-      newQnA = {
+      let newQnA = {
         Questions: '[]',
         Answer: "",
         Classification: "",
         QnAID: 0,
         Id: null,
         Remarks: "",
-        identifier: oldstate.qnaItems.length
+        identifier: identifierNum
       };
-
-    });
+      //create identifier for new question row for history
+      itemAddActionHistory = {
+        qnaItem: { newQnA, identifier: identifierNum},
+        action: "add"
+      };
+    //});
 
     this.setState(oldstate => ({
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
@@ -442,13 +443,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     if((itemId == null)){
       //item does not have id, so add
       historyItem = {
-        qnaItem: { ...item, identifier: index },
+        qnaItem: { ...item, identifier: item.identifier }, //index
         action: "add"
       };
 
       console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
-     historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == index);
+     historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
 
     } else  {
       //item has id so edit

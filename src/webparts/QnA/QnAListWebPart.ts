@@ -12,7 +12,7 @@ import {
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import * as AuthenticationContext from 'adal-angular';
 import * as strings from 'QnAListWebPartStrings';
-import { MenuItemType, ViewType } from '../common/enum';
+import { ViewType } from '../common/enum';
 import { IQnAContainerProps } from './components/QnAContainer/IQnAContainerProps';
 import { QnAContainer } from './components/QnAContainer/QnAContainer';
 import { IQnAService, QnAService } from './services';
