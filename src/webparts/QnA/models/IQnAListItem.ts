@@ -6,5 +6,6 @@ export interface IQnAListItem {
     Classification: string;
     QnAID: number;
     identifier: number;
+    Remarks: string;
 }
 

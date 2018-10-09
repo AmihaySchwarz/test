@@ -34,21 +34,22 @@ export interface IQnAEditFormState {
     selectedDivisionText: string;
     isLoading?: boolean;
     isDataLoaded?: boolean;
-    filtered: any;
-    filterAll: any;
+    // filtered: any;
+    // filterAll: any;
     //isEdit?: boolean;
     selectedDivisionListName: string;
     //isPublish?: boolean;
-    formView: ViewType;
+    // formView: ViewType;
     newQuestions: INewQuestions[];
     //updatedQnA: any[];
     //newQuestion: INewQuestions;
-    inputValue: string;
-    listTrackingItem: IQnAListTrackingItem;
+    // inputValue: string;
+    // listTrackingItem: IQnAListTrackingItem;
     currentUser: any;
     qnaActionHistory: any[];
     qnaOriginalCopy: IQnAListItem[];
     searchNewq: string;
     searchQnA: string;
     openModal: boolean;
+    nqForRemarks: INewQuestions;
 }

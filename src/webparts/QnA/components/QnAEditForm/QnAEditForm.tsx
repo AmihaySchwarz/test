@@ -21,6 +21,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 import Modal from "react-responsive-modal";
+
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
@@ -34,18 +35,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       selectedDivisionListName: "",
       qnaItems: [],
       isLoading: false,
-      filtered: [],
-      filterAll: "",
-      formView: ViewType.Edit,
       newQuestions: [],
-      inputValue: "",
-      listTrackingItem: undefined,
-      currentUser: props.currentUser,
+      currentUser: props.currentUser, 
       qnaActionHistory: [],
       qnaOriginalCopy: [],
       searchNewq: "",
       searchQnA: "",
-      openModal: false
+      openModal: false,
+      nqForRemarks: undefined
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -142,8 +139,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           isLoading: false
         });
       } else {
-        // const updatetoList = 
-        // const deletefromlist = 
         let promises = [
           this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,modifyItems),
           this.props.actionHandler.deleteFromQnAList(this.state.selectedDivisionListName,deleteItems)
@@ -283,8 +278,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     //     };
     //   });
     // });
-
-
     let newQnA = null;
     let itemAddActionHistory = null;
 
@@ -305,6 +298,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         Classification: "",
         QnAID: 0,
         Id: null,
+        Remarks: "",
         identifier: oldstate.qnaItems.length
       };
     });
@@ -327,29 +321,35 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ openModal: false });
   }
 
-  public updateRemarks(data:any): void {
-    //save the remarks in qnaitems 
+  public updateRemarks(data:any, newQ: any): void {
+    //TODO
+    //[Hung]: There is a property named “Status” in Azure Table Storage and it needs to be updated when users mark the question as resolved.
+    // There is a change in New Questions table where the client wants to remove “Delete Question” action.
+    // They only want “Mark as Resolved” option and the system should prompt users to key in “Remarks” when they mark question as resolved.
+    // The remarks as well as the original question itself will be stored in a SharePoint list. I will update this change to the specs.
+    console.log("remarks", data,newQ);
+
+    this.setState({ openModal: false });
   }
 
   public markAsResolved(item: any): void {
-    //todo create modal to show the remArks
-    // this.setState({isLoading: true});
-    this.setState({ openModal: true });
-
-    // try {
-    //   this.props.actionHandler.resolveQuestion(
-    //     this.props.properties.endpointUrl,
-    //     item.row._original
-    //   ).then(res => {
-    //     toast.info(res);
-    //     this.setState({isLoading: false});
-    //   });
-    // }catch (error) {
-    //   toast.error("an error has occured");
-    //   this.setState({isLoading: false});
-    // }
-    
     //save the question to sp list as well as the remark in sp list
+    // this.setState({ openModal: true, nqForRemarks: item.row});
+
+    try {
+      this.props.actionHandler.resolveQuestion(
+        this.props.properties.endpointUrl,
+        item.row._original
+      ).then(res => {
+        toast.info(res);
+        this.setState({isLoading: false});
+      });
+    }catch (error) {
+      toast.error("an error has occured");
+      this.setState({isLoading: false});
+    }
+    
+    
   }
 
   public addNewQnaToTable(): void {
@@ -374,6 +374,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         Classification: "",
         QnAID: 0,
         Id: null,
+        Remarks: "",
         identifier: oldstate.qnaItems.length
       };
 
@@ -683,17 +684,17 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                               }
                             >
                               Add to QnA List
-                            </button>{" "}
+                            </button>
                             <br />
                             {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
                             <button onClick={() => this.markAsResolved({ row })}>
                               Mark as Resolved
                             </button>
-                            <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
-                              <RemarksPanel onSubmitRemarks={data => this.updateRemarks(data)} />
-                            </Modal>
+                            {/* <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
+                              <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
+                            </Modal> */}
                           </div>
-                        ) //onClick={this.addToQnAList({row})}
+                        ) 
                       }
                     ]
                   }
@@ -758,7 +759,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             <ReactTooltip
                               id={index.toString()}
                               globalEventOff="click"
-                              aria-haspopup="true"
+                              //aria-haspopup="true"
                               place="bottom"
                               type="light"
                               effect="solid"

@@ -4,7 +4,6 @@ import { INewQuestions } from "../../models/INewQuestions";
 
 
 export interface IQnAPreviewPanelFormProps {
-    newQuestions?: INewQuestions[];
     qnaItem: IQnAListItem;
     
 }
