@@ -2,7 +2,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
 import { HttpClientResponse, HttpClient, AadHttpClient } from '@microsoft/sp-http';
-import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult } from '@pnp/sp';
+import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult, Web } from '@pnp/sp';
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { INewQuestions } from "../models/INewQuestions";
@@ -15,13 +15,16 @@ import * as storage from "azure-storage";
 
 export class QnAService extends BaseService implements IQnAService {
 
-    public endpoints: Object;
+    //private webServiceEnpoint: string;
     private context: WebPartContext;
-    public webPartContext: WebPartContext;
-   
+    //private webUrl: string;
+    //private web: Web;
+
     constructor(webPartContext: WebPartContext) {
         super(webPartContext);
        this.context = webPartContext;
+      // this.webUrl = webUrl;
+      // this.web = new Web(webUrl);
     }
 
     public getCurrentUser(): Promise<any> {

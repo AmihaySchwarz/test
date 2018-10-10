@@ -2,7 +2,7 @@
 import { INewQuestions } from "../../models/INewQuestions";
 
 export interface IRemarksProps {
-    item: INewQuestions,
+    item: INewQuestions;
     onSubmitRemarks: Function;
 }
 

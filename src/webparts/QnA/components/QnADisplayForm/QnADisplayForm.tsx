@@ -133,10 +133,13 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
         let currentUserEmail = this.state.currentUser.Email;
         if (
-          this.state.listTrackingItem.LockedBy !== undefined &&
-          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail
+          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+          this.state.listTrackingItem.LockedBy.EMail
         ) {
           toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+          this.setState({
+            isLoading: false
+          });
         } else {
           //get qna action history, if it has laman add to current state
           if((this.state.listTrackingItem.qnaPublishString != undefined) ||
@@ -162,6 +165,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                 //alert user if lock fail then refresh data
                 //console.log("failed to lock the item");
                 toast.error("Failed to lock item");
+                this.setState({
+                  isLoading: false
+                });
               } else {
                 // console.log(this.state.selectedDivision);
                 this.setState({
@@ -197,10 +203,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         });
         let currentUserEmail = this.state.currentUser.Email;
         if (
-          this.state.listTrackingItem.LockedBy !== undefined &&
-          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail
+          // this.state.listTrackingItem.LockedBy !== undefined &&
+           this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+          this.state.listTrackingItem.LockedBy.EMail
         ) {
           toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+          this.setState({
+            isLoading: false
+          });
         }
         //COMMENT OUT MUNA 
       //   else if () {
@@ -218,6 +228,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
               if (res.data == undefined) {
                 //alert user if lock fail then refresh data
                 toast.error("Failed to lock item");
+                this.setState({
+                  isLoading: false
+                });
               } else {
                 this.setState({
                   formView: ViewType.Publish,

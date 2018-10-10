@@ -17,6 +17,7 @@ import { IQnAContainerProps } from './components/QnAContainer/IQnAContainerProps
 import { QnAContainer } from './components/QnAContainer/QnAContainer';
 import { IQnAService, QnAService } from './services';
 import * as MockQnAServiceImport from './services/MockQnAService';
+import { sp } from '@pnp/sp';
 let MockQnAService: typeof MockQnAServiceImport;
 if (DEBUG) {
   MockQnAService = require('./services/MockQnAService');
@@ -34,7 +35,6 @@ export interface IQnAListWebPartProps {
   webUrl: string;
   tenant: string;
   QnAMakerKnowledgeBaseId: string;
-    
 }
 
 export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPartProps> {
@@ -50,7 +50,16 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
     //} else {
       this.service = new QnAService(this.context);
     //}
-      return super.onInit();
+      return super.onInit().then(_ => {
+        sp.setup({
+          spfxContext: this.context,
+          sp: {
+            headers: {
+              Accept: 'application/json; odata=verbose'
+            }
+          }
+        });
+      });
   }
 
   public render(): void {
