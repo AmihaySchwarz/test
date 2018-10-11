@@ -114,9 +114,9 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
           //    PropertyPaneTextField('clientId', {
           //      label: strings.ClientIdFieldLabel,
           //   }),
-            PropertyPaneTextField('webUrl', {
-                label: strings.WebUrlFieldLabel,
-            }),
+            // PropertyPaneTextField('webUrl', {
+            //     label: strings.WebUrlFieldLabel,
+            // }),
           //   PropertyPaneTextField('tenant', {
           //     label: strings.TenantFieldLabel,
           // }),

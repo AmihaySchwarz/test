@@ -54,7 +54,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public componentWillReceiveProps(newProps): void {
       console.log(newProps, "will receive props");
     if (
-      newProps.newQuestions.length !== 0
+      newProps.defaultDivision
     ) {
       this.setState({
         qnaItems: newProps.qnaItems,
@@ -76,7 +76,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public componentDidMount(): void {
     console.log(this.props, "did mount");
     if (
-        this.props.newQuestions.length !== 0
+        this.props.defaultDivision
       ) {
         this.setState({
           qnaItems: this.props.qnaItems,
@@ -423,7 +423,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     } else {
       //item is new so we also need to delete the item from qnaActionHistory state
       let historyArray = [...this.state.qnaActionHistory];
-      let histIndex = historyArray.findIndex(d => d.identifier == item.row._original.identifier);
+      let histIndex = historyArray.findIndex(d => d.qnaItem.identifier == item.row._original.identifier);
       historyArray.splice(histIndex, 1);
       this.setState({ qnaActionHistory: historyArray });
 
@@ -595,7 +595,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public render() {
-    
+    //console.log(this.state);
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
       
