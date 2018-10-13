@@ -17,6 +17,7 @@ export interface IQnAFormProps {
     properties: any;
     currentUser: any;
     defaultDivision: any;
+    qnaItems?: IQnAListItem[];
 }
 
 export interface IQnAFormState {

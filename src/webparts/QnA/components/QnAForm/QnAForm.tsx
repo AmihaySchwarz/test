@@ -45,11 +45,11 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   public async componentWillReceiveProps(newProps): Promise<void> {
     console.log(newProps);
     if (
-      newProps.masterItems.length !== 0 &&
-      newProps.newQuestions.length !== 0
+      newProps.masterItems.length !== 0 //&&
+      //newProps.newQuestions.length !== 0
     ) {
       this.setState({
-        qnaItems: newProps.qnaItems,
+        qnaItems: newProps.qnaItems, 
         newQuestions: newProps.newQuestions,
         currentUser: newProps.currentUser,
         division: newProps.masterItems,
@@ -61,7 +61,21 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public async componentDidMount(): Promise<void> {
-    console.log("componentdsd did mount");
+    console.log("component did mount", this.props);
+    if (
+      this.props.masterItems.length !== 0// &&
+      //this.props.newQuestions.length !== 0
+    ) {
+      this.setState({
+        qnaItems: this.props.qnaItems,
+        newQuestions: this.props.newQuestions,
+        currentUser: this.props.currentUser,
+        division: this.props.masterItems,
+        selectedDivision: this.props.defaultDivision,
+        selectedDivisionText: this.props.defaultDivision.text,
+        selectedDivisionListName: this.props.defaultDivision.key
+      });
+    }
   }
 
   public onEditClick(
@@ -131,6 +145,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public render() {
+    console.log(this.state);
     const { isLoading, formView } = this.state;
     return (
       <div>
@@ -141,7 +156,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             qnaItems={this.state.qnaItems}
             actionHandler={this.props.actionHandler}
             properties={this.props.properties}
-            currentUser={this.state.currentUser}
+            currentUser={this.props.currentUser}
             defaultDivision={this.state.selectedDivision}
             onSaveClick={this.onSaveClick}
             onSavePublishClick={this.onSavePublishClick}
@@ -155,7 +170,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             masterItems={this.props.masterItems}
             actionHandler={this.props.actionHandler}
             properties={this.props.properties}
-            currentUser={this.state.currentUser}
+            currentUser={this.props.currentUser}
             defaultDivision={this.state.selectedDivision}
             onEditClick={this.onEditClick}
             onPublishClick={this.onpublishClick}
@@ -169,7 +184,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             masterItems={this.props.masterItems}
             actionHandler={this.props.actionHandler}
             properties={this.props.properties}
-            currentUser={this.state.currentUser}
+            currentUser={this.props.currentUser}
             defaultDivision={this.state.selectedDivision}
             qnaActionHistory={this.state.qnaActionHistory}
             onPublishedClick={this.onPublishedClick}

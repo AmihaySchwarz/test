@@ -62,7 +62,7 @@ const components = {
           onChange={this.handleChange}
           onInputChange={this.handleInputChange}
           onKeyDown={this.handleKeyDown}
-          placeholder="Type something and press enter..."
+          placeholder="Enter Questions"
           value={value}
         />
       );

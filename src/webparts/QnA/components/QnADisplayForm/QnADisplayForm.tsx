@@ -42,10 +42,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   }
 
   public componentWillReceiveProps(newProps): void {
-    //console.log(newProps);
+    console.log(newProps);
     if (
-      newProps.masterItems.length !== 0 &&
-      newProps.newQuestions.length !== 0
+      newProps.masterItems.length !== 0 //&&
+      //newProps.newQuestions.length !== 0
     ) {
       this.setState({
         qnaItems: newProps.qnaItems,
@@ -65,7 +65,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   public componentDidMount(): void {
     console.log(this.props, "did mount");
     if (
-        this.props.newQuestions.length !== 0
+        this.props.masterItems.length !== 0
       ) {
         this.setState({
           newQuestions: this.props.newQuestions,
