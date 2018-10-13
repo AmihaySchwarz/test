@@ -138,7 +138,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
             //   });
             // });
             let addedQuestions = updatedQuestions.filter(
-              obj => !origQuestions.some(obj2 => obj.vale == obj2.value));
+              obj => !origQuestions.some(obj2 => obj.value == obj2.value));
   
             console.log(addedQuestions);
             if(!newObject.update){
