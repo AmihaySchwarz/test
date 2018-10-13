@@ -143,7 +143,7 @@ export class QnAService extends BaseService implements IQnAService {
                         Title: "Updated Title",
                         LockedById: null,
                         LockedReleaseTime: d.toLocaleTimeString(),
-                        LastUpdated: d.toLocaleDateString(),
+                        LastUpdated: d.toLocaleTimeString(),
                         qnaPublishString: JSON.stringify(qnaActionHistory),
                         qnaOriginalCopy: JSON.stringify(qnaOriginalCopy)
                     }).then(result => {
@@ -155,8 +155,8 @@ export class QnAService extends BaseService implements IQnAService {
                         Title: "Updated Title",
                         LockedById: null,
                         LockedReleaseTime: d.toLocaleTimeString(),
-                        LastUpdated: d.toLocaleDateString(),
-                        LastPublished: d.toLocaleDateString(),
+                        LastUpdated: d.toLocaleTimeString(),
+                        LastPublished: d.toLocaleTimeString(),
                         qnaPublishString: null,
                         qnaOriginalCopy: null
                     }).then(result => {
