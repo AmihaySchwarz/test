@@ -202,8 +202,6 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         const qnaWithKBID = addedItems.map(addedItem => {
           console.log(addedItem.qnaItem.Id);
           let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
-            //returning an error if the metadata for spid does not exist
-            //need to match the exact spid metadata not the index yata
             if (kb.metadata[1]){
               return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
             }
