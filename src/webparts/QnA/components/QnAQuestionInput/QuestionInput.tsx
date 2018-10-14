@@ -21,37 +21,49 @@ const components = {
       // console.group('Value Changed');
       // console.log(value);
       console.log(`action: ${actionMeta.action}`);
-      console.groupEnd();
-      console.log(value);
+      //console.groupEnd();
+      //console.log(value);
       this.setState({ value });
       this.props.onChange([...value]);
     }
     public handleInputChange = (inputValue: string) => {
-      console.log(inputValue);
-      this.setState({ inputValue });
+      this.setState({ inputValue : inputValue});
+      //console.log(inputValue);
     }
     public handleKeyDown = (event) => {
       const { inputValue } = this.state;
       const { value } = this.props;
-      console.log(inputValue);
-      if (!inputValue) return;
+      //console.log(inputValue);
+      if (!inputValue) {
+        //console.log(inputValue);
+        return;
+      } 
       switch (event.key) {
         case 'Enter':
-        case 'Tab':
-          console.group('Value Added');
-          console.log(value);
-          console.groupEnd();
           this.setState({
             inputValue: '',
             //value: [...value, createOption(inputValue)]
           });
           this.props.onChange([...value,createOption(inputValue)]);
           event.preventDefault();
+          break;
+        case 'Tab':
+          //console.group('Value Added');
+          //console.log(value);
+          //console.groupEnd();
+          this.setState({
+            inputValue: '',
+            //value: [...value, createOption(inputValue)]
+          });
+          this.props.onChange([...value,createOption(inputValue)]);
+          event.preventDefault();
+          break;
       }
     }
     public render() {
       const { inputValue  } = this.state;
       const { value } =this.props;
+      //console.log(inputValue);
       return (
         <CreatableSelect
           components={components}
