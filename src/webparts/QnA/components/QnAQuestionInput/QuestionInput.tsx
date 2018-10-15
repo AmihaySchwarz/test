@@ -28,21 +28,21 @@ const components = {
     }
     public handleInputChange = (inputValue: string) => {
       this.setState({ inputValue : inputValue});
-      //console.log(inputValue);
+      console.log(inputValue);
     }
     public handleKeyDown = (event) => {
       const { inputValue } = this.state;
       const { value } = this.props;
       //console.log(inputValue);
-      if (!inputValue) {
-        //console.log(inputValue);
-        return;
-      } 
+      // if (!inputValue) {
+      //   console.log(inputValue);
+      //   return;
+      // } 
+
       switch (event.key) {
         case 'Enter':
           this.setState({
-            inputValue: '',
-            //value: [...value, createOption(inputValue)]
+            inputValue: ''
           });
           this.props.onChange([...value,createOption(inputValue)]);
           event.preventDefault();
@@ -58,6 +58,8 @@ const components = {
           this.props.onChange([...value,createOption(inputValue)]);
           event.preventDefault();
           break;
+        default:
+            return null;
       }
     }
     public render() {
@@ -74,7 +76,7 @@ const components = {
           onChange={this.handleChange}
           onInputChange={this.handleInputChange}
           onKeyDown={this.handleKeyDown}
-          placeholder="Enter Questions"
+          placeholder="Press enter after every question"
           value={value}
         />
       );
