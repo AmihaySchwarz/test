@@ -163,12 +163,12 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
 
   private needsConfiguration(): boolean {
     console.log("needscionfig");
-    let config =  !!this.properties.qnATrackingListName &&
-        //!!this.properties.webUrl &&
-        !!this.properties.masterListName &&
-        !!this.properties.QnAMakerKnowledgeBaseId &&
-        !!this.properties.endpointUrl;
-
+    // let config =  !!this.properties.qnATrackingListName &&
+    //     //!!this.properties.webUrl &&
+    //     !!this.properties.masterListName &&
+    //     !!this.properties.QnAMakerKnowledgeBaseId &&
+    //     !!this.properties.endpointUrl;
+    let config = false;
         return config;
 
   }
