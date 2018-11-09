@@ -7,10 +7,6 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "../Pagination/Pagination";
 import { DefaultButton } from "office-ui-fabric-react/lib/Button";
-import {
-  Dropdown,
-  IDropdownOption
-} from "office-ui-fabric-react/lib/Dropdown";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import ReactTooltip from "react-tooltip";
@@ -21,6 +17,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 import Modal from "react-responsive-modal";
+import * as Scroll from 'react-scroll';
+import {
+  Events,
+  animateScroll as scroll
+} from "react-scroll";
 
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
@@ -72,6 +73,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.loadQnAListData(newProps.defaultDivision.key);
       this.loadNewQuestionsData(newProps.defaultDivision.text);
     }
+
+    Events.scrollEvent.register("begin", function() {
+      console.log("begin", arguments);
+    });
+
+    Events.scrollEvent.register("end", function() {
+      console.log("end", arguments);
+    });
   }
 
   public componentDidMount(): void {
@@ -94,6 +103,19 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         this.loadQnAListData(this.props.defaultDivision.key);
         this.loadNewQuestionsData(this.props.defaultDivision.text);
       }
+
+      Events.scrollEvent.register("begin", function() {
+        console.log("begin", arguments);
+      });
+  
+      Events.scrollEvent.register("end", function() {
+        console.log("end", arguments);
+      });
+  }
+
+  componentWillUnmount() {
+    Events.scrollEvent.remove("begin");
+    Events.scrollEvent.remove("end");
   }
   
   public async loadQnAListData(divisionListName: string): Promise<void> {
@@ -358,6 +380,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     
   }
 
+  scrollToBottom() {
+    scroll.scrollToBottom();
+  }
   public addNewQnaToTable(): void {
     console.log("add inline form");
 
@@ -390,6 +415,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
       qnaItems: [...oldstate.qnaItems, newQnA]
     }));
+
+    this.scrollToBottom();
+
   }
 
   

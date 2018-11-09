@@ -1,6 +1,9 @@
 
 import "@pnp/polyfill-ie11";
-
+require('core-js');
+import 'es6-promise';
+require('es6-promise/auto');
+import 'whatwg-fetch';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';

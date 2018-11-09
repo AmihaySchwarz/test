@@ -3,7 +3,7 @@ import * as AuthenticationContext from 'adal-angular';
 import styles from './QnAPreviewPanel.module.scss';
 import { IQnAPreviewPanelFormProps, IQnAPreviewPanelFormState } from './IQnAPreviewPanelProps';
 import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
-
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 
 export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, IQnAPreviewPanelFormState> {
@@ -32,7 +32,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
           
 
               <div className={styles.botMessage}>
-                <div className={styles.message}> {this.props.qnaItem.Answer} </div>
+                <div className={styles.message}> {ReactHtmlParser(this.props.qnaItem.Answer)} </div>
               </div>
         </div> 
     }

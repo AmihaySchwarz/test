@@ -3,6 +3,7 @@ import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { PrimaryButton } from "office-ui-fabric-react/lib/Button";
 import { IRemarksProps , IRemarksState } from "./IRemarksProps";
 
+
   export default class RemarksPanel extends React.Component<IRemarksProps,IRemarksState> {
     public state = {
       remarks: "",

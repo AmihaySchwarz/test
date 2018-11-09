@@ -15,6 +15,7 @@ import Moment from "react-moment";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADisplayFormState> {
   constructor(props) {
@@ -257,17 +258,25 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     });
   }
 
-  public renderQuestionsPublish(cellInfo) {
-    //console.log(cellInfo.original.qnaItem.Questions);
-    let parsedQ = JSON.parse(cellInfo.original.qnaItem.Questions);
-    return parsedQ.map(question => {
-      return (
-        <div>
-          <span style={{ border: "#000" }}> {question.label} </span>
-        </div>
-      );
-    });
+  public renderAnswerDisplay(cellInfo) {
+    console.log(cellInfo.original.Answer);
+    let html = cellInfo.original.Answer;
+    return (
+      <div> {ReactHtmlParser(html)}</div>
+    )
   }
+
+  // public renderQuestionsPublish(cellInfo) {
+  //   //console.log(cellInfo.original.qnaItem.Questions);
+  //   let parsedQ = JSON.parse(cellInfo.original.qnaItem.Questions);
+  //   return parsedQ.map(question => {
+  //     return (
+  //       <div>
+  //         <span style={{ border: "#000" }}> {question.label} </span>
+  //       </div>
+  //     );
+  //   });
+  // }
 
   public renderDateField(cellInfo) {
     return (
@@ -395,7 +404,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       },
                       {
                         Header: "Answer",
-                        accessor: "Answer"
+                        accessor: "Answer",
+                        Cell: this.renderAnswerDisplay
                       },
                       {
                         Header: "Classification",
