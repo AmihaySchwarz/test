@@ -127,7 +127,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       formView: ViewType.Edit,
       selectedDivision: selectedDivision,
       qnaActionHistory: qnaActionHistory
-    })
+    });
   }
 
   public onSaveClick(

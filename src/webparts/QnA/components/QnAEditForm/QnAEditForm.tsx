@@ -77,13 +77,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.loadNewQuestionsData(newProps.defaultDivision.text);
     }
 
-    Events.scrollEvent.register("begin", function() {
-      console.log("begin", arguments);
-    });
+    // Events.scrollEvent.register("begin", function() {
+    //   console.log("begin", arguments);
+    // });
 
-    Events.scrollEvent.register("end", function() {
-      console.log("end", arguments);
-    });
+    // Events.scrollEvent.register("end", function() {
+    //   console.log("end", arguments);
+    // });
   }
 
   public componentDidMount(): void {
@@ -107,16 +107,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         this.loadNewQuestionsData(this.props.defaultDivision.text);
       }
 
-      Events.scrollEvent.register("begin", function() {
-        console.log("begin", arguments);
-      });
+      // Events.scrollEvent.register("begin", function() {
+      //   console.log("begin", arguments);
+      // });
   
-      Events.scrollEvent.register("end", function() {
-        console.log("end", arguments);
-      });
+      // Events.scrollEvent.register("end", function() {
+      //   console.log("end", arguments);
+      // });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     Events.scrollEvent.remove("begin");
     Events.scrollEvent.remove("end");
   }
