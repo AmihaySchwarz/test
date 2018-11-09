@@ -38,6 +38,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.onEditClick = this.onEditClick.bind(this);
     this.onpublishClick = this.onpublishClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
+    this.onBackClick = this.onBackClick.bind(this);
+    this.onPublishBackClick = this.onPublishBackClick.bind(this);
     this.onSavePublishClick = this.onSavePublishClick.bind(this);
     this.onPublishedClick = this.onPublishedClick.bind(this);
   }
@@ -111,6 +113,23 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
+  public onBackClick(){
+    this.setState({
+      formView: ViewType.Display
+    });
+  }
+  
+  public onPublishBackClick(
+    qnaActionHistory: any[],
+    selectedDivision: any[]
+  ) {
+    this.setState({
+      formView: ViewType.Edit,
+      selectedDivision: selectedDivision,
+      qnaActionHistory: qnaActionHistory
+    })
+  }
+
   public onSaveClick(
     selectedDivision: any[],
     qnaActionHistory: any[],
@@ -159,6 +178,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             currentUser={this.props.currentUser}
             defaultDivision={this.state.selectedDivision}
             onSaveClick={this.onSaveClick}
+            onBackClick={this.onBackClick}
             onSavePublishClick={this.onSavePublishClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
             qnaActionHistory={this.state.qnaActionHistory}
@@ -187,6 +207,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             currentUser={this.props.currentUser}
             defaultDivision={this.state.selectedDivision}
             qnaActionHistory={this.state.qnaActionHistory}
+            onPublishBackClick={this.onPublishBackClick}
             onPublishedClick={this.onPublishedClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
           />

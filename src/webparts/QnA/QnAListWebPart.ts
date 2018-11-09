@@ -1,5 +1,13 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+// Include all polyfills
+require('core-js');
+import 'es6-promise';
+require('es6-promise/auto');
+import 'whatwg-fetch';
+//import "core-js/es6/array";
+//import "es6-map/implement";
+//import "core-js/modules/es6.array.find";
 import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
@@ -163,13 +171,13 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
 
   private needsConfiguration(): boolean {
     console.log("needscionfig");
-    // let config =  !!this.properties.qnATrackingListName &&
-    //     //!!this.properties.webUrl &&
-    //     !!this.properties.masterListName &&
-    //     !!this.properties.QnAMakerKnowledgeBaseId &&
-    //     !!this.properties.endpointUrl;
-    let config = false;
-        return config;
+    let config =  !!this.properties.qnATrackingListName &&
+        //!!this.properties.webUrl &&
+        !!this.properties.masterListName &&
+        !!this.properties.QnAMakerKnowledgeBaseId &&
+        !!this.properties.endpointUrl;
+    // let config = false;
+         return config;
 
   }
 

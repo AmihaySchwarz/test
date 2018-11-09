@@ -11,21 +11,26 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "@material-ui/core": "^3.0.3",
     "@microsoft/sp-core-library": "1.6.0",
     "@microsoft/sp-lodash-subset": "1.6.0",
     "@microsoft/sp-office-ui-fabric-core": "1.6.0",
+    "@microsoft/sp-polyfills": "^1.7.0",
     "@microsoft/sp-webpart-base": "1.6.0",
     "@pnp/common": "^1.2.1",
     "@pnp/graph": "^1.2.1",
     "@pnp/logging": "^1.2.1",
     "@pnp/odata": "^1.2.1",
+    "@pnp/polyfill-ie11": "^1.0.0",
     "@pnp/sp": "^1.2.1",
     "@types/es6-promise": "0.0.33",
     "@types/react": "15.6.6",
     "@types/react-dom": "15.5.6",
     "@types/webpack-env": "1.13.1",
+    "@types/whatwg-fetch": "0.0.33",
     "azure-storage": "^2.10.1",
+    "es6-promise": "^4.2.5",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "react": "15.6.2",
@@ -33,21 +38,23 @@
     "react-dom": "15.6.2",
     "react-moment": "^0.8.1",
     "react-responsive-modal": "^3.4.0",
-    "react-select": "^2.0.0",
+    "react-select": "^2.1.1",
     "react-table": "^6.8.6",
     "react-toastify": "^4.3.2",
     "react-tooltip": "^3.8.4",
     "reactjs-popup": "^1.2.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.0.3",
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "1.6.0",
     "@microsoft/sp-module-interfaces": "1.6.0",
     "@microsoft/sp-webpart-workbench": "1.6.0",
-    "tslint-microsoft-contrib": "~5.0.0",
-    "gulp": "~3.9.1",
     "@types/chai": "3.4.34",
+    "@types/core-js": "^2.5.0",
     "@types/mocha": "2.2.38",
-    "ajv": "~5.2.2"
+    "ajv": "~5.2.2",
+    "gulp": "~3.9.1",
+    "tslint-microsoft-contrib": "~5.0.0"
   }
 }

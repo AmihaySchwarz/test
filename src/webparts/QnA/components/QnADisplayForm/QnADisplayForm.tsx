@@ -188,7 +188,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
   public changeToPublish(): void {
     this.setState({isLoading: true});
-   
+
     this.props.actionHandler
       .checkLockStatus(
         this.state.currentUser,

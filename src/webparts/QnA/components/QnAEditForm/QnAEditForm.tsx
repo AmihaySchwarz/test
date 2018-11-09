@@ -46,6 +46,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
+    this.onBackClick = this.onBackClick.bind(this);
     this.addNewQuestionToQnAList = this.addNewQuestionToQnAList.bind(this);
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
@@ -186,6 +187,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
     }
     
+  }
+
+  private onBackClick() : void {
+    this.props.onBackClick();
   }
 
   private onSaveClick(): void {
@@ -558,15 +563,22 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public renderEditableAnswer = (cellInfo) => {
+
+    const style = _.isEmpty(cellInfo.original.Answer) ? {}  : {display: 'none'};
+
     return (
-      <TextField
-        value={cellInfo.original.Answer}
-        multiline
-        rows={4}
-        required={true}
-        resizable={true}
-        onChanged={data => this.updateQnAAnswer(data, cellInfo)}
-      />
+      <div>
+        <TextField
+          value={cellInfo.original.Answer}
+          multiline
+          rows={4}
+          required={true}
+          resizable={true}
+          onChanged={data => this.updateQnAAnswer(data, cellInfo)}
+        />
+        <span className={styles.requiredLabel} style={style}>* required </span> 
+      </div>
+     
     );
   }
 
@@ -622,11 +634,17 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             
             {this.state.isLoading && <LoadingSpinner />}
             {/* <ToastContainer /> */}
+           
             <div className={styles.controlMenu}>
               <div className={styles.dropdownCont}>
                 <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>
               </div>
               <div className={styles.actionButtons}>
+                <DefaultButton 
+                  text="Back"
+                  primary={true}
+                  onClick={this.onBackClick}
+                />
                 <DefaultButton 
                   text="Save"
                   primary={true}

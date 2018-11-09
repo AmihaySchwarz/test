@@ -16,6 +16,26 @@
 //     position: absolute;
 //   }
  }
+  .questionInput{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+ .textLabel {
+  font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: $ms-font-size-m;
+  font-weight: bold;
+  border-width: 0;
+ }
+
+ .requiredLabel{
+  font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+  font-size: 10;
+  font-style: italic;
+  font-weight: normal;
+  border-width: 0;
+  color: #B12406;
+ }
 
  .dropdownCont {
    flex: 1;

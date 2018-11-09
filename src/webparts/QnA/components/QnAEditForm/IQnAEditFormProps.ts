@@ -19,6 +19,7 @@ export interface IQnAEditFormProps {
     defaultDivision: any;
     qnaItems: IQnAListItem[];
     onSaveClick: Function;
+    onBackClick: Function;
     onSavePublishClick: Function;
     qnaOriginalCopy: IQnAListItem[];
     qnaActionHistory: any[];

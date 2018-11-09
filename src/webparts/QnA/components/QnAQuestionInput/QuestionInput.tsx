@@ -1,5 +1,7 @@
 import * as React from 'react';
 import CreatableSelect from 'react-select/lib/Creatable';
+import styles from '../QnAForm/QnAForm.module.scss';
+import * as _ from "lodash";
 
 const components = {
     DropdownIndicator: null
@@ -9,6 +11,10 @@ const components = {
     label,
     value: label,
   });
+
+  const questionStyles = {
+
+  };
   
   export default class QuestionInput extends React.Component<any,any> {
     public state = {
@@ -30,6 +36,21 @@ const components = {
       this.setState({ inputValue : inputValue});
       console.log(inputValue);
     }
+
+    public handleBlur = (event) => {
+      const { inputValue } = this.state;
+      const { value } = this.props;
+
+      if (!_.isEmpty(inputValue)) {
+        this.setState({
+          inputValue: ''
+        });
+        this.props.onChange([...value,createOption(inputValue)]);
+        event.preventDefault();
+      }
+
+    }
+
     public handleKeyDown = (event) => {
       const { inputValue } = this.state;
       const { value } = this.props;
@@ -62,23 +83,36 @@ const components = {
             return null;
       }
     }
+
+
     public render() {
       const { inputValue  } = this.state;
       const { value } =this.props;
+      console.log(value);
+
+      const style = _.isEmpty(value) ? {}  : {display: 'none'};
+
+
       //console.log(inputValue);
       return (
-        <CreatableSelect
-          components={components}
-          inputValue={inputValue}
-          isClearable
-          isMulti
-          menuIsOpen={false}
-          onChange={this.handleChange}
-          onInputChange={this.handleInputChange}
-          onKeyDown={this.handleKeyDown}
-          placeholder="Press enter after every question"
-          value={value}
-        />
+        <div> 
+          <CreatableSelect
+            components={components}
+            inputValue={inputValue}
+            isClearable
+            isMulti
+            menuIsOpen={false}
+            onChange={this.handleChange}
+            onInputChange={this.handleInputChange}
+            onBlur={this.handleBlur}
+            onKeyDown={this.handleKeyDown}
+            value={value}
+            className={styles.questionInput}
+            styles={questionStyles}
+          />
+          <span className={styles.requiredLabel} style={style}>* required </span> 
+        </div>
+       
       );
     }
   }

@@ -1,3 +1,6 @@
+
+import "@pnp/polyfill-ie11";
+
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
@@ -178,7 +181,7 @@ export class QnAService extends BaseService implements IQnAService {
             .get()
             .then((items: any[]) => {
                 if(items.length == 0) {
-                    console.log(items, "item does nto exist. creating now");
+                    console.log(items, "item does not exist. creating now");
                     return this.createLockItem(currentUser, division, qnaListTrackingListName).then(res => {
                        return res;
                    });
@@ -221,10 +224,10 @@ export class QnAService extends BaseService implements IQnAService {
                     LockedById: currentUser.Id,
                     LastUpdated: d.toLocaleDateString()
                 }).then(result => {
-                  //  console.log(result);
+                    console.log(result);
                     return result;
                 }).catch(error => {
-                  //  console.log();
+                    console.log();
                     return error;
                 });
             }

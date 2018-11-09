@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Dropdown, IDropdown, DropdownMenuItemType, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { ToastContainer, toast } from 'react-toastify';
-
+import styles from '../QnAForm/QnAForm.module.scss';
+import * as _ from "lodash";
 //Placeholder where will we get this data?
 
 const classificationDropDownOption = [  
@@ -42,12 +43,17 @@ const classificationDropDownOption = [
   
     public render() {
       const { selectedItem } = this.state;
+      let style;
+
+      if (selectedItem !== undefined) {
+        style = _.isEmpty(selectedItem.key) ? {}  : {display: 'none'};
+      }
 
       return (
      <div>
        { selectedItem && 
             <Dropdown 
-            placeHolder="classification"
+            placeHolder=""
             id="Classification"
             required={true}
             ariaLabel="Select Classification"
@@ -56,6 +62,7 @@ const classificationDropDownOption = [
             onChanged={this.changeState}
           />
         }
+        <span className={styles.requiredLabel} style={style}>* required </span> 
       </div>
       );
     }

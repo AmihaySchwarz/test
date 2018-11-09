@@ -7,11 +7,7 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "../Pagination/Pagination";
 import { DefaultButton } from "office-ui-fabric-react/lib/Button";
-import {
-  Dropdown,
-  IDropdownOption
-} from "office-ui-fabric-react/lib/Dropdown";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 
@@ -36,15 +32,20 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
       qnaActionHistory: [],
       qnaOriginalCopy: [],
       searchNewq: "",
-      searchQnA: ""
+      searchQnA: "",
+      isqnaActionHistoryEmpty: false
     };
 
     this.publishQnA = this.publishQnA.bind(this);
+    this.onBackClick = this.onBackClick.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
+    console.log(newProps.qnaActionHistory);
     if (
-      newProps.qnaActionHistory.length !== 0
+      (newProps.qnaActionHistory !== undefined) &&
+      (newProps.qnaActionHistory !== null) &&
+      (newProps.qnaActionHistory.length !== 0) 
     ) {
       this.setState({
         qnaActionHistory: this.props.qnaActionHistory,
@@ -57,11 +58,22 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionListName: newProps.defaultDivision.key,
         qnaOriginalCopy: newProps.qnaOriginalCopy
       });
+    } else {
+      this.setState({
+        isqnaActionHistoryEmpty: true,
+        selectedDivision: newProps.defaultDivision,
+        selectedDivisionText: newProps.defaultDivision.text,
+        selectedDivisionListName: newProps.defaultDivision.key
+      });
+      
     }
   }
 
   public componentDidMount(): void {
+    console.log(this.props.qnaActionHistory);
     if (
+      (this.props.qnaActionHistory !== undefined) &&
+      (this.props.qnaActionHistory !== null) &&
       this.props.qnaActionHistory.length !== 0
     ) {
       this.setState({
@@ -74,7 +86,18 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionListName: this.props.defaultDivision.key,
         qnaOriginalCopy: this.props.qnaOriginalCopy
       });
+    } else {
+      this.setState({
+        isqnaActionHistoryEmpty: true,
+        selectedDivision: this.props.defaultDivision,
+        selectedDivisionText: this.props.defaultDivision.text,
+        selectedDivisionListName: this.props.defaultDivision.key
+      });
     }
+  }
+
+  public onBackClick(): void {
+    this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision);
   }
 
   public publishQnA(): void {
@@ -306,6 +329,8 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
 
 
   public render() {
+      console.log(this.state.isqnaActionHistoryEmpty, "QNA HISTORY");
+
         return ( 
           <div>
             {/* <ToastContainer /> */}
@@ -316,13 +341,21 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
               </div>
               <div className={styles.actionButtons}>
                 <DefaultButton
+                    text="Back"
+                    primary={true}
+                    href="#"
+                    onClick={this.onBackClick}
+                  />
+                <DefaultButton
                   text="Publish"
                   primary={true}
                   href="#"
                   onClick={this.publishQnA}
+                  disabled={this.state.isqnaActionHistoryEmpty}
                 />
               </div>
             </div>
+            <span className={styles.textLabel}> Preview Changes </span>
             <div className={styles.tableCont}>{/*updatedQnA*/}
               <ReactTable 
                 data={this.state.qnaActionHistory } 
