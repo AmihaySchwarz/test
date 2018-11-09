@@ -259,7 +259,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   }
 
   public renderAnswerDisplay(cellInfo) {
-    console.log(cellInfo.original.Answer);
+    //console.log(cellInfo.original.Answer);
     let html = cellInfo.original.Answer;
     return (
       <div> {ReactHtmlParser(html)}</div>

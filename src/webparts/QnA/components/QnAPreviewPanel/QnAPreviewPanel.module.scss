@@ -3,6 +3,8 @@
 
 .chatPanel {
   background: #FFF;
+  width: 200px;
+  height: 400px;
 
 }
 .chatOutput {
@@ -16,7 +18,7 @@
   }
   .userMessage {
     .message {
-      background: #0078D7;
+      background: #ad0303;
       color: white;
     }
   }
