@@ -19,6 +19,8 @@ import * as _ from "lodash";
 import Modal from "react-responsive-modal";
 import * as Scroll from 'react-scroll';
 import {
+  Link,
+  Element,
   Events,
   animateScroll as scroll
 } from "react-scroll";
@@ -51,6 +53,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.addNewQuestionToQnAList = this.addNewQuestionToQnAList.bind(this);
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
+    this.scrollToBottom = this.scrollToBottom.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -380,7 +383,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     
   }
 
-  scrollToBottom() {
+  public scrollToBottom() {
     scroll.scrollToBottom();
   }
   public addNewQnaToTable(): void {
@@ -662,7 +665,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             
             {this.state.isLoading && <LoadingSpinner />}
             {/* <ToastContainer /> */}
-           
+            {/* <Link activeClass="active" className="test1" to="test1" spy={true} smooth={true} duration={500} >Test Scroll</Link> */}
             <div className={styles.controlMenu}>
               <div className={styles.dropdownCont}>
                 <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>
@@ -822,6 +825,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                 defaultPageSize={10}
                 className="-striped -highlight"
               />
+
             </div>
           </div>
         );

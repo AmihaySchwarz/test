@@ -363,7 +363,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                     columns: [
                       {
                         Header: "Question",
-                        accessor: "Question"
+                        accessor: "Question",
+                        style: { 'overflow': 'visible !important', 'overflow-wrap': 'break-word !important' } 
                       },
                       {
                         Header: "Posted Date",
