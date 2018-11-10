@@ -133,92 +133,73 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         });
 
         let currentUserEmail = this.state.currentUser.Email;
-        if (
-          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-          this.state.listTrackingItem.LockedBy.EMail
-        ) {
-          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
-          this.setState({
-            isLoading: false
-          });
+        //console.log(items[0], "list tracking");
+
+        if(items[0].LockedBy == undefined) {
+          this.lockList();
         } else {
-          //get qna action history, if it has laman add to current state
-          if((this.state.listTrackingItem.qnaPublishString != undefined) ||
-          (this.state.listTrackingItem.qnaPublishString != null)) {
+          if (
+            this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+            this.state.listTrackingItem.LockedBy.EMail
+          ) {
+            toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
             this.setState({
-              qnaActionHistory: JSON.parse(this.state.listTrackingItem.qnaPublishString)
+              isLoading: false
             });
           } else {
-            this.setState({
-              qnaActionHistory: []
-            });
+            //item is not locked
+            //get qna action history, if it has laman add to current state
+            this.lockList();
           }
-
-          this.props.actionHandler
-            .lockList(
-              this.state.currentUser,
-              this.state.selectedDivisionText,
-              this.props.properties.qnATrackingListName
-            )
-            .then(res => {
-              //console.log(res);
-              if (res.data == undefined) {
-                //alert user if lock fail then refresh data
-                //console.log("failed to lock the item");
-                toast.error("Failed to lock item");
-                this.setState({
-                  isLoading: false
-                });
-              } else {
-                // console.log(this.state.selectedDivision);
-                this.setState({
-                  formView: ViewType.Edit,
-                  isLoading: false
-                });
-                //pass state of newQuestions, qnaItems, selected Division
-                this.props.onEditClick(this.state.selectedDivision, 
-                  this.state.qnaItems, 
-                  this.state.newQuestions, 
-                  this.state.qnaOriginalCopy, 
-                  this.state.qnaActionHistory);
-              }
-            });
         }
       });
   }
 
-  public changeToPublish(): void {
-    this.setState({isLoading: true});
+  public lockList() {
+    if((this.state.listTrackingItem.qnaPublishString != undefined) ||
+    (this.state.listTrackingItem.qnaPublishString != null)) {
+      this.setState({
+        qnaActionHistory: JSON.parse(this.state.listTrackingItem.qnaPublishString)
+      });
+    } else {
+      this.setState({
+        qnaActionHistory: []
+      });
+    }
 
     this.props.actionHandler
-      .checkLockStatus(
+      .lockList(
         this.state.currentUser,
         this.state.selectedDivisionText,
         this.props.properties.qnATrackingListName
       )
-      .then(items => {
-        this.setState({
-          listTrackingItem: items[0],
-          qnaActionHistory: JSON.parse(items[0].qnaPublishString),
-          qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
-        });
-        let currentUserEmail = this.state.currentUser.Email;
-        if (
-          // this.state.listTrackingItem.LockedBy !== undefined &&
-           this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-          this.state.listTrackingItem.LockedBy.EMail
-        ) {
-          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+      .then(res => {
+        //console.log(res);
+        if (res.data == undefined) {
+          //alert user if lock fail then refresh data
+          //console.log("failed to lock the item");
+          toast.error("Failed to lock item");
           this.setState({
             isLoading: false
           });
+        } else {
+          // console.log(this.state.selectedDivision);
+          this.setState({
+            formView: ViewType.Edit,
+            isLoading: false
+          });
+          //pass state of newQuestions, qnaItems, selected Division
+          this.props.onEditClick(this.state.selectedDivision, 
+            this.state.qnaItems, 
+            this.state.newQuestions, 
+            this.state.qnaOriginalCopy, 
+            this.state.qnaActionHistory);
         }
-        //COMMENT OUT MUNA 
-      //   else if () {
-      //     //TO DO: CHECK THE UPDATED STATUS OF THE DIVISION
-      //  } 
-         else {
-          this.props.actionHandler
+      });
+  }
+
+  public lockListPublish() {
+    this.props.actionHandler
             .lockList(
               this.state.currentUser,
               this.state.selectedDivisionText,
@@ -244,6 +225,41 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   this.state.qnaOriginalCopy);
               }
             });
+  }
+
+  public changeToPublish(): void {
+    this.setState({isLoading: true});
+
+    this.props.actionHandler
+      .checkLockStatus(
+        this.state.currentUser,
+        this.state.selectedDivisionText,
+        this.props.properties.qnATrackingListName
+      )
+      .then(items => {
+        this.setState({
+          listTrackingItem: items[0],
+          qnaActionHistory: JSON.parse(items[0].qnaPublishString),
+          qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
+        });
+        let currentUserEmail = this.state.currentUser.Email;
+
+        if(items[0].LockedBy == undefined) {
+          this.lockListPublish();
+        } else {
+          if (
+            this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+            this.state.listTrackingItem.LockedBy.EMail
+          ) {
+            toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+            this.setState({
+              isLoading: false
+            });
+          } else {
+            //item is not locked
+            //get qna action history, if it has laman add to current state
+            this.lockListPublish();
+          }
         }
       });
   }

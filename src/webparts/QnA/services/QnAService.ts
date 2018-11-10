@@ -12,12 +12,11 @@ import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult, We
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { INewQuestions } from "../models/INewQuestions";
-//import * as moment from 'moment-mini';
-import * as storage from "azure-storage";
-//const storage = require('azure-storage');
+import * as moment from 'moment'; 
+import 'moment-timezone';
 
-//API Service endpoint : https://sitqnaapiservice20180920061357.azurewebsites.net
-//kbid: 3fd5349a-7f39-4599-bbb2-6f3e041703b4
+//API Service endpoint : https://sitqnaapp.azurewebsites.net 
+//kbid: da570262-16d1-4b75-85be-ed753244532d
 
 export class QnAService extends BaseService implements IQnAService {
 
@@ -138,18 +137,18 @@ export class QnAService extends BaseService implements IQnAService {
     public updateQnAListTracking(qnaListTrackingListName: string,division: string, 
         qnaActionHistory: any [], qnaOriginalCopy: IQnAListItem[], action: string): Promise<any>{
         //let res; 
-        //PENDIONG SAVE THE ACTION HISTORY ON SAVE (SAVE)
-        //SAVE NULL TO THE QNA PUBLISH STRING AFTER PUBLISHING (PUBLICH)
-        let d = new Date();
-
+ 
+        //let d = new Date();
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
+            console.log(d, "in updated time stamps");
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division+"'").get().then((items: any[]) => {
             if (items.length > 0) {
                 if(action === "save") {
                     return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                         Title: "Updated Title",
                         LockedById: null,
-                        LockedReleaseTime: d.toLocaleTimeString(),
-                        LastUpdated: d.toLocaleTimeString(),
+                        LockedReleaseTime: d, //d.toLocaleTimeString(),
+                        LastUpdated: d, //d.toLocaleTimeString(),
                         qnaPublishString: JSON.stringify(qnaActionHistory),
                         qnaOriginalCopy: JSON.stringify(qnaOriginalCopy)
                     }).then(result => {
@@ -160,9 +159,9 @@ export class QnAService extends BaseService implements IQnAService {
                     return sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                         Title: "Updated Title",
                         LockedById: null,
-                        LockedReleaseTime: d.toLocaleTimeString(),
-                        LastUpdated: d.toLocaleTimeString(),
-                        LastPublished: d.toLocaleTimeString(),
+                        LockedReleaseTime: d, // d.toLocaleTimeString(),
+                        LastUpdated: d, //d.toLocaleTimeString(),
+                        LastPublished: d, //d.toLocaleTimeString(),
                         qnaPublishString: null,
                         qnaOriginalCopy: null
                     }).then(result => {
@@ -199,10 +198,11 @@ export class QnAService extends BaseService implements IQnAService {
     }
 
     public createLockItem(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
-        let d = new Date();
+        //let d = new Date();
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
-            LastUpdated: d.toLocaleDateString(),
+            LastUpdated: d, // d.toLocaleDateString(),
             //LastPublished: null,
             LockedById: currentUser.Id,
             //LockedReleaseTime: d.toLocaleTimeString()
@@ -219,18 +219,20 @@ export class QnAService extends BaseService implements IQnAService {
 
     public lockList (currentUser: any, division: string, qnaListTrackingListName: string) : Promise<any>{
         //let res; 
-        let d = new Date();
+        //let d = new Date();
+        //let d = moment().tz("Asia/Singapore").format();
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
             // see if we got something
             if (items.length > 0) {
                 return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: currentUser.Id,
-                    LastUpdated: d.toLocaleDateString()
+                    LastUpdated: d //d.toLocaleDateString()
                 }).then(result => {
                     console.log(result);
                     return result;
                 }).catch(error => {
-                    console.log();
+                    console.log(error);
                     return error;
                 });
             }

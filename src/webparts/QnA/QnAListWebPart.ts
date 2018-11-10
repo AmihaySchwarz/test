@@ -63,7 +63,7 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
           spfxContext: this.context,
           sp: {
             headers: {
-              Accept: 'application/json' //; odata=verbose
+              Accept: 'application/json; odata=verbose' //; odata=verbose
             }
           }
         });
