@@ -97,6 +97,11 @@ const components = {
       return (
         <div> 
           <CreatableSelect
+            getStyles={() => ({
+                multiValueLabel: {
+                  whiteSpace: "normal"
+                }
+            })}
             components={components}
             inputValue={inputValue}
             isClearable
