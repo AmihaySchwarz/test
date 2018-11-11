@@ -58,8 +58,9 @@ const classificationDropDownOption = [
             required={true}
             ariaLabel="Select Classification"
             options={classificationDropDownOption}
-           selectedKey={selectedItem ? selectedItem.key : undefined}
+            selectedKey={selectedItem ? selectedItem.key : undefined}
             onChanged={this.changeState}
+            defaultValue=""
           />
         }
         <span className={styles.requiredLabel} style={style}>* required </span> 

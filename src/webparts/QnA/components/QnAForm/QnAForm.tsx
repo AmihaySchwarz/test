@@ -33,7 +33,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       qnaActionHistory: [],
       qnaOriginalCopy: [],
       searchNewq: "",
-      searchQnA: ""
+      searchQnA: "",
+      originModule: ""
     };
     this.onEditClick = this.onEditClick.bind(this);
     this.onpublishClick = this.onpublishClick.bind(this);
@@ -106,6 +107,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     //go to publish form
     console.log(qnaActionHistory);
     this.setState({
+      originModule: "Display",
       formView: ViewType.Publish,
       selectedDivision: selectedDivision,
       qnaActionHistory: qnaActionHistory,
@@ -121,13 +123,22 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   
   public onPublishBackClick(
     qnaActionHistory: any[],
-    selectedDivision: any[]
+    selectedDivision: any[],
+    originModule: string
   ) {
-    this.setState({
-      formView: ViewType.Edit,
-      selectedDivision: selectedDivision,
-      qnaActionHistory: qnaActionHistory
-    });
+    if (originModule === "Edit"){
+      this.setState({
+        formView: ViewType.Edit,
+        selectedDivision: selectedDivision,
+        qnaActionHistory: qnaActionHistory
+      });
+    } else {
+      this.setState({
+        formView: ViewType.Display,
+        selectedDivision: selectedDivision,
+        qnaActionHistory: qnaActionHistory
+      });
+    }
   }
 
   public onSaveClick(
@@ -152,7 +163,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       formView: ViewType.Publish,
       selectedDivision: selectedDivision,
       qnaActionHistory: qnaActionHistory,
-      qnaOriginalCopy: qnaOriginalCopy
+      qnaOriginalCopy: qnaOriginalCopy,
+      originModule: "Edit"
     });
   }
 
@@ -210,6 +222,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             onPublishBackClick={this.onPublishBackClick}
             onPublishedClick={this.onPublishedClick}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
+            originModule={this.state.originModule}
           />
         )}
         <ToastContainer />

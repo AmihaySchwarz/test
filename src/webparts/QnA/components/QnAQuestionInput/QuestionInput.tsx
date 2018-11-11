@@ -34,7 +34,7 @@ const components = {
     }
     public handleInputChange = (inputValue: string) => {
       this.setState({ inputValue : inputValue});
-      console.log(inputValue);
+    //  console.log(inputValue);
     }
 
     public handleBlur = (event) => {
@@ -54,11 +54,11 @@ const components = {
     public handleKeyDown = (event) => {
       const { inputValue } = this.state;
       const { value } = this.props;
-      //console.log(inputValue);
-      // if (!inputValue) {
-      //   console.log(inputValue);
-      //   return;
-      // } 
+     // console.log(inputValue);
+      if (!inputValue) {
+        //console.log(inputValue);
+        return;
+      } 
 
       switch (event.key) {
         case 'Enter':
@@ -88,7 +88,7 @@ const components = {
     public render() {
       const { inputValue  } = this.state;
       const { value } =this.props;
-      console.log(value);
+      //console.log(value);
 
       const style = _.isEmpty(value) ? {}  : {display: 'none'};
 

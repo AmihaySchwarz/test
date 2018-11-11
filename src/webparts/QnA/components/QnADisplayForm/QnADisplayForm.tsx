@@ -20,7 +20,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADisplayFormState> {
   constructor(props) {
     super(props);
-    console.log(props);
+    //console.log(props);
     this.state = {
       division: [],
       selectedDivision: undefined,

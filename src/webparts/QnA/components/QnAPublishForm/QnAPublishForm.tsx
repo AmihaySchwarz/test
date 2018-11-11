@@ -97,7 +97,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
   }
 
   public onBackClick(): void {
-    this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision);
+    this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision, this.props.originModule);
   }
 
   public publishQnA(): void {

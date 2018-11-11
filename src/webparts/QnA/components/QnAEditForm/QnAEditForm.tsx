@@ -1,4 +1,5 @@
 import * as React from "react";
+import { render } from 'react-dom';
 import styles from "../QnAForm/QnAForm.module.scss";
 import { IQnAEditFormProps, IQnAEditFormState } from "./IQnAEditFormProps";
 import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
@@ -17,14 +18,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 import Modal from "react-responsive-modal";
-import * as Scroll from 'react-scroll';
 import {
-  Link,
-  Element,
-  Events,
-  animateScroll as scroll
-} from "react-scroll";
-
+  Tooltip,
+} from 'react-tippy';
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
@@ -45,7 +41,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       searchNewq: "",
       searchQnA: "",
       openModal: false,
-      nqForRemarks: undefined
+      nqForRemarks: undefined,
+      showPreview: false
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -53,7 +50,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.addNewQuestionToQnAList = this.addNewQuestionToQnAList.bind(this);
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
-    this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.togglePreview = this.togglePreview.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -76,14 +73,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.loadQnAListData(newProps.defaultDivision.key);
       this.loadNewQuestionsData(newProps.defaultDivision.text);
     }
-
-    // Events.scrollEvent.register("begin", function() {
-    //   console.log("begin", arguments);
-    // });
-
-    // Events.scrollEvent.register("end", function() {
-    //   console.log("end", arguments);
-    // });
   }
 
   public componentDidMount(): void {
@@ -107,20 +96,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         this.loadNewQuestionsData(this.props.defaultDivision.text);
       }
 
-      // Events.scrollEvent.register("begin", function() {
-      //   console.log("begin", arguments);
-      // });
-  
-      // Events.scrollEvent.register("end", function() {
-      //   console.log("end", arguments);
-      // });
   }
 
-  public componentWillUnmount() {
-    Events.scrollEvent.remove("begin");
-    Events.scrollEvent.remove("end");
-  }
-  
   public async loadQnAListData(divisionListName: string): Promise<void> {
     this.setState({
       qnaItems: await this.props.actionHandler.getQnAItems(
@@ -383,9 +360,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     
   }
 
-  public scrollToBottom() {
-    scroll.scrollToBottom();
-  }
   public addNewQnaToTable(): void {
     console.log("add inline form");
 
@@ -407,6 +381,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         Remarks: "",
         identifier: identifierNum
       };
+      
       //create identifier for new question row for history
       itemAddActionHistory = {
         qnaItem: { newQnA, identifier: identifierNum},
@@ -414,13 +389,20 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       };
     //});
 
+    const insert = (arr, index, newItem) => [
+      // part of the array before the specified index
+      ...arr.slice(0, index),
+      // inserted item
+      newItem,
+      // part of the array after the specified index
+      ...arr.slice(index)
+    ];
+    
     this.setState(oldstate => ({
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
-      qnaItems: [...oldstate.qnaItems, newQnA]
+     // qnaItems: [...oldstate.qnaItems, newQnA]
+     qnaItems: insert(oldstate.qnaItems, 0, newQnA)
     }));
-
-    this.scrollToBottom();
-
   }
 
   
@@ -603,7 +585,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           value={cellInfo.original.Answer}
           multiline
           rows={4}
-          required={true}
+          //required={true}
           resizable={true}
           onChanged={data => this.updateQnAAnswer(data, cellInfo)}
         />
@@ -637,11 +619,18 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     );
   }
 
+  public togglePreview(isShow: boolean): void{
+    this.setState({showPreview: isShow});
+  }
+
+
   public render() {
-    //console.log(this.state);
+    
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
-      
+
+    //console.log(this.state.qnaItems, "origi", QnACpy);
+    
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
           return row.Answer.includes(this.state.searchQnA) || 
@@ -803,19 +792,35 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                           }>
                               Delete Question
                             </button> <br />
-                            <button data-tip data-for={index.toString()} data-event='click focus'>
+
+                            <Tooltip 
+                                placement= 'bottom'
+                                offset= '0, 5'
+                                interactive= {true}
+                                performance= {true}
+                                hideOnClick = {true}
+                                trigger="click"
+                                
+                                html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
+                            >
+                              <button>Preview</button>
+                            </Tooltip> 
+
+                           {/* <button  data-tip data-for={index.toString()} data-event='click focus'> 
                               Preview
                             </button>
-                            <ReactTooltip
-                              id={index.toString()}
-                              globalEventOff="click"
-                              //aria-haspopup="true"
-                              place="bottom"
-                              type="light"
-                              effect="solid"
-                            >
-                              <QnAPreviewPanel qnaItem={row} />
-                            </ReactTooltip>
+                            <div className="customTooltip"> 
+                              <ReactTooltip
+                                id={index.toString()}
+                                globalEventOff="click"
+                                //aria-haspopup="true"
+                                place="bottom"
+                                effect="solid"
+                              >
+                                <QnAPreviewPanel qnaItem={row} />
+                              </ReactTooltip> 
+                            </div> */}
+                           
                           </div>
                         )
                       }

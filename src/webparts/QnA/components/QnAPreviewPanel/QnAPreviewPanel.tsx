@@ -16,7 +16,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
     super(props);
   }
   public render() {
-   // console.log(this.props.qnaItem);
+    console.log(this.props.qnaItem);
     let questions = JSON.parse(this.props.qnaItem.Questions);
     return( 
       
@@ -28,12 +28,16 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
                 <div className={styles.userMessage}>
                   <div className={styles.message}>{questions[0].label}</div>  
                 </div>
+                <div className={styles.botMessage}>
+                  <div className={styles.message}> {ReactHtmlParser(this.props.qnaItem.Answer)} </div>
+                </div>
               </div>  
           
-
-              <div className={styles.botMessage}>
-                <div className={styles.message}> {ReactHtmlParser(this.props.qnaItem.Answer)} </div>
-              </div>
+              {/* <div className={styles.chatInput} id="chat-input">
+                <div className={styles.botMessage}>
+                  <div className={styles.message}> {ReactHtmlParser(this.props.qnaItem.Answer)} </div>
+                </div>
+              </div> */}
         </div> 
     }
     </div> );

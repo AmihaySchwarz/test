@@ -21,6 +21,7 @@ export interface IQnAPublishFormProps {
     onPublishedClick: Function;
     onPublishBackClick: Function;
     qnaOriginalCopy: IQnAListItem[];
+    originModule: string;
 }
 
 export interface IQnAPublishFormState {

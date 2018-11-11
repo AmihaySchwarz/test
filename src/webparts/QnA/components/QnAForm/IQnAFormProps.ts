@@ -46,6 +46,7 @@ export interface IQnAFormState {
     qnaOriginalCopy: IQnAListItem[];
     searchNewq: string;
     searchQnA: string;
+    originModule: string;
 }
 
 export interface INewQuestionsFormState {
