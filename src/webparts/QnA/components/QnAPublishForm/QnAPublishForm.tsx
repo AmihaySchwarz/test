@@ -355,7 +355,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                 />
               </div>
             </div>
-            <span className={styles.textLabel}> Preview Changes </span>
+            <span className={styles.tableLabels}> Preview Changes </span>
             <div className={styles.tableCont}>{/*updatedQnA*/}
               <ReactTable 
                 data={this.state.qnaActionHistory } 

@@ -680,23 +680,38 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
     //console.log(this.state.qnaItems, "origi", QnACpy);
     
+      // if (this.state.searchQnA) {
+      //   QnACpy = QnACpy.filter(row => {
+      //     return row.Answer.includes(this.state.searchQnA) || 
+      //     row.Questions.includes(this.state.searchQnA) || 
+      //     row.Classification == this.state.searchQnA;
+      //   });
+      // }
+
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
-          return row.Answer.includes(this.state.searchQnA) || 
-          row.Questions.includes(this.state.searchQnA) || 
-          row.Classification == this.state.searchQnA;
+          return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+          row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase();
         });
       }
 
 
+        // if (this.state.searchNewq) {
+        //   newQuestions = newQuestions.filter(row => {
+        //     return row.Question.includes(this.state.searchNewq) || 
+        //     row.PostedBy.includes(this.state.searchNewq) || 
+        //     String(row.PostedDate).includes(this.state.searchNewq);
+        //   });
+        // }
+
         if (this.state.searchNewq) {
           newQuestions = newQuestions.filter(row => {
-            return row.Question.includes(this.state.searchNewq) || 
-            row.PostedBy.includes(this.state.searchNewq) || 
-            String(row.PostedDate).includes(this.state.searchNewq);
+            return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+            row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+            String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
           });
         }
-
 
         return (
           <div>
@@ -828,12 +843,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                       {
                         Header: "Questions",
                         accessor: "Questions",
-                        Cell: this.renderQuestionsEdit
+                        Cell: this.renderQuestionsEdit,
+                        filterable: false
                       },
                       {
                         Header: "Answer",
                         accessor: "Answer",
-                        Cell: this.renderEditableAnswer
+                        Cell: this.renderEditableAnswer,
+                        filterable: false
                       },
                       {
                         Header: "Classification",
@@ -843,11 +860,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                       {
                         Header: "Remarks",
                         accessor: "Remarks",
-                        Cell: this.renderEditableRemarks
+                        Cell: this.renderEditableRemarks,
+                        filterable: false
                       },
                       {
                         Header: "Actions",
                         accessor: "Actions",
+                        filterable: false,
                         Cell: ({ row, index }) => (
                           <div>
                             <button onClick={() => 

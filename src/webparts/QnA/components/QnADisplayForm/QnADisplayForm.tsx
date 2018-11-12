@@ -311,21 +311,39 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     let QnACpy = this.state.qnaItems;
 
 
+      // if (this.state.searchQnA) {
+      //   QnACpy = QnACpy.filter(row => {
+      //     return row.Answer.includes(this.state.searchQnA) || 
+      //     row.Questions.includes(this.state.searchQnA) || 
+      //     row.Classification === this.state.searchQnA;
+      //   });
+      // }
+
+
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
-          return row.Answer.includes(this.state.searchQnA) || 
-          row.Questions.includes(this.state.searchQnA) || 
-          row.Classification.includes(this.state.searchQnA);
+          return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+          row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase();
         });
       }
 
-      if (this.state.searchNewq) {
+      // if (this.state.searchNewq) {
+      //   newQuestions = newQuestions.filter(row => {
+      //     return row.Question.includes(this.state.searchNewq) || 
+      //     row.PostedBy.includes(this.state.searchNewq) || 
+      //     String(row.PostedDate).includes(this.state.searchNewq);
+      //   });
+      // }
+
+       if (this.state.searchNewq) {
         newQuestions = newQuestions.filter(row => {
-          return row.Question.includes(this.state.searchNewq) || 
-          row.PostedBy.includes(this.state.searchNewq) || 
-          String(row.PostedDate).includes(this.state.searchNewq);
+          return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+          row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+          String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
         });
       }
+
         return (
           <div>
             {/* <ToastContainer /> */}
@@ -429,12 +447,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       {
                         Header: "Questions",
                         accessor: "Questions",
-                        Cell: this.renderQuestionsDisplay
+                        Cell: this.renderQuestionsDisplay,
+                        filterable: false
                       },
                       {
                         Header: "Answer",
                         accessor: "Answer",
-                        Cell: this.renderAnswerDisplay
+                        Cell: this.renderAnswerDisplay,
+                        filterable: false
                       },
                       {
                         Header: "Classification",
@@ -442,7 +462,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       },
                       {
                         Header: "Remarks",
-                        accessor: "Remarks"
+                        accessor: "Remarks",
+                        filterable: false
                       }
                     ]
                   }

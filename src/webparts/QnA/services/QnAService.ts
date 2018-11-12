@@ -204,7 +204,7 @@ export class QnAService extends BaseService implements IQnAService {
         let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.add({
             Division: division,
-            LastUpdated: d, // d.toLocaleDateString(),
+            //LastUpdated: d, // d.toLocaleDateString(),
             //LastPublished: null,
             LockedById: currentUser.Id,
             //LockedReleaseTime: d.toLocaleTimeString()
