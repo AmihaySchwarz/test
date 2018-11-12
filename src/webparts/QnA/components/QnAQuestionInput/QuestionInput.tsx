@@ -12,9 +12,6 @@ const components = {
     value: label,
   });
 
-  const questionStyles = {
-
-  };
   
   export default class QuestionInput extends React.Component<any,any> {
     public state = {
@@ -99,11 +96,12 @@ const components = {
           <div>
             <span className={styles.requiredLabel}>*</span>
             <CreatableSelect
-              getStyles={() => ({
-                  multiValueLabel: {
-                    whiteSpace: "normal"
-                  }
-              })}
+               styles={{
+                multiValueLabel: (provided, state) => ({
+                  ...provided,
+                  whiteSpace: "normal"
+                })
+              }}
               components={components}
               inputValue={inputValue}
               isClearable
@@ -115,7 +113,6 @@ const components = {
               onKeyDown={this.handleKeyDown}
               value={value}
               className={styles.questionInput}
-              styles={questionStyles}
             />
           </div>          
           <span className={styles.requiredLabel} style={style}>* required </span> 

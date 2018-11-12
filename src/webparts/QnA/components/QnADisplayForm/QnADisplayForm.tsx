@@ -364,39 +364,51 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
             
             <div className={styles.tableCont}>
               <div className={styles.tableLabels}>New Questions </div>
-              <div className={styles.searchCont}> 
-                <span>Search: </span>
-                <input 
-                    value={this.state.searchNewq}
-                    onChange={e => this.setState({searchNewq: e.target.value})}
-                />
-              </div>
-              <ReactTable
-                PaginationComponent={Pagination}
-                data={newQuestions} //this.state.newQuestions
-                columns={[
-                  {
-                    columns: [
+              {/* HIDE THE NEW QUESTIONS IF THERE IS NO DATA IN COSMOS DB*/}
+              {this.state.newQuestions.length > 0 ? ( 
+                <div>                  
+                  <div className={styles.searchCont}> 
+                    <span>Search: </span>
+                    <input 
+                        value={this.state.searchNewq}
+                        onChange={e => this.setState({searchNewq: e.target.value})}
+                    />
+                  </div>
+                  <ReactTable
+                    PaginationComponent={Pagination}
+                    data={newQuestions} //this.state.newQuestions
+                    columns={[
                       {
-                        Header: "Question",
-                        accessor: "Question",
-                        style: { 'overflow': 'visible !important', 'overflow-wrap': 'break-word !important' } 
-                      },
-                      {
-                        Header: "Posted Date",
-                        accessor: "PostedDate",
-                        Cell: this.renderDateField
-                      },
-                      {
-                        Header: "Posted By",
-                        accessor: "PostedBy"
+                        columns: [
+                          {
+                            Header: "Question",
+                            accessor: "Question",
+                            style: { 'overflow': 'visible !important', 'overflow-wrap': 'break-word !important' } 
+                          },
+                          {
+                            Header: "Posted Date",
+                            accessor: "PostedDate",
+                            Cell: this.renderDateField
+                          },
+                          {
+                            Header: "Posted By",
+                            accessor: "PostedBy"
+                          }
+                        ]
                       }
-                    ]
-                  }
-                ]}
-                defaultPageSize={10}
-                className="-striped -highlight"
-              />
+                    ]}
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                  />
+
+                </div>
+              ): (
+                <div>
+                  <span className={styles.notificationText}> There are no New Questions from the Database </span>
+                </div> 
+              
+              )}
+           
             </div>
             <br />
             <div className={styles.tableCont}>
@@ -427,6 +439,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       {
                         Header: "Classification",
                         accessor: "Classification"
+                      },
+                      {
+                        Header: "Remarks",
+                        accessor: "Remarks"
                       }
                     ]
                   }

@@ -65,7 +65,7 @@ export class QnAService extends BaseService implements IQnAService {
 
     public getQnAItems(divisionListName: string): Promise<any> {
        // console.log(divisionListName, "master list item");
-        return sp.web.lists.getByTitle(divisionListName).items.select("ID", "Questions", "Answer", "Classification", "QnAID").getAll().then((items: any[]) => {
+        return sp.web.lists.getByTitle(divisionListName).items.select("ID", "Questions", "Answer", "Classification", "QnAID", "Remarks").getAll().then((items: any[]) => {
            // console.log(items);
             return items;
         });
@@ -83,7 +83,8 @@ export class QnAService extends BaseService implements IQnAService {
                 Questions: item.Questions,
                 Answer: item.Answer,
                 Classification: item.Classification,
-                QnAID: item.QnAID
+                QnAID: item.QnAID,
+                Remarks: item.Remarks
             }).then(i => {
                // console.log(i);
                 res = i;
@@ -105,7 +106,8 @@ export class QnAService extends BaseService implements IQnAService {
             Questions: qnaListItem.Questions,
             Answer: qnaListItem.Answer,
             Classification: qnaListItem.Classification,
-            QnAID: qnaListItem.QnAID
+            QnAID: qnaListItem.QnAID,
+            Remarks: qnaListItem.Remarks
         }).then((result: ItemAddResult) => {
            // console.log(result);
             return result;
@@ -227,7 +229,7 @@ export class QnAService extends BaseService implements IQnAService {
             if (items.length > 0) {
                 return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: currentUser.Id,
-                    LastUpdated: d //d.toLocaleDateString()
+                    //LastUpdated: d //d.toLocaleDateString()
                 }).then(result => {
                     console.log(result);
                     return result;
@@ -240,6 +242,7 @@ export class QnAService extends BaseService implements IQnAService {
        // return res;
     }
 
+    //NOT USED
     public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
 
         let jsonQuestion = '[ {"label": "'+ newQuestionItem.Question+'", "value": "'+ newQuestionItem.Question+'" }]';

@@ -21,7 +21,13 @@
   // .inputContainer{
   //   display: inline-flex;
   // }
-
+  .notificationText{
+    font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+    font-size: 14;
+    font-style: normal;
+    font-weight: bold;
+    
+  }
  .customTooltip {
    position: fixed;
    background-color: #fff;
@@ -34,6 +40,7 @@
     overflow-wrap: break-word;
     display: inline-block;
     width: 97%;
+    white-space: normal !important;
   }
  .textLabel {
   font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;

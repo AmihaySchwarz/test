@@ -379,6 +379,10 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                       {
                         Header: "Change Type",
                         accessor: "action"
+                      },
+                      {
+                        Header: "Remarks",
+                        accessor: "qnaItem.Remarks"
                       }
                     ]
                   }

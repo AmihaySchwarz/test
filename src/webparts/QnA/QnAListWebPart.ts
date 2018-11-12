@@ -1,10 +1,14 @@
+import "@pnp/polyfill-ie11";
+require('core-js');
+import 'es6-promise';
+ require('es6-promise/auto');
+import 'whatwg-fetch';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 // Include all polyfills
 // require('core-js');
- import 'es6-promise';
- require('es6-promise/auto');
- import 'whatwg-fetch';
+ //import 'es6-promise';
+ //require('es6-promise/auto');
 //import "core-js/es6/array";
 //import "es6-map/implement";
 //import "core-js/modules/es6.array.find";

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { render } from 'react-dom';
 import styles from "../QnAForm/QnAForm.module.scss";
 import { IQnAEditFormProps, IQnAEditFormState } from "./IQnAEditFormProps";
 import { LoadingSpinner } from "../../../common/components/LoadingSpinner";
@@ -10,11 +9,10 @@ import { Pagination } from "../Pagination/Pagination";
 import { DefaultButton } from "office-ui-fabric-react/lib/Button";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
-import ReactTooltip from "react-tooltip";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
 import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationInput";
 import Moment from "react-moment";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 import Modal from "react-responsive-modal";
@@ -531,6 +529,27 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.updateActionHistory(item,index);
   }
 
+  public updateQnARemarks = (data, cellInfo) => {
+    //console.log(data)
+
+    let qnaItems = [...this.state.qnaItems];
+    let index;
+    if(cellInfo.original.Id != null){
+      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+    } else {
+       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+    }
+
+    let item = {
+      ...qnaItems[index],
+      Remarks: data, 
+    };
+    qnaItems[index] = item;
+    this.setState({ qnaItems });
+
+    this.updateActionHistory(item,index);
+  }
+
   public updateQuestions = (data, cellInfo) => {
     //console.log(data, cellInfo, "update question");
 
@@ -602,6 +621,24 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           onChanged={data => this.updateQnAAnswer(data, cellInfo)}
         />
         <span className={styles.requiredLabel} style={style}>* required </span> 
+      </div>
+     
+    );
+  }
+
+  public renderEditableRemarks = (cellInfo) => {
+
+    return (
+      <div>
+        <TextField
+          value={cellInfo.original.Remarks}
+          multiline
+          rows={4}
+          //required={true}
+          resizable={true}
+          onChanged={data => this.updateQnARemarks(data, cellInfo)}
+        />
+        
       </div>
      
     );
@@ -693,65 +730,74 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             
             <div className={styles.tableCont}>
               <div className={styles.tableLabels}>New Questions </div>
-              <div className={styles.searchCont}> 
-                <span>Search: </span>
-                <input 
-									value={this.state.searchNewq}
-									onChange={e => this.setState({searchNewq: e.target.value})}
-								/>
-              </div>
-              <ReactTable
-                PaginationComponent={Pagination}
-                data={newQuestions} //this.state.newQuestions
-                defaultPageSize={10}
-                className="-striped -highlight"
-                // filtered={this.state.filtered}
-                // onFilteredChange={this.onFilteredChange.bind(this)}
-                // filterable
-                columns={[
-                  {
-                    columns: [
+              {this.state.newQuestions.length > 0 ? ( 
+                <div> 
+                  <div className={styles.searchCont}> 
+                    <span>Search: </span>
+                    <input 
+                      value={this.state.searchNewq}
+                      onChange={e => this.setState({searchNewq: e.target.value})}
+                    />
+                  </div>
+                  <ReactTable
+                    PaginationComponent={Pagination}
+                    data={newQuestions} //this.state.newQuestions
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                    // filtered={this.state.filtered}
+                    // onFilteredChange={this.onFilteredChange.bind(this)}
+                    // filterable
+                    columns={[
                       {
-                        Header: "Question",
-                        accessor: "Question"
-                      },
-                      {
-                        Header: "Posted Date",
-                        accessor: "PostedDate",
-                        Cell: this.renderDateField
-                      },
-                      {
-                        Header: "Posted By",
-                        accessor: "PostedBy"
-                      },
-                      {
-                        Header: "Actions",
-                        accessor: "newQuestionsActions",
-                        Cell: ({ row }) => (
-                          <div>
-                            <button
-                              onClick={() =>
-                                this.addNewQuestionToQnAList({ row })
-                              }
-                            >
-                              Add to QnA List
-                            </button>
-                            <br />
-                            {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
-                            <button onClick={() => this.markAsResolved({ row })}>
-                              Mark as Resolved
-                            </button>
-                            {/* <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
-                              <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
-                            </Modal> */}
-                          </div>
-                        ) 
+                        columns: [
+                          {
+                            Header: "Question",
+                            accessor: "Question"
+                          },
+                          {
+                            Header: "Posted Date",
+                            accessor: "PostedDate",
+                            Cell: this.renderDateField
+                          },
+                          {
+                            Header: "Posted By",
+                            accessor: "PostedBy"
+                          },
+                          {
+                            Header: "Actions",
+                            accessor: "newQuestionsActions",
+                            Cell: ({ row }) => (
+                              <div>
+                                <button
+                                  onClick={() =>
+                                    this.addNewQuestionToQnAList({ row })
+                                  }
+                                >
+                                  Add to QnA List
+                                </button>
+                                <br />
+                                {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
+                                <button onClick={() => this.markAsResolved({ row })}>
+                                  Mark as Resolved
+                                </button>
+                                {/* <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
+                                  <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
+                                </Modal> */}
+                              </div>
+                            ) 
+                          }
+                        ]
                       }
-                    ]
-                  }
-                ]}
-                
-              />
+                    ]}
+                    
+                  />
+                </div>
+              ):(
+                <div>
+                  <span className={styles.notificationText}> There are no New Questions from the Database </span>
+                </div> 
+              )}
+              
             </div>
             <br />
             <div className={styles.addbtnCont}> 
@@ -793,6 +839,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Header: "Classification",
                         accessor: "Classification",
                         Cell: this.renderEditableDropdown
+                      },
+                      {
+                        Header: "Remarks",
+                        accessor: "Remarks",
+                        Cell: this.renderEditableRemarks
                       },
                       {
                         Header: "Actions",

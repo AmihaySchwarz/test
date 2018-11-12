@@ -47,7 +47,14 @@
       border-radius: 10px;
       //max-width: 400px;
       //min-width: 350px;
-      float:left
+      float:left;
+      width: -moz-available; 
+      width: -webkit-fill-available;
+      width: fill-available;
+      white-space: normal;
+      overflow: unset;
+      overflow-wrap: break-word;
+      word-break: break-all;
     }
   }
   .message {
