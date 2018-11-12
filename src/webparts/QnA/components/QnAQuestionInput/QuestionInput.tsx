@@ -94,27 +94,30 @@ const components = {
 
 
       //console.log(inputValue);
-      return (
+      return ( //className={styles.inputContainer}
         <div> 
-          <CreatableSelect
-            getStyles={() => ({
-                multiValueLabel: {
-                  whiteSpace: "normal"
-                }
-            })}
-            components={components}
-            inputValue={inputValue}
-            isClearable
-            isMulti
-            menuIsOpen={false}
-            onChange={this.handleChange}
-            onInputChange={this.handleInputChange}
-            onBlur={this.handleBlur}
-            onKeyDown={this.handleKeyDown}
-            value={value}
-            className={styles.questionInput}
-            styles={questionStyles}
-          />
+          <div>
+            <span className={styles.requiredLabel}>*</span>
+            <CreatableSelect
+              getStyles={() => ({
+                  multiValueLabel: {
+                    whiteSpace: "normal"
+                  }
+              })}
+              components={components}
+              inputValue={inputValue}
+              isClearable
+              isMulti
+              menuIsOpen={false}
+              onChange={this.handleChange}
+              onInputChange={this.handleInputChange}
+              onBlur={this.handleBlur}
+              onKeyDown={this.handleKeyDown}
+              value={value}
+              className={styles.questionInput}
+              styles={questionStyles}
+            />
+          </div>          
           <span className={styles.requiredLabel} style={style}>* required </span> 
         </div>
        

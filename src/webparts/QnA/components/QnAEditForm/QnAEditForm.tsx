@@ -207,7 +207,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       const newItem = addItems.find(a => a.newQnA);
       let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
       let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
-      let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
+      let isQuestionNull = addItems.some(q =>  q.Questions == "[]") || modifyItems.some(q => q.Questions == "[]"); 
 
 
       if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
@@ -298,7 +298,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       let newQnA = {
         Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
         Answer: "",
-        Classification: "",
+        Classification: " ",
         QnAID: 0,
         Id: null,
         Remarks: "",
@@ -311,9 +311,20 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       };
     //});
 
+
+    const insert = (arr, index, newItem) => [
+      // part of the array before the specified index
+      ...arr.slice(0, index),
+      // inserted item
+      newItem,
+      // part of the array after the specified index
+      ...arr.slice(index)
+    ];
+
     this.setState(oldstate => ({
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
-      qnaItems: [...oldstate.qnaItems, newQnA],
+      //qnaItems: [...oldstate.qnaItems, newQnA],
+      qnaItems: insert(oldstate.qnaItems, 0, newQnA),
       isLoading: false
     }));
   }
@@ -398,6 +409,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       ...arr.slice(index)
     ];
     
+    console.log(newQnA);
     this.setState(oldstate => ({
       qnaActionHistory: [...oldstate.qnaActionHistory, itemAddActionHistory],
      // qnaItems: [...oldstate.qnaItems, newQnA]
@@ -596,10 +608,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public renderEditableDropdown = cellInfo => {
-
+    console.log(cellInfo.original.Classification);
     let selectedItemOption = {"text": cellInfo.original.Classification , 
-    "key": cellInfo.original.Classification};
-
+      "key": cellInfo.original.Classification};
+    
     return (
       <QnAClassificationInput
         value={selectedItemOption}
@@ -671,7 +683,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   onClick={this.onSaveClick}
                 />
                 <DefaultButton
-                  text="Save and Publish"
+                  text="Save and Preview Changes"
                   primary={true}
                   href="#"
                   onClick={this.saveAndChangeToPublish}
@@ -680,7 +692,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             </div>
             
             <div className={styles.tableCont}>
-              <div>New Questions </div>
+              <div className={styles.tableLabels}>New Questions </div>
               <div className={styles.searchCont}> 
                 <span>Search: </span>
                 <input 
@@ -753,7 +765,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             </div>
             
             <div className={styles.tableCont}>
-              <div> QnA </div>
+              <div className={styles.tableLabels}> QnA </div>
               <div className={styles.searchCont}> 
                 <span>Search: </span>
                 <input 

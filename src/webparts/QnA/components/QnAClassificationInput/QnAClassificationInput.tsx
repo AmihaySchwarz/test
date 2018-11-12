@@ -6,6 +6,7 @@ import * as _ from "lodash";
 //Placeholder where will we get this data?
 
 const classificationDropDownOption = [  
+  //{key: ' ', text: ' '},
   {key: 'Staff', text: 'Staff'},
   {key: 'Public', text: 'Public'},
   {key: 'Student', text: 'Student'}
@@ -21,9 +22,16 @@ const classificationDropDownOption = [
 
 
     public componentDidMount(){
-    // console.log(this.props, "CLASSIFICATION INPUT")
+     console.log(this.props, "CLASSIFICATION INPUT");
       this.setState({
         selectedItem: this.props.value
+      });
+    }
+
+    public componentWillReceiveProps(newProps): void {
+      console.log(newProps, "will receive props");
+      this.setState({
+        selectedItem: newProps.value
       });
     }
 
@@ -34,11 +42,8 @@ const classificationDropDownOption = [
         selectedItem: item,
         selectedItemText: item.key
       });
-     // if((item.key == null) || (item.key == "")) {
-      //  toast.warn("Empty classification");
-      //} else {
         this.props.onChange(item.key);
-      //}
+      
     }
   
     public render() {
@@ -53,14 +58,13 @@ const classificationDropDownOption = [
      <div>
        { selectedItem && 
             <Dropdown 
-            placeHolder=""
+            placeHolder="Select"
             id="Classification"
             required={true}
-            ariaLabel="Select Classification"
+            ariaLabel="Select"
             options={classificationDropDownOption}
             selectedKey={selectedItem ? selectedItem.key : undefined}
             onChanged={this.changeState}
-            defaultValue=""
           />
         }
         <span className={styles.requiredLabel} style={style}>* required </span> 

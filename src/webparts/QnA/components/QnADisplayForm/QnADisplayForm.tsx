@@ -352,7 +352,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   onClick={this.changeToEdit}
                 />
                 <DefaultButton
-                  text="Publish"
+                  text="Preview Changes"
                   primary={true}
                   href="#"
                   onClick={this.changeToPublish}
@@ -363,7 +363,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
             </div>
             
             <div className={styles.tableCont}>
-              <div>New Questions </div>
+              <div className={styles.tableLabels}>New Questions </div>
               <div className={styles.searchCont}> 
                 <span>Search: </span>
                 <input 
@@ -400,7 +400,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
             </div>
             <br />
             <div className={styles.tableCont}>
-              <div> QnA </div>
+              <div className={styles.tableLabels}> QnA </div>
               <div className={styles.searchCont}> 
                 <span>Search: </span>
                 <input 
