@@ -47,11 +47,14 @@ export interface IQnAFormState {
     searchNewq: string;
     searchQnA: string;
     originModule: string;
+    //warningTime: number;
+    //signoutTime: number;
+   // warnTimeout: number;
+    //logoutTimeout: number;
 }
 
 export interface INewQuestionsFormState {
     Questions: string [];
     PostedDate: Date;
-    PostedBy: string;
-    
+    PostedBy: string;   
 }

@@ -10,6 +10,7 @@ import { DefaultButton } from "office-ui-fabric-react/lib/Button";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
+import QnAAnswerInput from "../QnAAnswerInput/QnAAnswerInput";
 import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationInput";
 import Moment from "react-moment";
 import { toast } from 'react-toastify';
@@ -49,6 +50,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
     this.togglePreview = this.togglePreview.bind(this);
+    this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -70,6 +72,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
       this.loadQnAListData(newProps.defaultDivision.key);
       this.loadNewQuestionsData(newProps.defaultDivision.text);
+      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
     }
   }
 
@@ -92,8 +95,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   
         this.loadQnAListData(this.props.defaultDivision.key);
         this.loadNewQuestionsData(this.props.defaultDivision.text);
+        setInterval(this.updateLockReleaseTimeIncrementally, 15 *  60 * 1000); //15 * 60 * 1000
       }
 
+  }
+
+
+  public updateLockReleaseTimeIncrementally(){
+    //update the lockrelease time every 15 min
+    console.log("updating the lock release time");
+    this.props.actionHandler.updateLockReleaseTime(this.state.currentUser,this.state.selectedDivisionText,this.props.properties.qnATrackingListName);
   }
 
   public async loadQnAListData(divisionListName: string): Promise<void> {
@@ -609,7 +620,15 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public renderEditableAnswer = (cellInfo) => {
 
     const style = _.isEmpty(cellInfo.original.Answer) ? {}  : {display: 'none'};
-
+    //console.log(cellInfo.original.Answer);
+    // return (
+    //   <div>
+    //     <QnAAnswerInput 
+    //         value={cellInfo.original.Answer} 
+    //         onChanged={data => this.updateQnAAnswer(data, cellInfo)}
+    //     />
+    //   </div>
+    // );
     return (
       <div>
         <TextField

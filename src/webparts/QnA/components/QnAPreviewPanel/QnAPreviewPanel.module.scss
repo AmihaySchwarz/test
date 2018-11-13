@@ -48,9 +48,8 @@
       //max-width: 400px;
       //min-width: 350px;
       float:left;
-      width: -moz-available; 
-      width: -webkit-fill-available;
-      width: fill-available;
+      //width: -moz-available; 
+      width: fill;
       white-space: normal;
       overflow: unset;
       overflow-wrap: break-word;

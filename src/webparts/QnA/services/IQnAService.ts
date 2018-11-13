@@ -11,6 +11,7 @@ export interface IQnAService {
     checkLockStatus:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     createLockItem:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     lockList:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
+    updateLockReleaseTime:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     updateQnAIDinSPlist:(qnaListName: string, qnaListItem: IQnAListItem, qnaid: string) =>  Promise<any>;
     updateItemInQnAList:(qnaListName:string, qnaListItems: IQnAListItem[]) => Promise<any>;
     addQuestionToQnAList:(url: string, qnaListName:string, qnaListItem: INewQuestions) => Promise<any>;

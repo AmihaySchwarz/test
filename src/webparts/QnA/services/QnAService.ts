@@ -242,6 +242,25 @@ export class QnAService extends BaseService implements IQnAService {
        // return res;
     }
 
+
+    public updateLockReleaseTime (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
+            // see if we got something
+            if (items.length > 0) {
+                return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                    LockedReleaseTime: d
+                }).then(result => {
+                    console.log(result);
+                    return result;
+                }).catch(error => {
+                    console.log(error);
+                    return error;
+                });
+            }
+        });
+    }
+
     //NOT USED
     public addQuestionToQnAList(url: string, qnaListName:string, newQuestionItem: INewQuestions): Promise<any>{
 

@@ -58,6 +58,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionListName: newProps.defaultDivision.key,
         qnaOriginalCopy: newProps.qnaOriginalCopy
       });
+      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
     } else {
       this.setState({
         isqnaActionHistoryEmpty: true,
@@ -65,7 +66,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionText: newProps.defaultDivision.text,
         selectedDivisionListName: newProps.defaultDivision.key
       });
-      
+      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
     }
   }
 
@@ -94,6 +95,12 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionListName: this.props.defaultDivision.key
       });
     }
+  }
+
+  public updateLockReleaseTimeIncrementally(){
+    //update the lockrelease time every 15 min
+    console.log("updating the lock release time");
+    this.props.actionHandler.updateLockReleaseTime(this.state.currentUser,this.state.selectedDivisionText,this.props.properties.qnATrackingListName);
   }
 
   public onBackClick(): void {

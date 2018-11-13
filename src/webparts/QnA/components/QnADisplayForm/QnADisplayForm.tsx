@@ -112,6 +112,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     });
     this.loadQnAListData(item.key.toString());
     this.loadNewQuestionsData(item.text.toString());
+    this.props.onDivisionSet(item);
   }
 
   public async changeToEdit(): Promise<void> {
@@ -401,7 +402,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                           {
                             Header: "Question",
                             accessor: "Question",
-                            style: { 'overflow': 'visible !important', 'overflow-wrap': 'break-word !important' } 
+                            style: { 'overflow': 'visible !important', 
+                                    'overflow-wrap': 'break-word !important',
+                                    'white-space': 'normal !important',
+                                    'word-break': 'break-all' } 
                           },
                           {
                             Header: "Posted Date",

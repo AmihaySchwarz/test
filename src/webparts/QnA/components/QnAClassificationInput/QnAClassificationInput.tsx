@@ -22,14 +22,14 @@ const classificationDropDownOption = [
 
 
     public componentDidMount(){
-     console.log(this.props, "CLASSIFICATION INPUT");
+     //console.log(this.props, "CLASSIFICATION INPUT");
       this.setState({
         selectedItem: this.props.value
       });
     }
 
     public componentWillReceiveProps(newProps): void {
-      console.log(newProps, "will receive props");
+      //console.log(newProps, "will receive props");
       this.setState({
         selectedItem: newProps.value
       });

@@ -21,6 +21,7 @@ export interface IQnADisplayFormProps {
     onEditClick: Function;
     onPublishClick : Function;
     qnaOriginalCopy;
+    onDivisionSet: Function;
 }
 
 export interface IQnADisplayFormState {

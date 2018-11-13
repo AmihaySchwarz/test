@@ -39,13 +39,17 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
 
   public async componentDidMount() : Promise<void>
   {
-    console.log("componentdsd did mount");
+    console.log("componentds did mount");
    this.loadData();
+
   }
+
+
+
 
   private setLoading(status: boolean): void {
     this.setState({ isLoading: status });
-}
+  }
 
   private async loadData(): Promise<void>{
     console.log("in load data");

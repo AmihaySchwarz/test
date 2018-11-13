@@ -12,6 +12,8 @@ import { QnADisplayForm } from "../QnADisplayForm/QnADisplayForm";
 import { QnAPublishForm } from "../QnAPublishForm/QnAPublishForm";
 import { IQnAListItem } from "../../models/IQnAListItem";
 import { INewQuestions } from "../../models/INewQuestions";
+import { QnAActionHandler } from '../QnAContainer/QnAActionHandler';
+
 
 export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   constructor(props) {
@@ -34,8 +36,9 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
       qnaOriginalCopy: [],
       searchNewq: "",
       searchQnA: "",
-      originModule: ""
+      originModule: "",
     };
+
     this.onEditClick = this.onEditClick.bind(this);
     this.onpublishClick = this.onpublishClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -43,6 +46,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     this.onPublishBackClick = this.onPublishBackClick.bind(this);
     this.onSavePublishClick = this.onSavePublishClick.bind(this);
     this.onPublishedClick = this.onPublishedClick.bind(this);
+    
+    this.onDivisionSet = this.onDivisionSet.bind(this);
   }
 
   public async componentWillReceiveProps(newProps): Promise<void> {
@@ -60,6 +65,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         selectedDivisionText: newProps.defaultDivision.text,
         selectedDivisionListName: newProps.defaultDivision.key
       });
+    
     }
   }
 
@@ -78,6 +84,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         selectedDivisionText: this.props.defaultDivision.text,
         selectedDivisionListName: this.props.defaultDivision.key
       });
+      //setInterval(this.updateLockReleaseTimeIncrementally, 60 * 1000); //15 * 60 * 1000
     }
   }
 
@@ -175,11 +182,21 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
     });
   }
 
+  public onDivisionSet(division: any){
+    this.setState({
+        selectedDivision: division,
+        selectedDivisionText: division.text,
+        selectedDivisionListName: division.key
+    });
+   
+  }
+
   public render() {
+    console.log("set division", this.state.selectedDivision);
     console.log(this.state);
     const { isLoading, formView } = this.state;
     return (
-      <div>
+      <div> 
         {isLoading && <LoadingSpinner />}
         {formView == ViewType.Edit && (
           <QnAEditForm
@@ -208,6 +225,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
             onPublishClick={this.onpublishClick}
             qnaActionHistory={this.state.qnaActionHistory}
             qnaOriginalCopy={this.state.qnaOriginalCopy}
+            onDivisionSet={this.onDivisionSet}
           />
         )}
         {formView == ViewType.Publish && (
