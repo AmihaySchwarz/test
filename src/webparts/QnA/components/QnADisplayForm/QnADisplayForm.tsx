@@ -150,7 +150,20 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
         console.log(minutes, "DIFFERENCE");
 
-        //if (minDiff < 15 )
+        if (minutes < 15 ) {
+          if(items[0].LockedBy == undefined) {
+            // user can edit it. call lockList()
+          } else {
+            // user cannot edit; toaster to say that it is still locked.
+          }
+        } else {
+          if(items[0].LockedBy == undefined) {
+            // user can edit it. call lockList()
+          } else {
+            // remove the lockedBy from sp list then call lockList();
+          }
+        }
+
         if(items[0].LockedBy == undefined) {
           this.lockList();
         } else {

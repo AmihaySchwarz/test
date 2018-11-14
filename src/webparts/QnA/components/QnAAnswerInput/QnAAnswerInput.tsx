@@ -14,7 +14,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
     super(props);
     this.state = {
       editorState: htmlToDraft(this.props.value) // or use an EmptyState
-    }
+    };
   
   }
 
@@ -36,9 +36,9 @@ export default class QnAAnswerInput extends React.Component<any,any> {
     return(
       <div>
            <Draft
-            editorState={this.state.editorState}
+            editorState={this.state.editorStates}
             // onEditorStateChange={(editorState) => { this.setState({ editorState }) }}
-            onEditorStateChange={(editorState) => this.onEditorStateChange({ editorState })}
+            onEditorStateChange={() => this.onEditorStateChange({editorState})}
           />
       </div>
     );

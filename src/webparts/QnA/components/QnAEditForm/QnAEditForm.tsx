@@ -202,6 +202,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   private onBackClick() : void {
+    //call cervice to remove locked by
+    this.props.actionHandler.removeLockedBy(this.state.currentUser,
+      this.state.selectedDivisionText,
+      this.props.properties.qnATrackingListName);
     this.props.onBackClick();
   }
 
