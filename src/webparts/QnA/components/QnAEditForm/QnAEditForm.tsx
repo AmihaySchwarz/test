@@ -22,6 +22,7 @@ import {
 } from 'react-tippy';
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
+
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
   constructor(props) {
     super(props);
@@ -142,7 +143,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       const newItem = addItems.find(a => a.newQnA);
       let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
       let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
-      let isQuestionNull = addItems.some(q =>  q.Questions == "[]"); 
+      let isQuestionNull = addItems.some(q =>  q.Questions == "[]") || modifyItems.some(q => q.Questions == "[]"); 
 
 
       if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
@@ -620,15 +621,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public renderEditableAnswer = (cellInfo) => {
 
     const style = _.isEmpty(cellInfo.original.Answer) ? {}  : {display: 'none'};
-    //console.log(cellInfo.original.Answer);
+    // console.log(cellInfo.original.Answer);
     // return (
     //   <div>
     //     <QnAAnswerInput 
     //         value={cellInfo.original.Answer} 
-    //         onChanged={data => this.updateQnAAnswer(data, cellInfo)}
+    //         onChange={data => this.updateQnAAnswer(data, cellInfo)}
     //     />
     //   </div>
     // );
+
     return (
       <div>
         <TextField
@@ -641,7 +643,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         />
         <span className={styles.requiredLabel} style={style}>* required </span> 
       </div>
-     
     );
   }
 
@@ -711,7 +712,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         QnACpy = QnACpy.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase();
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase() ||
+          row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
       }
 

@@ -91,10 +91,10 @@ const components = {
 
 
       //console.log(inputValue);
-      return ( //className={styles.inputContainer}
+      return ( //className={styles.inputContainer}              // isClearable
         <div> 
           <div>
-            <span className={styles.requiredLabel}>*</span>
+            {/* <span className={styles.requiredLabel}>*</span> */}
             <CreatableSelect
                styles={{
                 multiValueLabel: (provided, state) => ({
@@ -104,7 +104,7 @@ const components = {
               }}
               components={components}
               inputValue={inputValue}
-              isClearable
+              isClearable={false} 
               isMulti
               menuIsOpen={false}
               onChange={this.handleChange}

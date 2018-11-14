@@ -16,6 +16,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import * as moment from 'moment'; 
+import 'moment-timezone';
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADisplayFormState> {
   constructor(props) {
@@ -117,6 +119,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
   public async changeToEdit(): Promise<void> {
     //CREATE A COPY OF QNAITEMS ORIGINAL
+    
     this.setState(oldstate => ({
       qnaOriginalCopy: [...oldstate.qnaItems],
       isLoading: true
@@ -134,8 +137,20 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         });
 
         let currentUserEmail = this.state.currentUser.Email;
-        //console.log(items[0], "list tracking");
+        console.log(items[0], "list tracking");
+        //check if current is less than 15 min from release time
+        //if yes , is lockedby empty? yes = can edit ; no = cannot edit
+        //if no, (current time is greater than 15 min)
+        //check if lockedby empty? yes = can edit; no = remove the lockedby then lock to current user
+      //  let testDate = items[0].LockedReleaseTime.toLocaleDateString();
+        let dateTimeToday = moment(moment().local().format());
+        let lockReleaseTime = moment(items[0].LockedReleaseTime).local().format();
+        let minDiffDuration = moment.duration(dateTimeToday.diff(lockReleaseTime));
+        let minutes = minDiffDuration.asMinutes();
 
+        console.log(minutes, "DIFFERENCE");
+
+        //if (minDiff < 15 )
         if(items[0].LockedBy == undefined) {
           this.lockList();
         } else {
@@ -325,7 +340,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         QnACpy = QnACpy.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase();
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase() ||
+          row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
       }
 

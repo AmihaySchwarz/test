@@ -40,6 +40,7 @@
     "react": "^15.6.2",
     "react-bootstrap-table-next": "^1.1.4",
     "react-dom": "^15.6.2",
+    "react-draft-wysiwyg": "^1.12.13",
     "react-html-parser": "^2.0.2",
     "react-idle-timer": "^4.0.9",
     "react-moment": "^0.8.1",
@@ -49,6 +50,7 @@
     "react-table": "^6.8.6",
     "react-tippy": "^1.2.3",
     "react-toastify": "^4.3.2",
+    "react-wysiwyg-typescript": "^1.0.2",
     "typescript": "^3.0.3",
     "whatwg-fetch": "^3.0.0"
   },

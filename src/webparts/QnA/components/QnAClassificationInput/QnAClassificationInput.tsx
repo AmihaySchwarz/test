@@ -56,6 +56,7 @@ const classificationDropDownOption = [
 
       return (
      <div>
+       {/* <span className={styles.requiredLabel}>*</span> */}
        { selectedItem && 
             <Dropdown 
             placeHolder="Select"
