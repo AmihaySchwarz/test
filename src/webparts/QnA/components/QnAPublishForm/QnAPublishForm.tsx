@@ -194,10 +194,10 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
               formatItem.questions["add"] = addedQuestions.map(m => m.label);
             }
             if(deletedQuestions.length > 0) {
-              formatItem.questions["delete"] = addedQuestions.map(m => m.label);
+              formatItem.questions["delete"] = deletedQuestions.map(m => m.label);
             }
             if(itemInOrig.Classification !== currentItem.qnaItem.Classification) {
-              // "dalete" : original
+              // "delete" : original
               // add: currentItem
               formatItem["metadata"] = {};
               formatItem.metadata["add"] = { 

@@ -625,7 +625,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public renderEditableAnswer = (cellInfo) => {
 
     const style = _.isEmpty(cellInfo.original.Answer) ? {}  : {display: 'none'};
-    // console.log(cellInfo.original.Answer);
+    //console.log(cellInfo.original.Answer);
+    
     // return (
     //   <div>
     //     <QnAAnswerInput 
@@ -669,7 +670,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public renderEditableDropdown = cellInfo => {
-    console.log(cellInfo.original.Classification);
+
     let selectedItemOption = {"text": cellInfo.original.Classification , 
       "key": cellInfo.original.Classification};
     

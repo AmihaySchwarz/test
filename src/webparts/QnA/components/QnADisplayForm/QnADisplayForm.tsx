@@ -153,14 +153,35 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         if (minutes < 15 ) {
           if(items[0].LockedBy == undefined) {
             // user can edit it. call lockList()
+            this.lockList();
           } else {
             // user cannot edit; toaster to say that it is still locked.
+            if (
+              this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+              this.state.listTrackingItem.LockedBy.EMail
+            ) {
+              toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+              this.setState({
+                isLoading: false
+              });
+            } else {
+              this.lockList();
+            }
           }
         } else {
           if(items[0].LockedBy == undefined) {
             // user can edit it. call lockList()
+            this.lockList();
           } else {
             // remove the lockedBy from sp list then call lockList();
+            this.props.actionHandler
+            .removeLockedBy(
+              this.state.currentUser,
+              this.state.selectedDivisionText,
+              this.props.properties.qnATrackingListName
+            ).then(() => {
+              this.lockList();
+            });
           }
         }
 
@@ -259,23 +280,77 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   public changeToPublish(): void {
     this.setState({isLoading: true});
 
-    this.props.actionHandler
-      .checkLockStatus(
-        this.state.currentUser,
-        this.state.selectedDivisionText,
-        this.props.properties.qnATrackingListName
-      )
-      .then(items => {
-        this.setState({
-          listTrackingItem: items[0],
-          qnaActionHistory: JSON.parse(items[0].qnaPublishString),
-          qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
-        });
-        let currentUserEmail = this.state.currentUser.Email;
+    // this.props.actionHandler
+    //   .checkLockStatus(
+    //     this.state.currentUser,
+    //     this.state.selectedDivisionText,
+    //     this.props.properties.qnATrackingListName
+    //   )
+    //   .then(items => {
+    //     this.setState({
+    //       listTrackingItem: items[0],
+    //       qnaActionHistory: JSON.parse(items[0].qnaPublishString),
+    //       qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
+    //     });
+    //     let currentUserEmail = this.state.currentUser.Email;
 
+    //     if(items[0].LockedBy == undefined) {
+    //       this.lockListPublish();
+    //     } else {
+    //       if (
+    //         this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+    //         this.state.listTrackingItem.LockedBy.EMail
+    //       ) {
+    //         toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+    //         this.setState({
+    //           isLoading: false
+    //         });
+    //       } else {
+    //         //item is not locked
+    //         //get qna action history, if it has laman add to current state
+    //         this.lockListPublish();
+    //       }
+    //     }
+    //   });
+
+    this.props.actionHandler
+    .checkLockStatus(
+      this.state.currentUser,
+      this.state.selectedDivisionText,
+      this.props.properties.qnATrackingListName
+    )
+    .then(items => {
+      this.setState({
+        listTrackingItem: items[0],
+        qnaActionHistory: JSON.parse(items[0].qnaPublishString),
+        qnaOriginalCopy: JSON.parse(items[0].qnaOriginalCopy)
+      });
+
+      let currentUserEmail = this.state.currentUser.Email;
+      console.log(items[0], "list tracking");
+      //check if current is less than 15 min from release time
+      //if yes , is lockedby empty? yes = can edit ; no = cannot edit
+      //if no, (current time is greater than 15 min)
+      //check if lockedby empty? yes = can edit; no = remove the lockedby then lock to current user
+    //  let testDate = items[0].LockedReleaseTime.toLocaleDateString();
+      let dateTimeToday = moment(moment().local().format());
+      let lockReleaseTime = moment(items[0].LockedReleaseTime).local().format();
+      let minDiffDuration = moment.duration(dateTimeToday.diff(lockReleaseTime));
+      let minutes = minDiffDuration.asMinutes();
+
+      console.log(minutes, "DIFFERENCE");
+
+      if (minutes < 15 ) {
         if(items[0].LockedBy == undefined) {
+          // user can edit it. call lockList()
           this.lockListPublish();
         } else {
+          // user cannot edit; toaster to say that it is still locked.
+          // toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+          // this.setState({
+          //   isLoading: false
+          // });
+
           if (
             this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
             this.state.listTrackingItem.LockedBy.EMail
@@ -285,12 +360,46 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
               isLoading: false
             });
           } else {
-            //item is not locked
-            //get qna action history, if it has laman add to current state
             this.lockListPublish();
           }
+
         }
-      });
+      } else {
+        if(items[0].LockedBy == undefined) {
+          // user can edit it. call lockList()
+          this.lockListPublish();
+        } else {
+          // remove the lockedBy from sp list then call lockList();
+          this.props.actionHandler
+          .removeLockedBy(
+            this.state.currentUser,
+            this.state.selectedDivisionText,
+            this.props.properties.qnATrackingListName
+          ).then(() => {
+            this.lockListPublish();
+          });
+        }
+      }
+
+      if(items[0].LockedBy == undefined) {
+        this.lockListPublish();
+      } else {
+        if (
+          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+          this.state.listTrackingItem.LockedBy.EMail
+        ) {
+          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+          this.setState({
+            isLoading: false
+          });
+        } else {
+          //item is not locked
+          //get qna action history, if it has laman add to current state
+          this.lockListPublish();
+        }
+      }
+    });
+
   }
   public renderQuestionsDisplay(cellInfo) {
     let parsedQ = JSON.parse(cellInfo.original.Questions);
@@ -433,8 +542,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                             accessor: "Question",
                             style: { 'overflow': 'visible !important', 
                                     'overflow-wrap': 'break-word !important',
-                                    'white-space': 'normal !important',
-                                    'word-break': 'break-all' } 
+                                    'word-wrap': 'break-word !important',
+                                    'white-space': 'normal !important' } 
                           },
                           {
                             Header: "Posted Date",
@@ -481,13 +590,21 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                         Header: "Questions",
                         accessor: "Questions",
                         Cell: this.renderQuestionsDisplay,
-                        filterable: false
+                        filterable: false,
+                        style: { 'overflow': 'visible !important', 
+                                    'overflow-wrap': 'break-word !important',
+                                    'word-wrap': 'break-word !important',
+                                    'white-space': 'normal !important' } 
                       },
                       {
                         Header: "Answer",
                         accessor: "Answer",
                         Cell: this.renderAnswerDisplay,
-                        filterable: false
+                        filterable: false,
+                        style: { 'overflow': 'visible !important', 
+                                    'overflow-wrap': 'break-word !important',
+                                    'word-wrap': 'break-word !important',
+                                    'white-space': 'normal !important' } 
                       },
                       {
                         Header: "Classification",
@@ -496,7 +613,11 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       {
                         Header: "Remarks",
                         accessor: "Remarks",
-                        filterable: false
+                        filterable: false,
+                        style: { 'overflow': 'visible !important', 
+                                    'overflow-wrap': 'break-word !important',
+                                    'word-wrap': 'break-word !important',
+                                    'white-space': 'normal !important' } 
                       }
                     ]
                   }

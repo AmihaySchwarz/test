@@ -45,7 +45,10 @@ const components = {
         this.props.onChange([...value,createOption(inputValue)]);
         event.preventDefault();
       }
+    }
 
+    public onValueClick = (value : string) => {
+      console.log("this is the value clicked", value);
     }
 
     public handleKeyDown = (event) => {
@@ -102,6 +105,7 @@ const components = {
                   whiteSpace: "normal"
                 })
               }}
+              cropWithEllipsis={false}
               components={components}
               inputValue={inputValue}
               isClearable={false} 
@@ -113,6 +117,8 @@ const components = {
               onKeyDown={this.handleKeyDown}
               value={value}
               className={styles.questionInput}
+              onValueClick={this.onValueClick}
+             
             />
           </div>          
           <span className={styles.requiredLabel} style={style}>* required </span> 
