@@ -491,7 +491,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
 
-      console.log(this.state.qnaActionHistory, "actionhistory");
+      //console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
      historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
 

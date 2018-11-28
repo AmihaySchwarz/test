@@ -13,37 +13,75 @@ export default class QnAAnswerInput extends React.Component<any,any> {
 
   constructor(props) {
     super(props);
-    this.state = { text: props.value };
+    this.state = { 
+      text: ''
+
+    };
     this.handleChange = this.handleChange.bind(this);
+    this.setProps = this.setProps.bind(this);
   }
+
+  public componentDidMount(){
+    console.log(this.props);
+     this.setState({
+       text: this.props.value
+     });
+   }
+
+   public componentWillReceiveProps(newProps): void {
+    // console.log(newProps, "new props");
+     this.setState({
+       text: newProps.value
+     });
+   }
+ 
+   public setProps() {
+     console.log("set props", this.state.text);
+      this.props.onChange(this.state.text);
+   }
 
   public handleChange(value) {
     this.setState({ text: value });
-    this.props.onChange(value);
+    //this.props.onChange(value);
   }
+
+
+
+  /*
+ * Custom toolbar component including insertStar button and dropdowns
+ */
+public CustomToolbar = () => (
+  <div id="toolbar">
+    <button className="ql-bold"></button>
+    <button className="ql-italic"></button>
+  </div>
+)
+
+
 
   public modules = {
     toolbar: [
-      [{ 'header': [1, 2, false] }],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      ['bold', 'italic', 'blockquote'],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image'],
-      ['clean']
+      ['link']
     ],
   };
 
   public formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'bold', 'italic', 'blockquote',
     'list', 'bullet', 'indent',
-    'link', 'image'
+    'link'
   ];
 
   public render() {
+    //console.log(this.props.value);
+    const { val } = this.state;
+    //this.state.text
     return (
       <div className="text-editor">
-        <ReactQuill value={this.state.text}
-                  onChange={this.handleChange} />
+        <ReactQuill value={this.state.text} 
+                  onChange={this.handleChange} 
+                  onBlur= {this.setProps} modules={this.modules} formats={this.formats}/>
       </div>
     );
   }

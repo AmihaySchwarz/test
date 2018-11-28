@@ -72,6 +72,11 @@ export class QnAActionHandler {
         return res;
     }
 
+    public async removeLockedByPublish(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let res = await this.service.removeLockedByPublish(currentUser, division, qnaListTrackingListName);
+        return res;
+    }
+
     public async lockList (currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
         
         let response = await this.service.lockList(currentUser, division, qnaListTrackingListName);

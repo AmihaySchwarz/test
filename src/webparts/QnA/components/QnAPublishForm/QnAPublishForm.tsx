@@ -10,6 +10,7 @@ import { DefaultButton } from "office-ui-fabric-react/lib/Button";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPublishFormState> {
   constructor(props) {
@@ -122,6 +123,12 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
     try {
       const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
         console.log(currentItem);
+        
+        if (currentItem.qnaItem.QnAID == 0) {
+          currentItem.action = "add";
+        }
+
+        console.log(currentItem);
         switch(currentItem.action){
           case "add":
             if(!newObject.add){
@@ -224,7 +231,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         
       },{});
   
-      console.log(updateKBArray); //add the newObject in etoban :) 
+      console.log(updateKBArray); 
       let publishQnAJSOn = JSON.stringify(updateKBArray);
       console.log(publishQnAJSOn);
   
@@ -341,6 +348,14 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
     });
   }
 
+  public renderAnswerPublish(cellInfo) {
+    
+    let html = cellInfo.original.qnaItem.Answer;
+    return (
+      <div> {ReactHtmlParser(html)}</div>
+    );
+  }
+
 
   public render() {
       console.log(this.state.isqnaActionHistoryEmpty, "QNA HISTORY");
@@ -384,7 +399,8 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                       },
                       {
                         Header: "Answer",
-                        accessor: "qnaItem.Answer"
+                        accessor: "qnaItem.Answer",
+                        Cell: this.renderAnswerPublish,
                       },
                       {
                         Header: "Classification",

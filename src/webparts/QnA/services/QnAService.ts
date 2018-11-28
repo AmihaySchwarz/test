@@ -65,7 +65,7 @@ export class QnAService extends BaseService implements IQnAService {
 
     public getQnAItems(divisionListName: string): Promise<any> {
        // console.log(divisionListName, "master list item");
-        return sp.web.lists.getByTitle(divisionListName).items.select("ID", "Questions", "Answer", "Classification", "QnAID", "Remarks").getAll().then((items: any[]) => {
+        return sp.web.lists.getByTitle(divisionListName).items.orderBy('Created', true).select("ID", "Questions", "Answer", "Classification", "QnAID", "Remarks").getAll().then((items: any[]) => {
            // console.log(items);
             return items;
         });
@@ -228,6 +228,24 @@ export class QnAService extends BaseService implements IQnAService {
                     LockedById: null,
                     qnaOriginalCopy: null,
                     qnaPublishString: null
+                }).then(result => {
+                    console.log(result);
+                    return result;
+                }).catch(error => {
+                    console.log(error);
+                    return error;
+                });
+            }
+        });
+    }
+
+    public removeLockedByPublish(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any> {
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
+        return sp.web.lists.getByTitle(qnaListTrackingListName).items.top(1).filter("Division eq '" + division + "'").get().then((items: any[]) => {
+            // see if we got something
+            if (items.length > 0) {
+                return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
+                    LockedById: null
                 }).then(result => {
                     console.log(result);
                     return result;
