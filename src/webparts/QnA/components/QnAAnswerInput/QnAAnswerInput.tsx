@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styles from '../QnAForm/QnAForm.module.scss';
 import * as _ from "lodash";
-import { convertToRaw, EditorState, ContentState } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
-import { Editor } from 'react-draft-wysiwyg';
+// import { convertToRaw, EditorState, ContentState } from 'draft-js';
+// import draftToHtml from 'draftjs-to-html';
+// import htmlToDraft from 'html-to-draftjs';
+// import { Editor } from 'react-draft-wysiwyg';
 import ReactQuill, {Quill} from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
 
@@ -76,12 +76,16 @@ public CustomToolbar = () => (
   public render() {
     //console.log(this.props.value);
     const { val } = this.state;
-    //this.state.text
+    const style = _.isEmpty(this.state.text) ? {}  : {display: 'none'};
+
     return (
-      <div className="text-editor">
-        <ReactQuill value={this.state.text} 
-                  onChange={this.handleChange} 
-                  onBlur= {this.setProps} modules={this.modules} formats={this.formats}/>
+      <div>
+        <div className="text-editor">
+          <ReactQuill value={this.state.text} 
+                    onChange={this.handleChange} 
+                    onBlur= {this.setProps} modules={this.modules} formats={this.formats}/>
+        </div>
+        <span className={styles.requiredLabel} style={style}>* required </span> 
       </div>
     );
   }

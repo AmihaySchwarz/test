@@ -2,6 +2,7 @@ import * as React from 'react';
 import CreatableSelect from 'react-select/lib/Creatable';
 import styles from '../QnAForm/QnAForm.module.scss';
 import * as _ from "lodash";
+import TagEditor from "react-tageditor";
 
 const components = {
     DropdownIndicator: null
@@ -120,6 +121,9 @@ const components = {
               onValueClick={this.onValueClick}
              
             />
+
+            {/* <TagEditor onChange={this.handleChange} delimiters={[]} /> */}
+
           </div>          
           <span className={styles.requiredLabel} style={style}>* required </span> 
         </div>
