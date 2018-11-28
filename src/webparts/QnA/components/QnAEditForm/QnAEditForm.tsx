@@ -627,28 +627,28 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     const style = _.isEmpty(cellInfo.original.Answer) ? {}  : {display: 'none'};
     //console.log(cellInfo.original.Answer);
     
-    // return (
-    //   <div>
-    //     <QnAAnswerInput 
-    //         value={cellInfo.original.Answer} 
-    //         onChange={data => this.updateQnAAnswer(data, cellInfo)}
-    //     />
-    //   </div>
-    // );
-
     return (
       <div>
-        <TextField
-          value={cellInfo.original.Answer}
-          multiline
-          rows={4}
-          //required={true}
-          resizable={true}
-          onChanged={data => this.updateQnAAnswer(data, cellInfo)}
+        <QnAAnswerInput 
+            value={cellInfo.original.Answer} 
+            onChange={data => this.updateQnAAnswer(data, cellInfo)}
         />
-        <span className={styles.requiredLabel} style={style}>* required </span> 
       </div>
     );
+
+    // return (
+    //   <div>
+    //     <TextField
+    //       value={cellInfo.original.Answer}
+    //       multiline
+    //       rows={4}
+    //       //required={true}
+    //       resizable={true}
+    //       onChanged={data => this.updateQnAAnswer(data, cellInfo)}
+    //     />
+    //     <span className={styles.requiredLabel} style={style}>* required </span> 
+    //   </div>
+    // );
   }
 
   public renderEditableRemarks = (cellInfo) => {
@@ -717,8 +717,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         QnACpy = QnACpy.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase() ||
-          row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); //||
+         // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
       }
 
@@ -793,16 +793,19 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         columns: [
                           {
                             Header: "Question",
-                            accessor: "Question"
+                            accessor: "Question",
+                            sortable: false 
                           },
                           {
                             Header: "Posted Date",
                             accessor: "PostedDate",
-                            Cell: this.renderDateField
+                            Cell: this.renderDateField,
+                            sortable: false 
                           },
                           {
                             Header: "Posted By",
-                            accessor: "PostedBy"
+                            accessor: "PostedBy",
+                            sortable: false 
                           },
                           {
                             Header: "Actions",
@@ -870,29 +873,34 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Header: "Questions",
                         accessor: "Questions",
                         Cell: this.renderQuestionsEdit,
-                        filterable: false
+                        filterable: false,
+                        sortable: false 
                       },
                       {
                         Header: "Answer",
                         accessor: "Answer",
                         Cell: this.renderEditableAnswer,
-                        filterable: false
+                        filterable: false,
+                        sortable: false 
                       },
                       {
                         Header: "Classification",
                         accessor: "Classification",
-                        Cell: this.renderEditableDropdown
+                        Cell: this.renderEditableDropdown,
+                        sortable: false 
                       },
                       {
                         Header: "Remarks",
                         accessor: "Remarks",
                         Cell: this.renderEditableRemarks,
-                        filterable: false
+                        filterable: false,
+                        sortable: false 
                       },
                       {
                         Header: "Actions",
                         accessor: "Actions",
                         filterable: false,
+                        sortable: false, 
                         Cell: ({ row, index }) => (
                           <div>
                             <button onClick={() => 

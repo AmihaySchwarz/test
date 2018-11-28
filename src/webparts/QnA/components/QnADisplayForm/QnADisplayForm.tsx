@@ -462,8 +462,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         QnACpy = QnACpy.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase() ||
-          row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
+          row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); //||
+         // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
       }
 
@@ -543,12 +543,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                             style: { 'overflow': 'visible !important', 
                                     'overflow-wrap': 'break-word !important',
                                     'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' } 
+                                    'white-space': 'normal !important' },
+                            sortable: false 
                           },
                           {
                             Header: "Posted Date",
                             accessor: "PostedDate",
-                            Cell: this.renderDateField
+                            Cell: this.renderDateField,
+                            sortable: false 
                           },
                           {
                             Header: "Posted By",
@@ -594,7 +596,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                         style: { 'overflow': 'visible !important', 
                                     'overflow-wrap': 'break-word !important',
                                     'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' } 
+                                    'white-space': 'normal !important' },
+                        sortable: false  
                       },
                       {
                         Header: "Answer",
@@ -604,7 +607,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                         style: { 'overflow': 'visible !important', 
                                     'overflow-wrap': 'break-word !important',
                                     'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' } 
+                                    'white-space': 'normal !important' },
+                        sortable: false 
                       },
                       {
                         Header: "Classification",
@@ -617,7 +621,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                         style: { 'overflow': 'visible !important', 
                                     'overflow-wrap': 'break-word !important',
                                     'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' } 
+                                    'white-space': 'normal !important' },
+                        sortable: false 
                       }
                     ]
                   }

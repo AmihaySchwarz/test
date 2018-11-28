@@ -5,51 +5,46 @@ import { convertToRaw, EditorState, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
+import ReactQuill, {Quill} from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; 
 
 
 export default class QnAAnswerInput extends React.Component<any,any> {
 
-
   constructor(props) {
     super(props);
-    const html = props.value;
-    const contentBlock = htmlToDraft(html);
-    if (contentBlock) {
-      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-      const editorState = EditorState.createWithContent(contentState);
-      this.state = {
-        editorState,
-      };
-    }
-    // const blocksFromHTML = convertFromHTML(html);
-    // const state = ContentState.createFromBlockArray(
-    //   blocksFromHTML.contentBlocks,
-    //   blocksFromHTML.entityMap
-    // );
-    // this.state = {
-    //   editorState: EditorState.createWithContent(state)
-    // };
+    this.state = { text: props.value };
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  public onChange = (editorState) => {
-    this.setState({editorState})
-    console.log(editorState);
-    //const html = draftToHtml(convertToRaw(editorState));
-    //console.log(html);
-    //this.props.onChange(html);
+  public handleChange(value) {
+    this.setState({ text: value });
+    this.props.onChange(value);
   }
+
+  public modules = {
+    toolbar: [
+      [{ 'header': [1, 2, false] }],
+      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  public formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image'
+  ];
 
   public render() {
-    //console.log(this.props.value);
-    const { editorState } = this.state;
-    
-    //const { value } = this.props.value;
-
-    return(
-      <div>
-           <Editor editorState={editorState} onEditorStateChange={this.onChange} />
+    return (
+      <div className="text-editor">
+        <ReactQuill value={this.state.text}
+                  onChange={this.handleChange} />
       </div>
     );
-
   }
 }

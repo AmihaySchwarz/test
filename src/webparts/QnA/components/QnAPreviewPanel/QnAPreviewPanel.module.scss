@@ -6,6 +6,7 @@
   border: .1px solid #000;
   width: 272px;
   height: 377px;
+  overflow: auto;
 
 }
 .chatOutput {
@@ -35,8 +36,9 @@
     }
   }
   .botMessage {
-    text-align: right; 
+    //text-align: right; 
     overflow-wrap: break-word;
+    word-wrap: break-word;
     padding: 10px;
     //background: rgb(143, 139, 139);
     white-space: unset;
