@@ -99,7 +99,7 @@ const components = {
         <div> 
           <div>
             {/* <span className={styles.requiredLabel}>*</span> */}
-            {/* <CreatableSelect
+            <CreatableSelect
                styles={{
                 multiValueLabel: (provided, state) => ({
                   ...provided,
@@ -120,9 +120,9 @@ const components = {
               className={styles.questionInput}
               onValueClick={this.onValueClick}
              
-            /> */}
+            />
 
-            <TagEditor onChange={this.handleChange} delimiters={[]} />
+            {/* <TagEditor onChange={this.handleChange} delimiters={[]} /> */}
 
           </div>          
           <span className={styles.requiredLabel} style={style}>* required </span> 

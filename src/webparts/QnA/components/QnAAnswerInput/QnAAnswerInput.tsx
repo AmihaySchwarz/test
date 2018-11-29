@@ -22,7 +22,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
   }
 
   public componentDidMount(){
-    console.log(this.props);
+    //console.log(this.props);
      this.setState({
        text: this.props.value
      });
@@ -36,7 +36,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
    }
  
    public setProps() {
-     console.log("set props", this.state.text);
+     //console.log("set props", this.state.text);
       this.props.onChange(this.state.text);
    }
 

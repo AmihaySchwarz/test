@@ -174,14 +174,15 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
             this.lockList();
           } else {
             // remove the lockedBy from sp list then call lockList();
-            this.props.actionHandler
-            .removeLockedBy(
-              this.state.currentUser,
-              this.state.selectedDivisionText,
-              this.props.properties.qnATrackingListName
-            ).then(() => {
+            //commented out since its redundant
+            // this.props.actionHandler
+            // .removeLockedBy(
+            //   this.state.currentUser,
+            //   this.state.selectedDivisionText,
+            //   this.props.properties.qnATrackingListName
+            // ).then(() => {
               this.lockList();
-            });
+            //});
           }
         }
 
@@ -370,14 +371,15 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
           this.lockListPublish();
         } else {
           // remove the lockedBy from sp list then call lockList();
-          this.props.actionHandler
-          .removeLockedBy(
-            this.state.currentUser,
-            this.state.selectedDivisionText,
-            this.props.properties.qnATrackingListName
-          ).then(() => {
+          //commented out since its redundant
+          //this.props.actionHandler
+          // .removeLockedBy(
+          //   this.state.currentUser,
+          //   this.state.selectedDivisionText,
+          //   this.props.properties.qnATrackingListName
+          // ).then(() => {
             this.lockListPublish();
-          });
+          //});
         }
       }
 
@@ -447,6 +449,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     const { selectedDivision } = this.state;
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
+
+    let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+    let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
 
 
       // if (this.state.searchQnA) {
@@ -559,7 +564,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                         ]
                       }
                     ]}
-                    defaultPageSize={10}
+                    //defaultPageSize={5}
+                    pageSize={newQuestions.length}
                     className="-striped -highlight"
                   />
 
@@ -627,7 +633,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                     ]
                   }
                 ]}
-                defaultPageSize={10}
+                //defaultPageSize={pgSize}
+                pageSize={pgSize}
                 className="-striped -highlight"
               />
            </div>

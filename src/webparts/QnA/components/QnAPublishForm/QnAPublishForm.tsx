@@ -360,6 +360,9 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
   public render() {
       console.log(this.state.isqnaActionHistoryEmpty, "QNA HISTORY");
 
+      let tblLength = (this.state.qnaActionHistory) ? this.state.qnaActionHistory : 0; 
+      let pgSize = (tblLength > 10) ? 5 : tblLength;
+
         return ( 
           <div>
             {/* <ToastContainer /> */}
@@ -418,6 +421,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                   }
                 ]}
                 defaultPageSize={10}
+                //pageSize={pgSize}
                 className="-striped -highlight"
               />
             </div>

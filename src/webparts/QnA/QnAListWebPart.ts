@@ -1,17 +1,13 @@
 import "@pnp/polyfill-ie11";
-require('core-js');
+//require('core-js');
 import 'es6-promise';
- require('es6-promise/auto');
+
+//import 'core-js/es6/array';
+//import 'es6-map/implement';
+//require('es6-promise/auto');
 import 'whatwg-fetch';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-// Include all polyfills
-// require('core-js');
- //import 'es6-promise';
- //require('es6-promise/auto');
-//import "core-js/es6/array";
-//import "es6-map/implement";
-//import "core-js/modules/es6.array.find";
 import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
@@ -30,6 +26,7 @@ import { QnAContainer } from './components/QnAContainer/QnAContainer';
 import { IQnAService, QnAService } from './services';
 import * as MockQnAServiceImport from './services/MockQnAService';
 import { sp } from '@pnp/sp';
+
 let MockQnAService: typeof MockQnAServiceImport;
 if (DEBUG) {
   MockQnAService = require('./services/MockQnAService');

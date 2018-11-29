@@ -16,6 +16,7 @@ import Moment from "react-moment";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as _ from "lodash";
+//import * as _ from "underscore";
 import Modal from "react-responsive-modal";
 import {
   Tooltip,
@@ -162,7 +163,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
             .then(result => { 
                 console.log(result.data.Id);
-                const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
+
                 let qnaActionHistory = [...this.state.qnaActionHistory];
                 let item = {
                   ...qnaActionHistory[historyIndex],
@@ -242,7 +245,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
             .then(result => { 
                 console.log(result.data.Id);
-                const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
                 let qnaActionHistory = [...this.state.qnaActionHistory];
                 let item = {
                   ...qnaActionHistory[historyIndex],
@@ -441,7 +445,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       };
 
       console.log(this.state.qnaActionHistory);
-      const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.Id == item.row._original.Id);
+      //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.Id == item.row._original.Id);
+      const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.Id == item.row._original.Id);
 
 
       if (historyIndex >= 0) {
@@ -460,20 +465,25 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       }
       //remove from qnaState array
       let array = [...this.state.qnaItems];
-      let index = array.findIndex(d => d.Id == item.row._original.Id);
+      //let index = array.findIndex(d => d.Id == item.row._original.Id);
+      let index = _.findIndex(array,d => d.Id == item.row._original.Id);
+
       array.splice(index, 1);
       this.setState({ qnaItems: array });
 
     } else {
       //item is new so we also need to delete the item from qnaActionHistory state
       let historyArray = [...this.state.qnaActionHistory];
-      let histIndex = historyArray.findIndex(d => d.qnaItem.identifier == item.row._original.identifier);
+      //let histIndex = historyArray.findIndex(d => d.qnaItem.identifier == item.row._original.identifier);
+      let histIndex = _.findIndex(historyArray,d => d.qnaItem.identifier == item.row._original.identifier);
+
       historyArray.splice(histIndex, 1);
       this.setState({ qnaActionHistory: historyArray });
 
       //remove from qnaState array
       let array = [...this.state.qnaItems];
-      let index = array.findIndex(d => d.identifier == item.row._original.identifier);
+      //let index = array.findIndex(d => d.identifier == item.row._original.identifier);
+      let index = _.findIndex(array,d => d.identifier == item.row._original.identifier);
       array.splice(index, 1);
       this.setState({ qnaItems: array });
     }
@@ -493,7 +503,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
       //console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
-     historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
+     //historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
+     historyIndex = _.findIndex(this.state.qnaActionHistory, data => data.qnaItem.identifier == item.identifier); //index
 
     } else  {
       //item has id so edit
@@ -503,7 +514,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       };
      
       //check if item exist in action history
-      historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
+      //historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.Id == item.Id);
+      historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.Id == item.Id);
 
     }
 
@@ -530,9 +542,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     let qnaItems = [...this.state.qnaItems];
     let index;
     if(cellInfo.original.Id != null){
-      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      //index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
     } else {
-       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       //index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
 
     let item = {
@@ -551,9 +565,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     let qnaItems = [...this.state.qnaItems];
     let index;
     if(cellInfo.original.Id != null){
-      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      //index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
     } else {
-       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       //index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
 
     let item = {
@@ -572,9 +588,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     let array = [...this.state.qnaItems];
     let index;
     if(cellInfo.original.Id != null){
-      index = array.findIndex(d => d.Id == cellInfo.original.Id);
+      //index = array.findIndex(d => d.Id == cellInfo.original.Id);
+      index = _.findIndex(array,d => d.Id == cellInfo.original.Id);
     } else {
-       index = array.findIndex(d => d.identifier == cellInfo.original.identifier);
+       //index = array.findIndex(d => d.identifier == cellInfo.original.identifier);
+       index = _.findIndex(array,d => d.identifier == cellInfo.original.identifier);
     }
    
     let qnaItems = [...this.state.qnaItems];
@@ -595,9 +613,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
     let index;
     if(cellInfo.original.Id != null){
-      index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      //index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
     } else {
-       index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       //index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
 
     let item = {
@@ -703,6 +723,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
 
+    let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+
     //console.log(this.state.qnaItems, "origi", QnACpy);
     
       // if (this.state.searchQnA) {
@@ -784,6 +806,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                     PaginationComponent={Pagination}
                     data={newQuestions} //this.state.newQuestions
                     defaultPageSize={10}
+                    //pageSize={this.state.newQuestions.length}
                     className="-striped -highlight"
                     // filtered={this.state.filtered}
                     // onFilteredChange={this.onFilteredChange.bind(this)}
@@ -944,6 +967,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   }
                 ]}
                 defaultPageSize={10}
+                //pageSize={QnACpyLength}
                 className="-striped -highlight"
               />
 
