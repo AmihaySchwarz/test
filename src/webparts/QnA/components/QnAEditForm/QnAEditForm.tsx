@@ -725,6 +725,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
     let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
 
+    let NewQLength = (newQuestions) ? newQuestions.length : 0;
+    let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+
+
     //console.log(this.state.qnaItems, "origi", QnACpy);
     
       // if (this.state.searchQnA) {
@@ -805,7 +809,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   <ReactTable
                     PaginationComponent={Pagination}
                     data={newQuestions} //this.state.newQuestions
-                    defaultPageSize={10}
+                    defaultPageSize={newQPgSize}
                     //pageSize={this.state.newQuestions.length}
                     className="-striped -highlight"
                     // filtered={this.state.filtered}

@@ -29,7 +29,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
    }
 
    public componentWillReceiveProps(newProps): void {
-    // console.log(newProps, "new props");
+     //console.log(newProps, "new props");
      this.setState({
        text: newProps.value
      });
@@ -83,7 +83,9 @@ public CustomToolbar = () => (
         <div className="text-editor">
           <ReactQuill value={this.state.text} 
                     onChange={this.handleChange} 
-                    onBlur= {this.setProps} modules={this.modules} formats={this.formats}/>
+                    onBlur= {this.setProps} 
+                    modules={this.modules} 
+                    formats={this.formats}/>
         </div>
         <span className={styles.requiredLabel} style={style}>* required </span> 
       </div>

@@ -453,6 +453,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
     let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
 
+    let NewQLength = (newQuestions) ? newQuestions.length : 0;
+    let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+
 
       // if (this.state.searchQnA) {
       //   QnACpy = QnACpy.filter(row => {
@@ -565,7 +568,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                       }
                     ]}
                     //defaultPageSize={5}
-                    pageSize={newQuestions.length}
+                    pageSize={newQPgSize}
                     className="-striped -highlight"
                   />
 

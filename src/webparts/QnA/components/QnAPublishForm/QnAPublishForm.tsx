@@ -107,11 +107,11 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
   public onBackClick(): void {
     console.log(this.props.originModule, "origin module");
 
-    if(this.props.originModule === "Display"){
-      this.props.actionHandler.removeLockedBy(this.state.currentUser,
-        this.state.selectedDivisionText,
-        this.props.properties.qnATrackingListName);
-    }
+    // if(this.props.originModule === "Display"){
+    //   this.props.actionHandler.removeLockedBy(this.state.currentUser,
+    //     this.state.selectedDivisionText,
+    //     this.props.properties.qnATrackingListName);
+    // }
     this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision, this.props.originModule);
   }
 
@@ -360,8 +360,11 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
   public render() {
       console.log(this.state.isqnaActionHistoryEmpty, "QNA HISTORY");
 
-      let tblLength = (this.state.qnaActionHistory) ? this.state.qnaActionHistory : 0; 
+      let tblLength = (this.state.qnaActionHistory) ? this.state.qnaActionHistory.length : 0; 
       let pgSize = (tblLength > 10) ? 5 : tblLength;
+
+    //   let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+    // let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
 
         return ( 
           <div>
@@ -421,7 +424,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                   }
                 ]}
                 defaultPageSize={10}
-                //pageSize={pgSize}
+                pageSize={pgSize}
                 className="-striped -highlight"
               />
             </div>

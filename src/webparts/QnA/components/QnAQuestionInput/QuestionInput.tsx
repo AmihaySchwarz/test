@@ -15,119 +15,156 @@ const components = {
 
   
   export default class QuestionInput extends React.Component<any,any> {
-    public state = {
-      inputValue: '',
-       value: [],
-    };
-
-    public handleChange = (value: any, actionMeta: any) => {
-      // console.log(value,actionMeta);
-      // console.group('Value Changed');
-      // console.log(value);
-      console.log(`action: ${actionMeta.action}`);
-      //console.groupEnd();
-      //console.log(value);
-      this.setState({ value });
-      this.props.onChange([...value]);
-    }
-    public handleInputChange = (inputValue: string) => {
-      this.setState({ inputValue : inputValue});
-    //  console.log(inputValue);
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+        
+        value: props.value,
+        focused: false,
+        inputValue: ""
+      };
+  
+      this.handleInputChange = this.handleInputChange.bind(this);
+      this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
+      this.handleEditItem = this.handleEditItem.bind(this);
+      this.handleBlur = this.handleBlur.bind(this);
     }
 
-    public handleBlur = (event) => {
-      const { inputValue } = this.state;
-      const { value } = this.props;
+    // public componentDidMount(){
+    //   //console.log(this.props);
+    //    this.setState({
+    //     value: this.props.value
+    //    });
+    //  }
+  
+     public componentWillReceiveProps(newProps): void {
+       //console.log(newProps, "new props");
+       this.setState({
+        value: newProps.value
+       });
+     }
 
-      if (!_.isEmpty(inputValue)) {
-        this.setState({
-          inputValue: ''
-        });
-        this.props.onChange([...value,createOption(inputValue)]);
-        event.preventDefault();
+    public handleBlur(evt) {
+      const { value } = evt.target;
+  
+      if (value !== "") {
+        this.setState(state => ({
+          value: [...state.value, createOption(value)],
+          inputValue: ""
+        }));
+        //this.props.onChange(this.state.value);
+        this.props.onChange([...this.state.value, createOption(value)]);
+        //evt.preventDefault();
       }
+      console.log(this.state.value);
     }
-
-    public onValueClick = (value : string) => {
-      console.log("this is the value clicked", value);
+  
+    public handleInputChange(evt) {
+      this.setState({ inputValue: evt.target.value });
+      
+     // this.props.onChange([...this.state.value, createOption(evt.target.value)]);
     }
-
-    public handleKeyDown = (event) => {
-      const { inputValue } = this.state;
-      const { value } = this.props;
-     // console.log(inputValue);
-      if (!inputValue) {
-        //console.log(inputValue);
-        return;
-      } 
-
-      switch (event.key) {
-        case 'Enter':
-          this.setState({
-            inputValue: ''
-          });
-          this.props.onChange([...value,createOption(inputValue)]);
-          event.preventDefault();
-          break;
-        case 'Tab':
-          //console.group('Value Added');
-          //console.log(value);
-          //console.groupEnd();
-          this.setState({
-            inputValue: '',
-            //value: [...value, createOption(inputValue)]
-          });
-          this.props.onChange([...value,createOption(inputValue)]);
-          event.preventDefault();
-          break;
-        default:
-            return null;
+  
+    public handleInputKeyDown(evt) {
+      if (evt.keyCode === 13) {
+        const { value } = evt.target;
+  
+        if (value !== "") {
+          console.log("enter pressed", value);
+          this.setState(state => ({
+            value: [...state.value, createOption(value)],
+            inputValue: ""
+          }));
+          this.props.onChange([...this.state.value, createOption(value)]);
+         // evt.preventDefault();
+        }
       }
+  
+      if (evt.keyCode === 9) {
+        const { value } = evt.target;
+  
+        if (value !== "") {
+          console.log("tab pressed");
+          this.setState(state => ({
+            value: [...state.value, createOption(value)],
+            inputValue: ""
+          }));
+          this.props.onChange([...this.state.value, createOption(value)]);
+         // evt.preventDefault();
+        }
+      }
+  
+      if (
+        this.state.value.length &&
+        evt.keyCode === 8 &&
+        !this.state.inputValue.length
+      ) {
+        this.setState(state => ({
+          value: state.value.slice(0, state.value.length - 1)
+        }));
+      }
+  
+      //console.log(this.state.value, "in handle input");
     }
-
+  
+    public handleEditItem(index) {
+      return () => {
+        let it = this.state.value.filter((item, i) => i === index);
+        console.log(it);
+        this.setState(state => ({
+          value: state.value.filter((item, i) => i !== index),
+          inputValue: it[0].label
+        }));
+      };
+    }
 
     public render() {
-      const { inputValue  } = this.state;
-      const { value } =this.props;
-      //console.log(value);
-
-      const style = _.isEmpty(value) ? {}  : {display: 'none'};
-
-
-      //console.log(inputValue);
-      return ( //className={styles.inputContainer}              // isClearable
-        <div> 
-          <div>
-            {/* <span className={styles.requiredLabel}>*</span> */}
-            <CreatableSelect
-               styles={{
-                multiValueLabel: (provided, state) => ({
-                  ...provided,
-                  whiteSpace: "normal"
-                })
-              }}
-              cropWithEllipsis={false}
-              components={components}
-              inputValue={inputValue}
-              isClearable={false} 
-              isMulti
-              menuIsOpen={false}
-              onChange={this.handleChange}
-              onInputChange={this.handleInputChange}
+      const questionStyles = {
+        container: {
+          border: "1px solid #ddd",
+          padding: "5px",
+          borderRadius: "5px"
+        },
+  
+        items: {
+          display: "inline-block",
+          padding: "2px",
+          border: "1px solid black",
+          fontFamily: "Helvetica, sans-serif",
+          borderRadius: "5px",
+          marginRight: "5px",
+          margin: "5px",
+          cursor: "pointer",
+          width: "100%"
+        },
+  
+        input: {
+          outline: "none",
+          border: "none",
+          fontSize: "14px",
+          fontFamily: "Helvetica, sans-serif",
+          backgroundColor: "inherit",
+          width: "100%"
+        }
+      };
+      return (
+        <label>
+          <ul style={questionStyles.container}>
+            {this.state.value.map((item, i) => (
+              <li key={i} style={questionStyles.items} onClick={this.handleEditItem(i)}>
+                {item.label}
+              </li>
+            ))}
+            <input
+              style={questionStyles.input}
+              value={this.state.inputValue}
+              onChange={this.handleInputChange}
+              onKeyDown={this.handleInputKeyDown}
               onBlur={this.handleBlur}
-              onKeyDown={this.handleKeyDown}
-              value={value}
-              className={styles.questionInput}
-              onValueClick={this.onValueClick}
-             
             />
-
-            {/* <TagEditor onChange={this.handleChange} delimiters={[]} /> */}
-
-          </div>          
-          <span className={styles.requiredLabel} style={style}>* required </span> 
-        </div>
-       
+          </ul>
+        </label>
       );
     }
   }
