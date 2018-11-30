@@ -21,6 +21,11 @@
   // .inputContainer{
   //   display: inline-flex;
   // }
+
+  .searchtxtBox::-ms-clear {
+    display:none;
+  }
+
   .notificationText{
     font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
     font-size: 14;

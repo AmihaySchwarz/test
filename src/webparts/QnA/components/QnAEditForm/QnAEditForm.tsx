@@ -801,7 +801,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                 <div> 
                   <div className={styles.searchCont}> 
                     <span>Search: </span>
-                    <input 
+                    <input className={styles.searchtxtBox}
                       value={this.state.searchNewq}
                       onChange={e => this.setState({searchNewq: e.target.value})}
                     />
@@ -885,7 +885,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
               <div className={styles.tableLabels}> QnA </div>
               <div className={styles.searchCont}> 
                 <span>Search: </span>
-                <input 
+                <input className={styles.searchtxtBox}
 									value={this.state.searchQnA}
 									onChange={e => this.setState({searchQnA: e.target.value})}
 								/>
