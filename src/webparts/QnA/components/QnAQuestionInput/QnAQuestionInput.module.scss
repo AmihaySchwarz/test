@@ -1,0 +1,70 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.container {
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+
+.input {
+    outline: none;
+    border: none;
+    font-size: 14px;
+    font-family: Helvetica, sans-serif;
+    background-color: inherit;
+    width: 100%;
+  }
+
+  .xButton {
+    padding: 4px 8px 4px 8px;
+    display: inline-block;
+    color: #0078D7;
+    font-size: 13px;
+    line-height: 20px;
+    cursor: pointer
+  }
+
+  .xButton:hover {
+      background-color: #B3DBF2;
+  }
+  
+  .items {
+    border: 1px solid #B3DBF2;
+    border-radius: 2px;
+    //display: "-webkit-box",
+    //display: "-ms-flexbox",
+    display: flex;
+    margin: 4px 8px 4px 0px;
+  }
+
+  .listitem {
+    display: inline-block
+  }
+
+  .input {
+    outline: none;
+    border: none;
+    font-size: 14px;
+    font-family: Helvetica, sans-serif;
+  }
+
+  .indivQuestions {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px 4px 12px;
+    min-height: 20px;
+    font-size: 13px;
+    line-height: 20px;
+    word-break: break-word;
+  }
+
+  .editItemInput { 
+    font-size: 14px;
+    font-family: Helvetica, sans-serif;
+  }
+
+  .qContainer {
+    display: flex
+  }

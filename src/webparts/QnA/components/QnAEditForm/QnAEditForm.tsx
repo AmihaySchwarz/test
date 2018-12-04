@@ -21,6 +21,7 @@ import Modal from "react-responsive-modal";
 import {
   Tooltip,
 } from 'react-tippy';
+import Floater from 'react-floater';
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
 
@@ -901,31 +902,34 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         accessor: "Questions",
                         Cell: this.renderQuestionsEdit,
                         filterable: false,
-                        sortable: false 
+                        sortable: false,
+                        width: 200
                       },
                       {
                         Header: "Answer",
                         accessor: "Answer",
                         Cell: this.renderEditableAnswer,
                         filterable: false,
-                        sortable: false 
+                        sortable: false ,
+                        width: 200
                       },
                       {
                         Header: "Classification",
                         accessor: "Classification",
                         Cell: this.renderEditableDropdown,
-                        sortable: false 
+                        sortable: false
                       },
                       {
                         Header: "Remarks",
                         accessor: "Remarks",
                         Cell: this.renderEditableRemarks,
                         filterable: false,
-                        sortable: false 
+                        sortable: false
                       },
                       {
                         Header: "Actions",
                         accessor: "Actions",
+                        width: 50,
                         filterable: false,
                         sortable: false, 
                         Cell: ({ row, index }) => (
@@ -949,20 +953,23 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                               <button>Preview</button>
                             </Tooltip> 
 
-                           {/* <button  data-tip data-for={index.toString()} data-event='click focus'> 
-                              Preview
-                            </button>
-                            <div className="customTooltip"> 
-                              <ReactTooltip
-                                id={index.toString()}
-                                globalEventOff="click"
-                                //aria-haspopup="true"
-                                place="bottom"
-                                effect="solid"
-                              >
-                                <QnAPreviewPanel qnaItem={row} />
-                              </ReactTooltip> 
-                            </div> */}
+                            {/* <Floater
+                              content={
+                                <div>
+                                  <QnAPreviewPanel qnaItem={row} />
+                                </div>
+                              }
+                
+                              placement="right-end"
+                              offset={0}
+                              styles={{
+                                tooltip: {
+                                  filter: "none"
+                                }
+                              }}
+                            >
+                              <button>Preview</button>
+                            </Floater> */}
                            
                           </div>
                         )

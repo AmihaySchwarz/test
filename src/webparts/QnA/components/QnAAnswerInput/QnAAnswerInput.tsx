@@ -42,7 +42,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
 
   public handleChange(value) {
     this.setState({ text: value });
-    //this.props.onChange(value);
+    this.props.onChange(value);
   }
 
 
@@ -61,14 +61,14 @@ public CustomToolbar = () => (
 
   public modules = {
     toolbar: [
-      ['bold', 'italic', 'blockquote'],
+      ['bold', 'italic'],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
       ['link']
     ],
   };
 
   public formats = [
-    'bold', 'italic', 'blockquote',
+    'bold', 'italic',
     'list', 'bullet', 'indent',
     'link'
   ];

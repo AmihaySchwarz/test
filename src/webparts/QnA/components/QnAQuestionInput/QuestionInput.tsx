@@ -1,8 +1,9 @@
 import * as React from 'react';
 import CreatableSelect from 'react-select/lib/Creatable';
-import styles from '../QnAForm/QnAForm.module.scss';
+import styles from './QnAQuestionInput.module.scss';
 import * as _ from "lodash";
 import TagEditor from "react-tageditor";
+import QuestionComp from './QuestionComp';
 
 const components = {
     DropdownIndicator: null
@@ -27,43 +28,65 @@ const components = {
   
       this.handleInputChange = this.handleInputChange.bind(this);
       this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
-      this.handleEditItem = this.handleEditItem.bind(this);
+      //this.handleEditItem = this.handleEditItem.bind(this);
       this.handleBlur = this.handleBlur.bind(this);
+      this.handleRemoveItem = this.handleRemoveItem.bind(this);
+      this.updateQItem = this.updateQItem.bind(this);
+      //this.onClick = this.onClick.bind(this);
     }
 
-    // public componentDidMount(){
-    //   //console.log(this.props);
-    //    this.setState({
-    //     value: this.props.value
-    //    });
-    //  }
   
      public componentWillReceiveProps(newProps): void {
-       //console.log(newProps, "new props");
        this.setState({
         value: newProps.value
        });
      }
 
+     public updateQItem(index, item) {
+      if (item !== "") {
+        const newValue = this.state.value.map((x, i) => {
+          if (i === index) {
+            return createOption(item);
+          } else {
+            return x;
+          }
+        });
+        this.setState(state => ({
+          value: newValue,
+          inputValue: ""
+        }));
+      }
+      console.log(this.state.value);
+    }
+  
+    public handleRemoveItem(index) {
+      console.log(
+        index,
+        "tesr",
+        this.state.value.filter((item, i) => i !== index)
+      );
+      this.setState(state => ({
+        value: state.value.filter((item, i) => i !== index)
+      }));
+    }
+  
     public handleBlur(evt) {
       const { value } = evt.target;
   
+      console.log(value);
       if (value !== "") {
         this.setState(state => ({
           value: [...state.value, createOption(value)],
           inputValue: ""
         }));
-        //this.props.onChange(this.state.value);
-        this.props.onChange([...this.state.value, createOption(value)]);
-        //evt.preventDefault();
       }
-      console.log(this.state.value);
+  
+      console.log(this.state.value, "blur", value);
+      this.props.onChange(this.state.value);
     }
   
     public handleInputChange(evt) {
       this.setState({ inputValue: evt.target.value });
-      
-     // this.props.onChange([...this.state.value, createOption(evt.target.value)]);
     }
   
     public handleInputKeyDown(evt) {
@@ -71,13 +94,10 @@ const components = {
         const { value } = evt.target;
   
         if (value !== "") {
-          console.log("enter pressed", value);
           this.setState(state => ({
             value: [...state.value, createOption(value)],
             inputValue: ""
           }));
-          this.props.onChange([...this.state.value, createOption(value)]);
-         // evt.preventDefault();
         }
       }
   
@@ -85,13 +105,10 @@ const components = {
         const { value } = evt.target;
   
         if (value !== "") {
-          console.log("tab pressed");
           this.setState(state => ({
             value: [...state.value, createOption(value)],
             inputValue: ""
           }));
-          this.props.onChange([...this.state.value, createOption(value)]);
-         // evt.preventDefault();
         }
       }
   
@@ -105,63 +122,42 @@ const components = {
         }));
       }
   
-      //console.log(this.state.value, "in handle input");
-    }
-  
-    public handleEditItem(index) {
-      return () => {
-        let it = this.state.value.filter((item, i) => i === index);
-        console.log(it);
-        this.setState(state => ({
-          value: state.value.filter((item, i) => i !== index),
-          inputValue: it[0].label
-        }));
-      };
+      //console.log(this.state.value);
     }
 
+    // public onClick(evt) {
+    //   const { value } = evt.target;
+    //   if (value !== "") {
+    //     this.setState(state => ({
+    //       value: [...state.value, createOption(value)],
+    //       inputValue: ""
+    //     }));
+    //   }
+    //   console.log("on click", this.state.value);
+    // }
+
     public render() {
-      const questionStyles = {
-        container: {
-          border: "1px solid #ddd",
-          padding: "5px",
-          borderRadius: "5px"
-        },
-  
-        items: {
-          display: "inline-block",
-          padding: "2px",
-          border: "1px solid black",
-          fontFamily: "Helvetica, sans-serif",
-          borderRadius: "5px",
-          marginRight: "5px",
-          margin: "5px",
-          cursor: "pointer",
-          width: "100%"
-        },
-  
-        input: {
-          outline: "none",
-          border: "none",
-          fontSize: "14px",
-          fontFamily: "Helvetica, sans-serif",
-          backgroundColor: "inherit",
-          width: "100%"
-        }
-      };
+
       return (
         <label>
-          <ul style={questionStyles.container}>
+          <ul className={styles.container}>
             {this.state.value.map((item, i) => (
-              <li key={i} style={questionStyles.items} onClick={this.handleEditItem(i)}>
-                {item.label}
-              </li>
+
+              <QuestionComp
+                item={item.label}
+                index={i}
+                key={i}
+                onRemoveItem={index => this.handleRemoveItem(i)}
+                updateItem={this.updateQItem}
+              />
             ))}
             <input
-              style={questionStyles.input}
+              className={styles.input}
               value={this.state.inputValue}
               onChange={this.handleInputChange}
               onKeyDown={this.handleInputKeyDown}
               onBlur={this.handleBlur}
+              //onClick={this.onClick}
             />
           </ul>
         </label>
