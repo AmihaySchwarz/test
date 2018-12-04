@@ -941,12 +941,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             </button> <br />
 
                             <Tooltip 
-                                placement= 'bottom'
+                                placement= 'left'
+                                position="left-start"
                                 offset= '0, 5'
                                 interactive= {true}
                                 performance= {true}
                                 hideOnClick = {true}
                                 trigger="click"
+                                
                                 
                                 html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
                             >

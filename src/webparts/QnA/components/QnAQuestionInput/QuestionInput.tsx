@@ -20,7 +20,6 @@ const components = {
       super(props);
   
       this.state = {
-        
         value: props.value,
         focused: false,
         inputValue: ""
@@ -76,13 +75,13 @@ const components = {
       console.log(value);
       if (value !== "") {
         this.setState(state => ({
-          value: [...state.value, createOption(value)],
-          inputValue: ""
-        }));
+            value: [...state.value, createOption(value)],
+            inputValue: ""
+          }));  
+          //this.props.onChange(this.state.value);
+          this.props.onChange([...this.state.value, createOption(value)]);  
       }
-  
       console.log(this.state.value, "blur", value);
-      this.props.onChange(this.state.value);
     }
   
     public handleInputChange(evt) {
@@ -98,7 +97,9 @@ const components = {
             value: [...state.value, createOption(value)],
             inputValue: ""
           }));
+          this.props.onChange([...this.state.value, createOption(value)]);  
         }
+        console.log(value);
       }
   
       if (evt.keyCode === 9) {
@@ -109,7 +110,9 @@ const components = {
             value: [...state.value, createOption(value)],
             inputValue: ""
           }));
+          this.props.onChange([...this.state.value, createOption(value)]);  
         }
+        
       }
   
       if (
@@ -119,7 +122,7 @@ const components = {
       ) {
         this.setState(state => ({
           value: state.value.slice(0, state.value.length - 1)
-        }));
+        }));  
       }
   
       //console.log(this.state.value);

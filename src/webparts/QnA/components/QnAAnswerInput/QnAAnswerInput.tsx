@@ -42,7 +42,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
 
   public handleChange(value) {
     this.setState({ text: value });
-    this.props.onChange(value);
+    //this.props.onChange(value);
   }
 
 
