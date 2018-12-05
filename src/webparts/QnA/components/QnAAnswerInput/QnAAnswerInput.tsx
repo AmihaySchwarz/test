@@ -36,8 +36,13 @@ export default class QnAAnswerInput extends React.Component<any,any> {
    }
  
    public setProps() {
-     //console.log("set props", this.state.text);
+     console.log("set props", this.state.text);
+     if(this.state.text === "<p><br></p>"){
+      this.props.onChange("");
+     } else {
       this.props.onChange(this.state.text);
+     }
+      
    }
 
   public handleChange(value) {
@@ -76,7 +81,7 @@ public CustomToolbar = () => (
   public render() {
     //console.log(this.props.value);
     const { val } = this.state;
-    const style = _.isEmpty(this.state.text) ? {}  : {display: 'none'};
+    const style = ((_.isEmpty(this.state.text)) || (this.state.text === "<p><br></p>")) ? {}  : {display: 'none'};
 
     return (
       <div>

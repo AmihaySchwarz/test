@@ -1,6 +1,7 @@
 import * as React from 'react';
 import CreatableSelect from 'react-select/lib/Creatable';
 import styles from './QnAQuestionInput.module.scss';
+import Formstyles from '../QnAForm/QnAForm.module.scss';
 import * as _ from "lodash";
 import TagEditor from "react-tageditor";
 import QuestionComp from './QuestionComp';
@@ -67,6 +68,7 @@ const components = {
       this.setState(state => ({
         value: state.value.filter((item, i) => i !== index)
       }));
+      this.props.onChange(this.state.value.filter((item, i) => i !== index));
     }
   
     public handleBlur(evt) {
@@ -123,6 +125,7 @@ const components = {
         this.setState(state => ({
           value: state.value.slice(0, state.value.length - 1)
         }));  
+        this.props.onChange(this.state.value.slice(0, this.state.value.length - 1));
       }
   
       //console.log(this.state.value);
@@ -140,7 +143,7 @@ const components = {
     // }
 
     public render() {
-
+      const style = ((this.state.value.length == 0) || (_.isEmpty(this.state.value))) ? {}  : {display: 'none'};
       return (
         <label>
           <ul className={styles.container}>
@@ -150,7 +153,7 @@ const components = {
                 item={item.label}
                 index={i}
                 key={i}
-                onRemoveItem={index => this.handleRemoveItem(i)}
+                onRemoveItem={this.handleRemoveItem}
                 updateItem={this.updateQItem}
               />
             ))}
@@ -163,6 +166,7 @@ const components = {
               //onClick={this.onClick}
             />
           </ul>
+          <span className={Formstyles.requiredLabel} style={style}>* required </span> 
         </label>
       );
     }

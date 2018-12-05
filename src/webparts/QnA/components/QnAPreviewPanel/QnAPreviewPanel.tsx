@@ -16,7 +16,7 @@ export class QnAPreviewPanel extends React.Component<IQnAPreviewPanelFormProps, 
     super(props);
   }
   public render() {
-    console.log(this.props.qnaItem);
+    //console.log(this.props.qnaItem);
     let questions = JSON.parse(this.props.qnaItem.Questions);
     return( 
       

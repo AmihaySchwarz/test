@@ -52,7 +52,7 @@ export default class QuestionComp extends React.Component<any,any> {
   }
 
   public handleRemoveItem(index) {
-    this.props.onRemoveItem(index);
+    this.props.onRemoveItem(this.props.index);
   }
 
   public handleEditItem(i) {
