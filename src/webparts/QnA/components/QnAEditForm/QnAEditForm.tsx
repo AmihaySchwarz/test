@@ -942,7 +942,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
                             <Tooltip 
                                 placement= 'left'
-                                position="left-start"
+                                position="left-end"
                                 offset= '0, 5'
                                 interactive= {true}
                                 performance= {true}
@@ -962,7 +962,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                 </div>
                               }
                 
-                              placement="right-end"
+                              placement="left-end"
                               offset={0}
                               styles={{
                                 tooltip: {
