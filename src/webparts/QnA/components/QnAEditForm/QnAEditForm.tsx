@@ -147,7 +147,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
       let isQuestionNull = addItems.some(q =>  q.Questions == "[]") || modifyItems.some(q => q.Questions == "[]"); 
 
-
       if((newItem !== undefined ) || isQuestionNull || isAnswerNull || isClassificationNull){
         toast.error("One or more items have empty value");
         this.setState({
@@ -160,24 +159,28 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         ];
 
         addItems.forEach(additem => {
-          promises.push(
-            this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
-            .then(result => { 
-                console.log(result.data.Id);
-                //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-                const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
 
-                let qnaActionHistory = [...this.state.qnaActionHistory];
-                let item = {
-                  ...qnaActionHistory[historyIndex],
-                  qnaItem:{
-                  ...qnaActionHistory[historyIndex].qnaItem,
-                  Id: result.data.Id
-                  } 
-                };
-                qnaActionHistory[historyIndex] = item;
-                this.setState({ qnaActionHistory });
-            }));
+          //if an item already has an ID do not save again instead change action to update
+          if(additem.Id == null ) {
+            promises.push(
+              this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
+              .then(result => { 
+                  console.log(result.data.Id);
+                  //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                  const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
+  
+                  let qnaActionHistory = [...this.state.qnaActionHistory];
+                  let item = {
+                    ...qnaActionHistory[historyIndex],
+                    qnaItem:{
+                    ...qnaActionHistory[historyIndex].qnaItem,
+                    Id: result.data.Id
+                    } 
+                  };
+                  qnaActionHistory[historyIndex] = item;
+                  this.setState({ qnaActionHistory });
+              }));
+          } 
         });
 
         Promise.all(promises).then(res => {
@@ -242,23 +245,28 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         ];
 
         addItems.forEach(additem => {
-          promises.push(
-            this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
-            .then(result => { 
-                console.log(result.data.Id);
-                //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
-                const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
-                let qnaActionHistory = [...this.state.qnaActionHistory];
-                let item = {
-                  ...qnaActionHistory[historyIndex],
-                  qnaItem:{
-                  ...qnaActionHistory[historyIndex].qnaItem,
-                  Id: result.data.Id
-                  } 
-                };
-                qnaActionHistory[historyIndex] = item;
-                this.setState({ qnaActionHistory });
-            }));
+
+
+          //if an item already has an ID do not save again instead change action to update
+          if(additem.Id == null) {
+            promises.push(
+              this.props.actionHandler.addtoQnaList(this.state.selectedDivisionListName,additem)
+              .then(result => { 
+                  console.log(result.data.Id);
+                  //const historyIndex = this.state.qnaActionHistory.findIndex(data => data.qnaItem.identifier == additem.identifier);
+                  const historyIndex = _.findIndex(this.state.qnaActionHistory,data => data.qnaItem.identifier == additem.identifier);
+                  let qnaActionHistory = [...this.state.qnaActionHistory];
+                  let item = {
+                    ...qnaActionHistory[historyIndex],
+                    qnaItem:{
+                    ...qnaActionHistory[historyIndex].qnaItem,
+                    Id: result.data.Id
+                    } 
+                  };
+                  qnaActionHistory[historyIndex] = item;
+                  this.setState({ qnaActionHistory });
+              }));
+          }
         });
 
         Promise.all(promises).then(() => {
@@ -786,12 +794,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   text="Save"
                   primary={true}
                   onClick={this.onSaveClick}
+                  disabled={this.state.qnaActionHistory.length === 0}
                 />
                 <DefaultButton
                   text="Save and Preview Changes"
                   primary={true}
                   href="#"
                   onClick={this.saveAndChangeToPublish}
+                  disabled={this.state.qnaActionHistory.length === 0}
                 />
               </div>
             </div>

@@ -392,41 +392,50 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
             </div>
             <span className={styles.tableLabels}> Preview Changes </span>
             <div className={styles.tableCont}>{/*updatedQnA*/}
-              <ReactTable 
-                data={this.state.qnaActionHistory } 
-                PaginationComponent={Pagination}
-                columns={[
-                  {
-                    columns: [
-                      {
-                        Header: "Questions",
-                        accessor: "qnaItem.Questions",
-                        Cell: this.renderQuestionsPublish
-                      },
-                      {
-                        Header: "Answer",
-                        accessor: "qnaItem.Answer",
-                        Cell: this.renderAnswerPublish,
-                      },
-                      {
-                        Header: "Classification",
-                        accessor: "qnaItem.Classification"
-                      },
-                      {
-                        Header: "Change Type",
-                        accessor: "action"
-                      },
-                      {
-                        Header: "Remarks",
-                        accessor: "qnaItem.Remarks"
-                      }
-                    ]
-                  }
-                ]}
-                defaultPageSize={10}
-                pageSize={pgSize}
-                className="-striped -highlight"
-              />
+
+            {this.state.qnaActionHistory.length > 0 ? ( 
+               <ReactTable 
+                  data={this.state.qnaActionHistory } 
+                  PaginationComponent={Pagination}
+                  columns={[
+                    {
+                      columns: [
+                        {
+                          Header: "Questions",
+                          accessor: "qnaItem.Questions",
+                          Cell: this.renderQuestionsPublish
+                        },
+                        {
+                          Header: "Answer",
+                          accessor: "qnaItem.Answer",
+                          Cell: this.renderAnswerPublish,
+                        },
+                        {
+                          Header: "Classification",
+                          accessor: "qnaItem.Classification"
+                        },
+                        {
+                          Header: "Change Type",
+                          accessor: "action"
+                        },
+                        {
+                          Header: "Remarks",
+                          accessor: "qnaItem.Remarks"
+                        }
+                      ]
+                    }
+                  ]}
+                  defaultPageSize={10}
+                  pageSize={pgSize}
+                  className="-striped -highlight"
+                />
+              ):(
+                <div>
+                  <span className={styles.notificationText}> There are no Items to Publish </span>
+                </div> 
+              )}
+
+             
             </div>
           </div>
         );
