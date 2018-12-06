@@ -225,6 +225,7 @@ export class QnAService extends BaseService implements IQnAService {
             if (items.length > 0) {
                 return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: null,
+                    LockedReleaseTime: d
                    // qnaOriginalCopy: null,
                    // qnaPublishString: null
                 }).then(result => {

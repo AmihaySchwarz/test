@@ -592,7 +592,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public updateQuestions = (data, cellInfo) => {
-    //console.log(data, cellInfo, "update question");
+    console.log(data, cellInfo, "update question");
 
     let array = [...this.state.qnaItems];
     let index;
@@ -953,7 +953,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             <Tooltip 
                                 position="left-end"                              
                                 trigger="click" 
-                                offset={0}                           
+                                arrow      
+                                offset={0}                  
                                 html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
                             >
                               <button>Preview</button>

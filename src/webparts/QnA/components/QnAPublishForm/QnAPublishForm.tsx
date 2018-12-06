@@ -39,6 +39,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
 
     this.publishQnA = this.publishQnA.bind(this);
     this.onBackClick = this.onBackClick.bind(this);
+    this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -107,11 +108,11 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
   public onBackClick(): void {
     console.log(this.props.originModule, "origin module");
 
-    // if(this.props.originModule === "Display"){
-    //   this.props.actionHandler.removeLockedBy(this.state.currentUser,
-    //     this.state.selectedDivisionText,
-    //     this.props.properties.qnATrackingListName);
-    // }
+    if(this.props.originModule === "Display"){
+      this.props.actionHandler.removeLockedBy(this.state.currentUser,
+        this.state.selectedDivisionText,
+        this.props.properties.qnATrackingListName);
+    }
     this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision, this.props.originModule);
   }
 

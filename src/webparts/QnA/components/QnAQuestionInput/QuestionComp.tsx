@@ -49,6 +49,7 @@ export default class QuestionComp extends React.Component<any,any> {
     });
     console.log(evt.target.value, "blur inside indiv");
     this.props.updateItem(this.props.index,evt.target.value);
+    this.props.onBlur(this.props.index,evt.target.value);
   }
 
   public handleRemoveItem(index) {

@@ -30,6 +30,7 @@ const components = {
       this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
       //this.handleEditItem = this.handleEditItem.bind(this);
       this.handleBlur = this.handleBlur.bind(this);
+      this.handleNewInputBlur = this.handleNewInputBlur.bind(this);
       this.handleRemoveItem = this.handleRemoveItem.bind(this);
       this.updateQItem = this.updateQItem.bind(this);
       //this.onClick = this.onClick.bind(this);
@@ -57,12 +58,13 @@ const components = {
         }));
       }
       console.log(this.state.value);
+      //this.props.onChange(this.state.value);
     }
   
     public handleRemoveItem(index) {
       console.log(
         index,
-        "tesr",
+        "remove",
         this.state.value.filter((item, i) => i !== index)
       );
       this.setState(state => ({
@@ -71,7 +73,7 @@ const components = {
       this.props.onChange(this.state.value.filter((item, i) => i !== index));
     }
   
-    public handleBlur(evt) {
+    public handleNewInputBlur(evt) {
       const { value } = evt.target;
   
       console.log(value);
@@ -80,10 +82,29 @@ const components = {
             value: [...state.value, createOption(value)],
             inputValue: ""
           }));  
-          //this.props.onChange(this.state.value);
           this.props.onChange([...this.state.value, createOption(value)]);  
+      } else {
+        this.props.onChange(this.state.value);  
       }
-      console.log(this.state.value, "blur", value);
+      console.log(this.state.value, "new input blur", value);
+    }
+
+    public handleBlur(index, item) {
+      if (item !== "") {
+        const newValue = this.state.value.map((x, i) => {
+          if (i === index) {
+            return createOption(item);
+          } else {
+            return x;
+          }
+        });
+        this.setState(state => ({
+          value: newValue,
+          inputValue: ""
+        }));
+      } 
+      console.log("question blur", item);
+      this.props.onChange(this.state.value);
     }
   
     public handleInputChange(evt) {
@@ -155,6 +176,7 @@ const components = {
                 key={i}
                 onRemoveItem={this.handleRemoveItem}
                 updateItem={this.updateQItem}
+                onBlur={this.handleBlur}
               />
             ))}
             <input
@@ -162,7 +184,7 @@ const components = {
               value={this.state.inputValue}
               onChange={this.handleInputChange}
               onKeyDown={this.handleInputKeyDown}
-              onBlur={this.handleBlur}
+              onBlur={this.handleNewInputBlur}
               //onClick={this.onClick}
             />
           </ul>

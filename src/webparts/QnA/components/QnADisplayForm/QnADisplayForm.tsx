@@ -438,7 +438,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     return (
       <div>
         <Moment
-          format={"MMMM Do YYYY, h:mm:ss a"}
+          //format={"MMMM Do YYYY, h:mm:ss a"}
+          format={"DD/MM/YYYY, h:mm:ss a"}
           date={cellInfo.original.PostedDate}
         />
       </div>
@@ -456,16 +457,6 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     let NewQLength = (newQuestions) ? newQuestions.length : 0;
     let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
 
-
-      // if (this.state.searchQnA) {
-      //   QnACpy = QnACpy.filter(row => {
-      //     return row.Answer.includes(this.state.searchQnA) || 
-      //     row.Questions.includes(this.state.searchQnA) || 
-      //     row.Classification === this.state.searchQnA;
-      //   });
-      // }
-
-
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
@@ -474,14 +465,6 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
          // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
       }
-
-      // if (this.state.searchNewq) {
-      //   newQuestions = newQuestions.filter(row => {
-      //     return row.Question.includes(this.state.searchNewq) || 
-      //     row.PostedBy.includes(this.state.searchNewq) || 
-      //     String(row.PostedDate).includes(this.state.searchNewq);
-      //   });
-      // }
 
        if (this.state.searchNewq) {
         newQuestions = newQuestions.filter(row => {
@@ -584,62 +567,74 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
             <br />
             <div className={styles.tableCont}>
               <div className={styles.tableLabels}> QnA </div>
-              <div className={styles.searchCont}> 
-                <span>Search: </span>
-                <input className={styles.searchtxtBox}
-									value={this.state.searchQnA}
-									onChange={e => this.setState({searchQnA: e.target.value})}
-								/>
-              </div>
-              <ReactTable
-                data={QnACpy} //this.state.qnaItems
-                PaginationComponent={Pagination}
-                columns={[
-                  {
-                    columns: [
-                      {
-                        Header: "Questions",
-                        accessor: "Questions",
-                        Cell: this.renderQuestionsDisplay,
-                        filterable: false,
-                        style: { 'overflow': 'visible !important', 
-                                    'overflow-wrap': 'break-word !important',
-                                    'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' },
-                        sortable: false  
-                      },
-                      {
-                        Header: "Answer",
-                        accessor: "Answer",
-                        Cell: this.renderAnswerDisplay,
-                        filterable: false,
-                        style: { 'overflow': 'visible !important', 
-                                    'overflow-wrap': 'break-word !important',
-                                    'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' },
-                        sortable: false 
-                      },
-                      {
-                        Header: "Classification",
-                        accessor: "Classification"
-                      },
-                      {
-                        Header: "Remarks",
-                        accessor: "Remarks",
-                        filterable: false,
-                        style: { 'overflow': 'visible !important', 
-                                    'overflow-wrap': 'break-word !important',
-                                    'word-wrap': 'break-word !important',
-                                    'white-space': 'normal !important' },
-                        sortable: false 
-                      }
-                    ]
-                  }
-                ]}
-                //defaultPageSize={pgSize}
-                pageSize={pgSize}
-                className="-striped -highlight"
-              />
+
+                  {(QnACpyLength > 0) ? ( 
+                    <div>
+                      <div className={styles.searchCont}> 
+                                      <span>Search: </span>
+                                      <input className={styles.searchtxtBox}
+                                        value={this.state.searchQnA}
+                                        onChange={e => this.setState({searchQnA: e.target.value})}
+                                      />
+                                    </div>
+                            <ReactTable
+                              data={QnACpy} //this.state.qnaItems
+                              PaginationComponent={Pagination}
+                              columns={[
+                                {
+                                  columns: [
+                                    {
+                                      Header: "Questions",
+                                      accessor: "Questions",
+                                      Cell: this.renderQuestionsDisplay,
+                                      filterable: false,
+                                      style: { 'overflow': 'visible !important', 
+                                                  'overflow-wrap': 'break-word !important',
+                                                  'word-wrap': 'break-word !important',
+                                                  'white-space': 'normal !important' },
+                                      sortable: false  
+                                    },
+                                    {
+                                      Header: "Answer",
+                                      accessor: "Answer",
+                                      Cell: this.renderAnswerDisplay,
+                                      filterable: false,
+                                      style: { 'overflow': 'visible !important', 
+                                                  'overflow-wrap': 'break-word !important',
+                                                  'word-wrap': 'break-word !important',
+                                                  'white-space': 'normal !important' },
+                                      sortable: false 
+                                    },
+                                    {
+                                      Header: "Classification",
+                                      accessor: "Classification"
+                                    },
+                                    {
+                                      Header: "Remarks",
+                                      accessor: "Remarks",
+                                      filterable: false,
+                                      style: { 'overflow': 'visible !important', 
+                                                  'overflow-wrap': 'break-word !important',
+                                                  'word-wrap': 'break-word !important',
+                                                  'white-space': 'normal !important' },
+                                      sortable: false 
+                                    }
+                                  ]
+                                }
+                              ]}
+                              //defaultPageSize={pgSize}
+                              pageSize={pgSize}
+                              className="-striped -highlight"
+                            />
+                </div>
+              ): (
+                <div>
+                  <span className={styles.notificationText}> There are no QnA Items. Edit to add QnA Pairs </span>
+                </div> 
+              
+              )}
+
+              
            </div>
           </div>
         );
