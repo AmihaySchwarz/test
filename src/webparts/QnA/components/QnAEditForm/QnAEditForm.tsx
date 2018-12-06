@@ -954,7 +954,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                 position="left-end"                              
                                 trigger="click" 
                                 arrow      
-                                offset={0}                  
+                                offset={0}     
+                                sticky={true}
+                                stickyDuration={0}             
                                 html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
                             >
                               <button>Preview</button>

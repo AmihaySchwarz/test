@@ -186,23 +186,23 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
           }
         }
 
-        if(items[0].LockedBy == undefined) {
-          this.lockList();
-        } else {
-          if (
-            this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-            this.state.listTrackingItem.LockedBy.EMail
-          ) {
-            toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
-            this.setState({
-              isLoading: false
-            });
-          } else {
-            //item is not locked
-            //get qna action history, if it has laman add to current state
-            this.lockList();
-          }
-        }
+        // if(items[0].LockedBy == undefined) {
+        //   this.lockList();
+        // } else {
+        //   if (
+        //     this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+        //     this.state.listTrackingItem.LockedBy.EMail
+        //   ) {
+        //     toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+        //     this.setState({
+        //       isLoading: false
+        //     });
+        //   } else {
+        //     //item is not locked
+        //     //get qna action history, if it has laman add to current state
+        //     this.lockList();
+        //   }
+        // }
       });
   }
 
@@ -383,23 +383,23 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         }
       }
 
-      if(items[0].LockedBy == undefined) {
-        this.lockListPublish();
-      } else {
-        if (
-          this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-          this.state.listTrackingItem.LockedBy.EMail
-        ) {
-          toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
-          this.setState({
-            isLoading: false
-          });
-        } else {
-          //item is not locked
-          //get qna action history, if it has laman add to current state
-          this.lockListPublish();
-        }
-      }
+      // if(items[0].LockedBy == undefined) {
+      //   this.lockListPublish();
+      // } else {
+      //   if (
+      //     this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
+      //     this.state.listTrackingItem.LockedBy.EMail
+      //   ) {
+      //     toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+      //     this.setState({
+      //       isLoading: false
+      //     });
+      //   } else {
+      //     //item is not locked
+      //     //get qna action history, if it has laman add to current state
+      //     this.lockListPublish();
+      //   }
+      // }
     });
 
   }
