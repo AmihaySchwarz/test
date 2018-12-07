@@ -44,7 +44,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       searchQnA: "",
       openModal: false,
       nqForRemarks: undefined,
-      showPreview: false
+      openTooltip: false
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -722,8 +722,22 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     );
   }
 
-  public togglePreview(isShow: boolean): void{
-    this.setState({showPreview: isShow});
+  public togglePreview(isShow: boolean) {
+    // const { openTooltip } = this.state;
+
+    // this.setState({
+    //   openTooltip: !openTooltip
+    // });
+    document.body.addEventListener("click", this.close);
+  }
+
+  public close = e => {
+    console.log("click", e);
+     const { openTooltip } = this.state;
+
+    this.setState({
+      openTooltip: !openTooltip
+    });
   }
 
 
@@ -939,7 +953,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                       {
                         Header: "Actions",
                         accessor: "Actions",
-                        width: 50,
                         filterable: false,
                         sortable: false, 
                         Cell: ({ row, index }) => (
@@ -950,9 +963,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                               Delete Question
                             </button> <br />
 
-                            <Tooltip 
+                             <Tooltip 
                                 position="left-end"                              
                                 trigger="click" 
+                                //interactive
                                 arrow      
                                 offset={0}     
                                 sticky={true}
@@ -960,20 +974,27 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                 html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
                             >
                               <button>Preview</button>
-                            </Tooltip> 
-
+                            </Tooltip>
+                            
                             {/* <Floater
+                              
                               content={
                                 <div>
                                   <QnAPreviewPanel qnaItem={row} />
                                 </div>
                               }
-                
+                             // open={this.state.openTooltip}
                               placement="left-end"
                               offset={0}
                               styles={{
                                 tooltip: {
                                   filter: "none"
+                                },
+                                container: {
+                                  backgroundColor: "#FFF",
+                                  width: "272px",
+                                  height: "377px",
+                                  padding: "0px"
                                 }
                               }}
                             >

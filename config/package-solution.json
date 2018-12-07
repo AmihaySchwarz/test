@@ -3,7 +3,7 @@
   "solution": {
     "name": "QnA Management List Web Part",
     "id": "25eb1400-85c3-44fd-8619-4aca12e85099",
-    "version": "1.0.1.29",
+    "version": "1.0.1.30",
     "includeClientSideAssets": true
   },
   "paths": {

@@ -3,7 +3,8 @@
 
 .chatPanel {
   background: #FFF;
-  border: .1px solid #000;
+  //border: .1px solid #000;    
+  filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 0px 3px);
   width: 272px;
   height: 377px;
   overflow: auto;

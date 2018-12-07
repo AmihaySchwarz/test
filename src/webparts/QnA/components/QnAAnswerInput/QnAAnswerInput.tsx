@@ -19,6 +19,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
     };
     this.handleChange = this.handleChange.bind(this);
     this.setProps = this.setProps.bind(this);
+    //this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   public componentDidMount(){
@@ -36,7 +37,7 @@ export default class QnAAnswerInput extends React.Component<any,any> {
    }
  
    public setProps() {
-     console.log("set props", this.state.text);
+     //console.log("set props", this.state.text);
      if(this.state.text === "<p><br></p>"){
       this.props.onChange("");
      } else {
@@ -47,9 +48,18 @@ export default class QnAAnswerInput extends React.Component<any,any> {
 
   public handleChange(value) {
     this.setState({ text: value });
-    //this.props.onChange(value);
+    //console.log("update props of parent", value);
+    this.props.onChange(value);
   }
 
+  // public handleKeyDown(value){
+  //   this.setState({ text: value });
+  //   if(this.state.text === "<p><br></p>"){
+  //     this.props.onChange("");
+  //    } else {
+  //     this.props.onChange(value);
+  //    }
+  // }
 
 
   /*
@@ -88,6 +98,7 @@ public CustomToolbar = () => (
         <div className="text-editor">
           <ReactQuill value={this.state.text} 
                     onChange={this.handleChange} 
+                   // onKeyDown={this.handleKeyDown}
                     onBlur= {this.setProps} 
                     modules={this.modules} 
                     formats={this.formats}/>
