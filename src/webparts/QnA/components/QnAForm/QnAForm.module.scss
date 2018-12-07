@@ -22,6 +22,11 @@
   //   display: inline-flex;
   // }
 
+
+  body {
+    overflow: hidden
+  }
+
   .searchtxtBox::-ms-clear {
     display:none;
   }

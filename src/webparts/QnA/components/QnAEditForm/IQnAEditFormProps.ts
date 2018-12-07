@@ -53,5 +53,4 @@ export interface IQnAEditFormState {
     searchQnA: string;
     openModal: boolean;
     nqForRemarks: INewQuestions;
-    openTooltip:boolean;
 }

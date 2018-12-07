@@ -43,8 +43,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       searchNewq: "",
       searchQnA: "",
       openModal: false,
-      nqForRemarks: undefined,
-      openTooltip: false
+      nqForRemarks: undefined
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -52,7 +51,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.addNewQuestionToQnAList = this.addNewQuestionToQnAList.bind(this);
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
-    this.togglePreview = this.togglePreview.bind(this);
     this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
   }
 
@@ -722,25 +720,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     );
   }
 
-  public togglePreview(isShow: boolean) {
-    // const { openTooltip } = this.state;
-
-    // this.setState({
-    //   openTooltip: !openTooltip
-    // });
-    document.body.addEventListener("click", this.close);
-  }
-
-  public close = e => {
-    console.log("click", e);
-     const { openTooltip } = this.state;
-
-    this.setState({
-      openTooltip: !openTooltip
-    });
-  }
-
-
   public render() {
     
     let newQuestions = this.state.newQuestions; 
@@ -964,6 +943,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             </button> <br />
 
                              <Tooltip 
+                                popperOptions={{
+                                  modifiers: {
+                                    preventOverflow: {
+                                      priority: ['bottom', 'top'],
+                                      boundariesElement: "scrollParent"
+                                    }
+                                  }
+                                }}
                                 position="left-end"                              
                                 trigger="click" 
                                 //interactive
@@ -975,7 +962,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             >
                               <button>Preview</button>
                             </Tooltip>
-                            
+
                             {/* <Floater
                               
                               content={
