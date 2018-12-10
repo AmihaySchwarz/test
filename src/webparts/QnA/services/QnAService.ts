@@ -177,7 +177,7 @@ export class QnAService extends BaseService implements IQnAService {
 
     public checkLockStatus(currentUser: any, division: string, qnaListTrackingListName: string): Promise<any>{
         return sp.web.lists.getByTitle(qnaListTrackingListName).items.select("ID", "Division",
-        "LastUpdated","LastPublished", "LockedBy/Id", "LockedBy/EMail", 
+        "LastUpdated","LastPublished", "LockedBy/Id", "LockedBy/EMail", "LockedBy/Title", 
         "LockedReleaseTime", "qnaPublishString", "qnaOriginalCopy")
             .filter("Division eq '" +division+"'")
             .expand("LockedBy")
@@ -267,7 +267,7 @@ export class QnAService extends BaseService implements IQnAService {
             if (items.length > 0) {
                 return  sp.web.lists.getByTitle(qnaListTrackingListName).items.getById(items[0].Id).update({
                     LockedById: currentUser.Id,
-                    //LastUpdated: d //d.toLocaleDateString()
+                    LockedReleaseTime: d //d.toLocaleDateString()
                 }).then(result => {
                     console.log(result);
                     return result;

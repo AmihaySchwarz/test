@@ -137,7 +137,9 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
         });
 
         let currentUserEmail = this.state.currentUser.Email;
+        let currentUserTitle = this.state.currentUser.Title;
         console.log(items[0], "list tracking");
+        console.log(this.state.currentUser);
         //check if current is less than 15 min from release time
         //if yes , is lockedby empty? yes = can edit ; no = cannot edit
         //if no, (current time is greater than 15 min)
@@ -157,10 +159,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
           } else {
             // user cannot edit; toaster to say that it is still locked.
             if (
-              this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-              this.state.listTrackingItem.LockedBy.EMail
+              this.state.listTrackingItem.LockedBy.Title !== currentUserTitle &&
+              this.state.listTrackingItem.LockedBy.Title
             ) {
-              toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+              toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.Title);
               this.setState({
                 isLoading: false
               });
@@ -328,6 +330,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       });
 
       let currentUserEmail = this.state.currentUser.Email;
+      let currentUserTitle = this.state.currentUser.Title;
       console.log(items[0], "list tracking");
       //check if current is less than 15 min from release time
       //if yes , is lockedby empty? yes = can edit ; no = cannot edit
@@ -353,10 +356,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
           // });
 
           if (
-            this.state.listTrackingItem.LockedBy.EMail !== currentUserEmail &&
-            this.state.listTrackingItem.LockedBy.EMail
+            this.state.listTrackingItem.LockedBy.Title !== currentUserTitle &&
+            this.state.listTrackingItem.LockedBy.Title
           ) {
-            toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.EMail);
+            toast.info("Item is locked by: " + this.state.listTrackingItem.LockedBy.Title);
             this.setState({
               isLoading: false
             });

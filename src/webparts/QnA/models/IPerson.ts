@@ -4,5 +4,6 @@ export interface IPerson {
     EMail: string;
     odataid: string;
     odatatype: string;
+    Title: string;
 }
 
