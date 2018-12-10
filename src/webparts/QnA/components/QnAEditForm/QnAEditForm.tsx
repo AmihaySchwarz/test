@@ -52,6 +52,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.saveAndChangeToPublish = this.saveAndChangeToPublish.bind(this);
     this.addNewQnaToTable = this.addNewQnaToTable.bind(this);
     this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
+    this.updateActionHistory = this.updateActionHistory.bind(this);
+    this.deleteQnA = this.deleteQnA.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -496,10 +498,11 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     }
   }
 
-  public updateActionHistory = (item, index) => {
+  public updateActionHistory(item, index) {
     let historyItem;
     let historyIndex;
 
+    console.log(item);
     const itemId = item.Id;
     if((itemId == null)){
       //item does not have id, so add
@@ -508,12 +511,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
 
-      //console.log(this.state.qnaActionHistory, "actionhistory");
+      console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
      //historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
      historyIndex = _.findIndex(this.state.qnaActionHistory, data => data.qnaItem.identifier == item.identifier); //index
 
     } else  {
+      console.log(this.state.qnaActionHistory, "actionhistory");
       //item has id so edit
       historyItem = {
         qnaItem: { ...item },
@@ -541,6 +545,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         qnaActionHistory: [...oldstate.qnaActionHistory, historyItem]
       }));
     }
+
   }
 
   public updateQnAAnswer = (data, cellInfo) => {

@@ -51,7 +51,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public async componentWillReceiveProps(newProps): Promise<void> {
-    console.log(newProps);
+    //console.log(newProps);
     if (
       newProps.masterItems.length !== 0 //&&
       //newProps.newQuestions.length !== 0
@@ -70,7 +70,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public async componentDidMount(): Promise<void> {
-    console.log("component did mount", this.props);
+    //console.log("component did mount", this.props);
     if (
       this.props.masterItems.length !== 0// &&
       //this.props.newQuestions.length !== 0
@@ -192,8 +192,8 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
   }
 
   public render() {
-    console.log("set division", this.state.selectedDivision);
-    console.log(this.state);
+    //console.log("set division", this.state.selectedDivision);
+    //console.log(this.state);
     const { isLoading, formView } = this.state;
     return (
       <div> 
