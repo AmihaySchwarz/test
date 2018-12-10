@@ -353,7 +353,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
     
     let html = cellInfo.original.qnaItem.Answer;
     return (
-      <div> {ReactHtmlParser(html)}</div>
+      <div className={styles.answerDisplay}> {ReactHtmlParser(html)}</div>
     );
   }
 

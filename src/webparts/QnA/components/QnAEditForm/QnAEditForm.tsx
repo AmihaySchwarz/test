@@ -226,7 +226,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       const modifyItems = this.state.qnaActionHistory.filter(items => items.action === "update").map( qna => qna.qnaItem);
       const deleteItems = this.state.qnaActionHistory.filter(items => items.action === "delete").map( qna => qna.qnaItem);
       const newItem = addItems.find(a => a.newQnA);
-      let isClassificationNull = addItems.some(c => c.Classification == "") || modifyItems.some(c => c.Classification == "");
+      let isClassificationNull = addItems.some(c => c.Classification == "") || 
+                                  addItems.some(c => _.isEmpty(c.Classification)) ||  
+                                  modifyItems.some(c => c.Classification == "") ||
+                                  modifyItems.some(c => _.isEmpty(c.Classification));
       let isAnswerNull = addItems.some(a => a.Answer == "") || modifyItems.some(a => a.Answer == "");
       let isQuestionNull = addItems.some(q =>  q.Questions == "[]") || modifyItems.some(q => q.Questions == "[]"); 
 
@@ -325,7 +328,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       let newQnA = {
         Questions: '[ {"label": "'+ item.row.Question +'", "value": "'+ item.row.Question +'" }]',
         Answer: "",
-        Classification: " ",
+        Classification: "",
         QnAID: 0,
         Id: null,
         Remarks: "",

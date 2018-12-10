@@ -439,7 +439,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       <div>
         <Moment
           //format={"MMMM Do YYYY, h:mm:ss a"}
-          format={"DD/MM/YYYY, h:mm:ss a"}
+          format={"DD/MM/YYYY, h:mm a"}
           date={cellInfo.original.PostedDate}
         />
       </div>
