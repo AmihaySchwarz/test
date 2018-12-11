@@ -98,8 +98,13 @@ export class QnAActionHandler {
         return res;
     }
 
-    public async resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
-        let res = await this.service.resolveQuestion(endpoint,item);
+    public async resolveQuestion(endpoint: string, item: INewQuestions, remarks: string, currentUser: any): Promise<any>{
+        let res = await this.service.resolveQuestion(endpoint,item, remarks, currentUser);
+        return res;
+    }
+
+    public async reassignQuestion(endpoint: string, item: INewQuestions, division: string): Promise<any>{
+        let res = await this.service.reassignQuestion(endpoint,item, division);
         return res;
     }
 

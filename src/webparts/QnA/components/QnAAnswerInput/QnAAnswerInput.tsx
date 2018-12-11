@@ -49,16 +49,16 @@ export default class QnAAnswerInput extends React.Component<any,any> {
   public handleChange(value) {
     this.setState({ text: value });
     //console.log("update props of parent", value);
-    //this.props.onChange(value);
+    this.props.onChange(value);
   }
 
-  // public handleKeyDown(value){
+  // public handleKeyDown(evt:any){
+    
+  //   let value = evt.target.textContent;
+  //   console.log(evt.target.textContent);
   //   this.setState({ text: value });
-  //   if(this.state.text === "<p><br></p>"){
-  //     this.props.onChange("");
-  //    } else {
-  //     this.props.onChange(value);
-  //    }
+  //   this.props.onChange(value);
+     
   // }
 
 
@@ -71,8 +71,6 @@ public CustomToolbar = () => (
     <button className="ql-italic"></button>
   </div>
 )
-
-
 
   public modules = {
     clipboard: {
@@ -100,8 +98,10 @@ public CustomToolbar = () => (
       <div>
         <div className="text-editor" onBlur= {this.setProps}>
           <ReactQuill value={this.state.text} 
-                    onChange={this.handleChange} 
-                   // onKeyDown={this.handleKeyDown}
+                    onChange={this.handleChange}
+                    //onKeyPress={this.handleKeyDown}
+                
+                    //onKeyDown={this.handleKeyDown}
                     onBlur= {this.setProps} 
                     modules={this.modules} 
                     formats={this.formats}/>

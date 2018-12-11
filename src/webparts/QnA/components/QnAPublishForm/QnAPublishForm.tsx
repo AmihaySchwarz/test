@@ -112,6 +112,10 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
       this.props.actionHandler.removeLockedBy(this.state.currentUser,
         this.state.selectedDivisionText,
         this.props.properties.qnATrackingListName);
+    } else {
+      console.log("origin module is edit", this.props.originModule);
+      
+
     }
     this.props.onPublishBackClick(this.state.qnaActionHistory, this.state.selectedDivision, this.props.originModule);
   }

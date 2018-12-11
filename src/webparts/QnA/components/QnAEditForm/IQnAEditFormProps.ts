@@ -53,4 +53,6 @@ export interface IQnAEditFormState {
     searchQnA: string;
     openModal: boolean;
     nqForRemarks: INewQuestions;
+    reassignModal: boolean;
+    nqNewDivision: INewQuestions;
 }

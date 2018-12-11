@@ -12,6 +12,7 @@ import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
 import QnAAnswerInput from "../QnAAnswerInput/QnAAnswerInput";
 import QnAClassificationInput from "../QnAClassificationInput/QnAClassificationInput";
+import ReAssignDivision from "../ReAssignDivision/ReAssignDivision";
 import Moment from "react-moment";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,7 +44,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       searchNewq: "",
       searchQnA: "",
       openModal: false,
-      nqForRemarks: undefined
+      nqForRemarks: undefined,
+      reassignModal: false,
+      nqNewDivision: undefined
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -54,6 +57,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
     this.updateActionHistory = this.updateActionHistory.bind(this);
     this.deleteQnA = this.deleteQnA.bind(this);
+    this.lockList = this.lockList.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -121,11 +125,12 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public async loadNewQuestionsData(division: string): Promise<void> {
+    let newQuestionItems = await this.props.actionHandler.getNewQuestions(
+      this.props.properties.endpointUrl, 
+      division
+    );
     this.setState({
-      newQuestions: await this.props.actionHandler.getNewQuestions(
-        this.props.properties.endpointUrl, 
-        division
-      ),
+      newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
       isLoading: false
     });
   }
@@ -196,6 +201,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                     selectedDivision: this.state.selectedDivision,
                     isLoading: false
                   });
+                  this.lockList();
                   this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
               });
         });
@@ -206,6 +212,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.props.onSavePublishClick(this.state.selectedDivision, this.state.qnaActionHistory, this.state.qnaOriginalCopy);
     }
     
+  }
+
+  public lockList() {
+    this.props.actionHandler
+      .lockList(
+        this.state.currentUser,
+        this.state.selectedDivisionText,
+        this.props.properties.qnATrackingListName
+      )
+      .then();
   }
 
   private onBackClick() : void {
@@ -370,36 +386,68 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ openModal: false });
   }
 
-  public updateRemarks(data:any, newQ: any): void {
-    //TODO
-    //[Hung]: There is a property named “Status” in Azure Table Storage and it needs to be updated when users mark the question as resolved.
-    // There is a change in New Questions table where the client wants to remove “Delete Question” action.
-    // They only want “Mark as Resolved” option and the system should prompt users to key in “Remarks” when they mark question as resolved.
-    // The remarks as well as the original question itself will be stored in a SharePoint list. I will update this change to the specs.
-    console.log("remarks", data,newQ);
-
-    this.setState({ openModal: false });
+  public onCloseReassignModal = () => {
+    this.setState({ reassignModal: false });
   }
 
-  public markAsResolved(item: any): void {
-    //save the question to sp list as well as the remark in sp list
-    // this.setState({ openModal: true, nqForRemarks: item.row});
+  public updateRemarks(data:any, newQ: any): void {
+    console.log("remarks", data,newQ);
 
-    try {
-      this.props.actionHandler.resolveQuestion(
-        this.props.properties.endpointUrl,
-        item.row._original
-      ).then(res => {
-        toast.info(res);
-        this.setState({isLoading: false});
-      });
+    if (_.isEmpty(data)){
+      toast.error("Remarks is empty");
+    } else {
+       try {
+        this.setState({isLoading: true});
+        this.props.actionHandler.resolveQuestion(
+          this.props.properties.endpointUrl,
+          newQ._original,
+          data,
+          this.state.currentUser
+        ).then(res => {
+          this.loadNewQuestionsData(this.props.defaultDivision.text);
+          toast.info(res);
+          this.setState({isLoading: false});
+        });
     }catch (error) {
+      console.log(error);      
       toast.error("an error has occured");
       this.setState({isLoading: false});
     }
-    
-    
+      this.setState({ openModal: false });
+    }
   }
+
+  public markAsResolved(item: any): void {
+     this.setState({ openModal: true, nqForRemarks: item.row}); 
+  }
+
+  public updateNewQuestionDivision(data:any, newQ: any): void {
+    console.log("new division", data, newQ);
+    try {
+      this.setState({isLoading: true});
+      this.props.actionHandler.reassignQuestion(
+        this.props.properties.endpointUrl,
+        newQ._original,
+        data
+      ).then(res => {
+        this.loadNewQuestionsData(this.props.defaultDivision.text);
+        toast.info(res);
+        this.setState({isLoading: false});
+        this.setState({ reassignModal: false });
+      });
+    }catch (error) {
+      console.log(error);      
+      toast.error("an error has occured");
+      this.setState({isLoading: false});
+    }
+      
+  }
+
+  public reassignQuestion(item: any): void {
+    console.log(item);
+    this.setState({ reassignModal: true, nqNewDivision: item.row}); 
+  }
+
 
   public addNewQnaToTable(): void {
     console.log("add inline form");
@@ -505,7 +553,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     let historyItem;
     let historyIndex;
 
-    console.log(item);
+    //console.log(item);
     const itemId = item.Id;
     if((itemId == null)){
       //item does not have id, so add
@@ -514,13 +562,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         action: "add"
       };
 
-      console.log(this.state.qnaActionHistory, "actionhistory");
+     // console.log(this.state.qnaActionHistory, "actionhistory");
       //check if item exist in action history
      //historyIndex = this.state.qnaActionHistory.findIndex( data => data.qnaItem.identifier == item.identifier); //index
      historyIndex = _.findIndex(this.state.qnaActionHistory, data => data.qnaItem.identifier == item.identifier); //index
 
     } else  {
-      console.log(this.state.qnaActionHistory, "actionhistory");
+      //console.log(this.state.qnaActionHistory, "actionhistory");
       //item has id so edit
       historyItem = {
         qnaItem: { ...item },
@@ -551,6 +599,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
   }
 
+  public getText = (html) => {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    
+    return tmp.textContent || tmp.innerText;
+}
+
+
   public updateQnAAnswer = (data, cellInfo) => {
     //console.log(data)
 
@@ -564,14 +620,19 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
        index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
 
-    let item = {
-      ...qnaItems[index],
-      Answer: data, 
-    };
-    qnaItems[index] = item;
-    this.setState({ qnaItems });
+    if(this.getText(data) !== this.getText(cellInfo.original.Answer)){
+     // console.log(this.getText(data), "====", this.getText(cellInfo.original.Answer));
+      let item = {
+        ...qnaItems[index],
+        Answer: data, 
+      };
+      qnaItems[index] = item;
+      this.setState({ qnaItems });
+  
+      this.updateActionHistory(item,index);
+    }
 
-    this.updateActionHistory(item,index);
+   
   }
 
   public updateQnARemarks = (data, cellInfo) => {
@@ -692,10 +753,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       <div>
         <TextField
           value={cellInfo.original.Remarks}
-          multiline
-          rows={4}
+          //multiline
+          //rows={4}
           //required={true}
-          resizable={true}
+          //resizable={true}
           onChanged={data => this.updateQnARemarks(data, cellInfo)}
         />
         
@@ -863,9 +924,17 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                 <button onClick={() => this.markAsResolved({ row })}>
                                   Mark as Resolved
                                 </button>
-                                {/* <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
+                                <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
                                   <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
-                                </Modal> */}
+                                </Modal>
+                                <button onClick={() => this.reassignQuestion({row})}>
+                                  Reassign Question to Other Division
+                                </button>
+                                <Modal open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
+                                  <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
+                                    divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />
+                                </Modal>
+
                               </div>
                             ) 
                           }

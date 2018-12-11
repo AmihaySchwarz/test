@@ -11,7 +11,7 @@ import { IRemarksProps , IRemarksState } from "./IRemarksProps";
     }; 
 
     public handleInputChange(value) {
-      console.log(value);
+     // console.log(value);
       this.setState({
         remarks: value
       });
@@ -19,7 +19,7 @@ import { IRemarksProps , IRemarksState } from "./IRemarksProps";
 
     public render() {
      // const { remarks } = this.state;
-     console.log(this.props.item);
+    // console.log(this.props.item);
       return (
      <div>
 

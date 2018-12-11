@@ -97,11 +97,12 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
   }
 
   public async loadNewQuestionsData(division: string): Promise<void> {
+    let newQuestionItems = await this.props.actionHandler.getNewQuestions(
+      this.props.properties.endpointUrl, 
+      division
+    );
     this.setState({
-      newQuestions: await this.props.actionHandler.getNewQuestions(
-        this.props.properties.endpointUrl, 
-        division
-      ),
+      newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
       isLoading: false
     });
   }

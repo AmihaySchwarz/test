@@ -201,6 +201,7 @@ export class QnAForm extends React.Component<IQnAFormProps, IQnAFormState> {
         {formView == ViewType.Edit && (
           <QnAEditForm
             newQuestions={this.state.newQuestions}
+            masterItems={this.props.masterItems}
             qnaItems={this.state.qnaItems}
             actionHandler={this.props.actionHandler}
             properties={this.props.properties}

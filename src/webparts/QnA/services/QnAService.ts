@@ -383,9 +383,14 @@ export class QnAService extends BaseService implements IQnAService {
         );
     }
 
-    public resolveQuestion(endpoint: string, item: INewQuestions): Promise<any>{
+    public resolveQuestion(endpoint: string, item: INewQuestions, remarks: string, currentUser: any): Promise<any>{
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/question
         //PATCH
+        let d = moment.utc().local().format("MM/DD/YYYY HH:mm");
+        let newqitem = {
+            ...item, Remarks: remarks, ResolvedBy: currentUser.Title, ResolvedDate: d
+          };
+          console.log(newqitem);
         let resolveQuestionEndpoint = endpoint + "/api/newquestions/question";
         return this.context.httpClient.fetch(resolveQuestionEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include',
@@ -394,7 +399,40 @@ export class QnAService extends BaseService implements IQnAService {
                 'Accept': 'application/json'
              }, 
              method: 'PATCH',
-            body: JSON.stringify(item)
+            body: JSON.stringify(newqitem)
+        }).then((response: HttpClientResponse) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log(response, "error resolving");
+                console.error(response.statusText);
+            }
+        }).then((json: any): any[] => {
+            console.log(json);
+            return json;
+        },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+    }
+
+    public reassignQuestion(endpoint: string, item: INewQuestions, division: string): Promise<any>{
+        //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/reassignquestion
+        //PATCH
+        let newqitem = {
+            ...item, Division: division
+          };
+        console.log(newqitem);
+        let resolveQuestionEndpoint = endpoint + "/api/newquestions/reassignquestion";
+        return this.context.httpClient.fetch(resolveQuestionEndpoint, HttpClient.configurations.v1, {
+            //credentials: 'include',
+             headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+             }, 
+             method: 'PATCH',
+            body: JSON.stringify(newqitem)
         }).then((response: HttpClientResponse) => {
             if (response.ok) {
                 return response.json();
