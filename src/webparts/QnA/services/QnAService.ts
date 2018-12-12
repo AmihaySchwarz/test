@@ -424,8 +424,8 @@ export class QnAService extends BaseService implements IQnAService {
             ...item, Division: division
           };
         console.log(newqitem);
-        let resolveQuestionEndpoint = endpoint + "/api/newquestions/reassignquestion";
-        return this.context.httpClient.fetch(resolveQuestionEndpoint, HttpClient.configurations.v1, {
+        let reassignQuestionEndpoint = endpoint + "/api/newquestions/reassignquestion";
+        return this.context.httpClient.fetch(reassignQuestionEndpoint, HttpClient.configurations.v1, {
             //credentials: 'include',
              headers: {
                 'Content-Type': 'application/json',
@@ -437,7 +437,7 @@ export class QnAService extends BaseService implements IQnAService {
             if (response.ok) {
                 return response.json();
             } else {
-                console.log(response, "error resolving");
+                console.log(response, "error reassigning");
                 console.error(response.statusText);
             }
         }).then((json: any): any[] => {

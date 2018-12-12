@@ -27,6 +27,27 @@
     overflow: hidden
   }
 
+  .modalWindow {
+    width: 50%;
+  }
+
+  .reassignModalContent{
+    width: 300px;
+    height: 100px;
+  }
+  .reassignModalContent > span{
+    font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+    font-style: normal;
+    padding: 1px;
+    font-size: 14px;
+
+  }
+
+  
+  .dialogContent{
+    width:100%;  
+  }
+
   .answerDisplay ul, p, ol {
     margin: 0!important;
   }

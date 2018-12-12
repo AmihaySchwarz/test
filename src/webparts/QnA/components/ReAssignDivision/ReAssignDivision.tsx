@@ -56,9 +56,9 @@ import {
      <div>
 
        { this.props.item != undefined && 
-       <div>
-        <span> Reassign to New Division: </span>
-        <div> Question: {this.props.item.Question} </div>
+       <div className={styles.reassignModalContent}>
+        <span className={styles.notificationText}> Reassign to New Division </span>
+        <div> <span> Question: {this.props.item.Question} </span> </div>
         <div className={styles.dropdownCont}>
         <Dropdown
             placeHolder="Select Division"

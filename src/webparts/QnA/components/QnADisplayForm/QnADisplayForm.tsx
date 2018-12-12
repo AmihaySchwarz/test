@@ -101,6 +101,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       this.props.properties.endpointUrl, 
       division
     );
+    //console.log(newQuestionItems);
     this.setState({
       newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
       isLoading: false

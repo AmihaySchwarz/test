@@ -26,6 +26,13 @@ import Floater from 'react-floater';
 import RemarksPanel  from "../RemarksPanel/RemarksPanel";
 
 
+const modalStyle = {
+  content: {
+    width: '40%',
+    maxWidth: '40rem'
+  }
+};
+
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
   constructor(props) {
     super(props);
@@ -924,16 +931,24 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                 <button onClick={() => this.markAsResolved({ row })}>
                                   Mark as Resolved
                                 </button>
-                                <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
-                                  <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
-                                </Modal>
+                                <div className={styles.modalWindow}>
+                                  <Modal styles={{width:'50%'}} open={this.state.openModal} onClose={this.onCloseModal} center>
+                                    <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
+                                  </Modal>
+                                </div>
+                               
                                 <button onClick={() => this.reassignQuestion({row})}>
-                                  Reassign Question to Other Division
+                                  Reassign to Other Division
                                 </button>
-                                <Modal open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
-                                  <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
-                                    divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />
+         
+                                <Modal styles={modalStyle} open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
+                                  <div className={styles.dialogContent} ref='content'>
+                                    <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
+                                    divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />  
+                                  </div>
+                                  
                                 </Modal>
+
 
                               </div>
                             ) 

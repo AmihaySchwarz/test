@@ -75,10 +75,10 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     }));
 
     let newQuestionItems = await this.actionHandler.getNewQuestions(this.props.endpointUrl, divisionList[0].text);
-    console.log(newQuestionItems);
+    
     this.setState({
       masterItems: divisionList,
-      newQuestions: newQuestionItems.map(nq => nq.Status !== "Resolved"),
+      newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
       isLoading: false,
     });
   }

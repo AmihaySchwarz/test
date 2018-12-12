@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { PrimaryButton } from "office-ui-fabric-react/lib/Button";
 import { IRemarksProps , IRemarksState } from "./IRemarksProps";
-
+import styles from "../QnAForm/QnAForm.module.scss";
 
   export default class RemarksPanel extends React.Component<IRemarksProps,IRemarksState> {
     public state = {
@@ -24,8 +24,8 @@ import { IRemarksProps , IRemarksState } from "./IRemarksProps";
      <div>
 
        { this.props.item != undefined && 
-       <div>
-        <span> Remarks </span>
+       <div className={styles.reassignModalContent}>
+        <span className={styles.notificationText}> Remarks </span>
         <div> Question: {this.props.item.Question} </div>
           <TextField
             value={this.state.remarks}
