@@ -38,11 +38,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       qnaOriginalCopy: [],
       searchNewq: "",
       searchQnA: "",
-      resolvedQuestions: []
+      resolvedQuestions: [],
+      showResolvedQuestions: false
     };
 
     this.changeToEdit = this.changeToEdit.bind(this);
     this.changeToPublish = this.changeToPublish.bind(this);
+    this.showResolvedQuestions = this.showResolvedQuestions.bind(this);
+    this.hideResolveQuestions = this.hideResolveQuestions.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -453,16 +456,30 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     );
   }
 
+  public showResolvedQuestions(){
+    //set state that show ResolvedQuestions
+    this.setState({showResolvedQuestions: true});
+  } 
+
+  public hideResolveQuestions(){
+    this.setState({showResolvedQuestions: false});
+  }
+
+
   public render() {
     const { selectedDivision } = this.state;
     let newQuestions = this.state.newQuestions; 
     let QnACpy = this.state.qnaItems;
+    let resolvedQuestions = this.state.resolvedQuestions;
 
     let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
     let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
 
     let NewQLength = (newQuestions) ? newQuestions.length : 0;
     let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+
+    let ResQLength = (resolvedQuestions) ? resolvedQuestions.length : 0;
+    let resQPgSize = (ResQLength > 10) ? 5 : ResQLength;
 
       if (this.state.searchQnA) {
         QnACpy = QnACpy.filter(row => {
@@ -505,33 +522,39 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   text="Edit"
                   primary={true}
                   onClick={this.changeToEdit}
+                  disabled={this.state.showResolvedQuestions}
                 />
                 <DefaultButton
                   text="Preview Changes"
                   primary={true}
                   href="#"
                   onClick={this.changeToPublish}
+                  disabled={this.state.showResolvedQuestions}
                 />
 
               </div>
-              
             </div>
-            
+          
+      
             <div className={styles.tableCont}>
-              <div className={styles.tableLabels}>New Questions </div>
-              {/* HIDE THE NEW QUESTIONS IF THERE IS NO DATA IN COSMOS DB*/}
-              {this.state.newQuestions.length > 0 ? ( 
-                <div>                  
-                  <div className={styles.searchCont}> 
-                    <span>Search: </span>
-                    <input className={styles.searchtxtBox}
-                        value={this.state.searchNewq}
-                        onChange={e => this.setState({searchNewq: e.target.value})}
+              {this.state.showResolvedQuestions ? (
+
+                <div>
+               <div className={styles.tableLabels}>Resolved Questions </div>              
+                <div className={styles.controlMenu}>               
+                  <div className={styles.actionButtons}>
+                    <DefaultButton
+                      text="Back"
+                      href="#"
+                      onClick={this.hideResolveQuestions}
                     />
                   </div>
+                </div>
+
+                {this.state.resolvedQuestions.length > 0 ? ( 
                   <ReactTable
                     PaginationComponent={Pagination}
-                    data={newQuestions} //this.state.newQuestions
+                    data={resolvedQuestions} //this.state.newQuestions
                     columns={[
                       {
                         columns: [
@@ -553,96 +576,166 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                           {
                             Header: "Posted By",
                             accessor: "PostedBy"
+                          },
+                          {
+                            Header: "Remarks",
+                            accessor: "Remarks"
+                          },
+                          {
+                            Header: "Resolved By",
+                            accessor: "ResolvedBy"
+                          },
+                          {
+                            Header: "Resolved Date",
+                            accessor: "ResolvedDate",
+                            Cell: this.renderDateField
                           }
                         ]
                       }
                     ]}
-                    //defaultPageSize={5}
-                    pageSize={newQPgSize}
+                    pageSize={resQPgSize}
                     className="-striped -highlight"
                   />
-
+                ) : (
+                  <div>
+                  <span className={styles.notificationText}> There are no Resolved Questions from the Database </span>
+                  </div> 
+                )}
+                
                 </div>
-              ): (
-                <div>
-                  <span className={styles.notificationText}> There are no New Questions from the Database </span>
-                </div> 
-              
+                  
+              ):(
+                <div> 
+                  <div className={styles.tableLabels}>New Questions </div>
+                  {this.state.newQuestions.length > 0 ? ( 
+                            <div>    
+                              <div className={styles.controlMenu}>               
+                                <div className={styles.searchCont}> 
+                                  <span>Search: </span>
+                                  <input className={styles.searchtxtBox}
+                                      value={this.state.searchNewq}
+                                      onChange={e => this.setState({searchNewq: e.target.value})}
+                                  />
+                                </div>
+                                <div className={styles.actionButtons}>
+                                  <DefaultButton text="Resolved Questions" 
+                                      onClick={this.showResolvedQuestions}/>
+                                </div>
+                              </div>
+                              <ReactTable
+                                PaginationComponent={Pagination}
+                                data={newQuestions} //this.state.newQuestions
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Header: "Question",
+                                        accessor: "Question",
+                                        style: { 'overflow': 'visible !important', 
+                                                'overflow-wrap': 'break-word !important',
+                                                'word-wrap': 'break-word !important',
+                                                'white-space': 'normal !important' },
+                                        sortable: false 
+                                      },
+                                      {
+                                        Header: "Posted Date",
+                                        accessor: "PostedDate",
+                                        Cell: this.renderDateField,
+                                        sortable: false 
+                                      },
+                                      {
+                                        Header: "Posted By",
+                                        accessor: "PostedBy"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                //defaultPageSize={5}
+                                pageSize={newQPgSize}
+                                className="-striped -highlight"
+                              />
+
+                            </div>
+                          ): (
+                            <div>
+                              <span className={styles.notificationText}> There are no New Questions from the Database </span>
+                            </div> 
+                          
+                          )}
+
+                        <br />
+                        <div className={styles.tableCont}>
+                          <div className={styles.tableLabels}> QnA </div>
+
+                              {(QnACpyLength > 0) ? ( 
+                                <div>
+                                  <div className={styles.searchCont}> 
+                                                  <span>Search: </span>
+                                                  <input className={styles.searchtxtBox}
+                                                    value={this.state.searchQnA}
+                                                    onChange={e => this.setState({searchQnA: e.target.value})}
+                                                  />
+                                                </div>
+                                        <ReactTable
+                                          data={QnACpy} //this.state.qnaItems
+                                          PaginationComponent={Pagination}
+                                          columns={[
+                                            {
+                                              columns: [
+                                                {
+                                                  Header: "Questions",
+                                                  accessor: "Questions",
+                                                  Cell: this.renderQuestionsDisplay,
+                                                  filterable: false,
+                                                  style: { 'overflow': 'visible !important', 
+                                                              'overflow-wrap': 'break-word !important',
+                                                              'word-wrap': 'break-word !important',
+                                                              'white-space': 'normal !important' },
+                                                  sortable: false  
+                                                },
+                                                {
+                                                  Header: "Answer",
+                                                  accessor: "Answer",
+                                                  Cell: this.renderAnswerDisplay,
+                                                  filterable: false,
+                                                  style: { 'overflow': 'visible !important', 
+                                                              'overflow-wrap': 'break-word !important',
+                                                              'word-wrap': 'break-word !important',
+                                                              'white-space': 'normal !important' },
+                                                  sortable: false 
+                                                },
+                                                {
+                                                  Header: "Classification",
+                                                  accessor: "Classification"
+                                                },
+                                                {
+                                                  Header: "Remarks",
+                                                  accessor: "Remarks",
+                                                  filterable: false,
+                                                  style: { 'overflow': 'visible !important', 
+                                                              'overflow-wrap': 'break-word !important',
+                                                              'word-wrap': 'break-word !important',
+                                                              'white-space': 'normal !important' },
+                                                  sortable: false 
+                                                }
+                                              ]
+                                            }
+                                          ]}
+                                          //defaultPageSize={pgSize}
+                                          pageSize={pgSize}
+                                          className="-striped -highlight"
+                                        />
+                            </div>
+                          ): (
+                            <div>
+                              <span className={styles.notificationText}> There are no QnA Items. Edit to add QnA Pairs </span>
+                            </div> 
+                          
+                          )}
+                      </div>
+                </div>  
               )}
-           
             </div>
-            <br />
-            <div className={styles.tableCont}>
-              <div className={styles.tableLabels}> QnA </div>
-
-                  {(QnACpyLength > 0) ? ( 
-                    <div>
-                      <div className={styles.searchCont}> 
-                                      <span>Search: </span>
-                                      <input className={styles.searchtxtBox}
-                                        value={this.state.searchQnA}
-                                        onChange={e => this.setState({searchQnA: e.target.value})}
-                                      />
-                                    </div>
-                            <ReactTable
-                              data={QnACpy} //this.state.qnaItems
-                              PaginationComponent={Pagination}
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Header: "Questions",
-                                      accessor: "Questions",
-                                      Cell: this.renderQuestionsDisplay,
-                                      filterable: false,
-                                      style: { 'overflow': 'visible !important', 
-                                                  'overflow-wrap': 'break-word !important',
-                                                  'word-wrap': 'break-word !important',
-                                                  'white-space': 'normal !important' },
-                                      sortable: false  
-                                    },
-                                    {
-                                      Header: "Answer",
-                                      accessor: "Answer",
-                                      Cell: this.renderAnswerDisplay,
-                                      filterable: false,
-                                      style: { 'overflow': 'visible !important', 
-                                                  'overflow-wrap': 'break-word !important',
-                                                  'word-wrap': 'break-word !important',
-                                                  'white-space': 'normal !important' },
-                                      sortable: false 
-                                    },
-                                    {
-                                      Header: "Classification",
-                                      accessor: "Classification"
-                                    },
-                                    {
-                                      Header: "Remarks",
-                                      accessor: "Remarks",
-                                      filterable: false,
-                                      style: { 'overflow': 'visible !important', 
-                                                  'overflow-wrap': 'break-word !important',
-                                                  'word-wrap': 'break-word !important',
-                                                  'white-space': 'normal !important' },
-                                      sortable: false 
-                                    }
-                                  ]
-                                }
-                              ]}
-                              //defaultPageSize={pgSize}
-                              pageSize={pgSize}
-                              className="-striped -highlight"
-                            />
-                </div>
-              ): (
-                <div>
-                  <span className={styles.notificationText}> There are no QnA Items. Edit to add QnA Pairs </span>
-                </div> 
-              
-              )}
-
-              
-           </div>
           </div>
         );
     }

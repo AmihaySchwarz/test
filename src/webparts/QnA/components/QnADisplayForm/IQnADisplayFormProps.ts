@@ -40,6 +40,7 @@ export interface IQnADisplayFormState {
     qnaOriginalCopy: IQnAListItem[];
     searchNewq: string;
     searchQnA: string;
+    showResolvedQuestions: boolean;
 }
 
 export interface INewQuestionsFormState {
