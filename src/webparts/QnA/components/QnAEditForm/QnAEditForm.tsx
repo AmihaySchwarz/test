@@ -789,7 +789,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     return (
       <div>
         <Moment
-          format={"MMMM Do YYYY, h:mm:ss a"}
+          format={"DD/MM/YYYY, h:mm A"}
           date={cellInfo.original.PostedDate}
         />
       </div>
@@ -932,7 +932,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                   Mark as Resolved
                                 </button>
                                 <div className={styles.modalWindow}>
-                                  <Modal styles={{width:'50%'}} open={this.state.openModal} onClose={this.onCloseModal} center>
+                                  <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
                                     <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
                                   </Modal>
                                 </div>
@@ -941,8 +941,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                                   Reassign to Other Division
                                 </button>
          
-                                <Modal styles={modalStyle} open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
-                                  <div className={styles.dialogContent} ref='content'>
+                                <Modal  open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
+                                  <div className={styles.dialogContent}>
                                     <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
                                     divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />  
                                   </div>

@@ -24,7 +24,7 @@ import styles from "../QnAForm/QnAForm.module.scss";
      <div>
 
        { this.props.item != undefined && 
-       <div className={styles.reassignModalContent}>
+       <div className={styles.remarksModalContent}>
         <span className={styles.notificationText}> Remarks </span>
         <div> Question: {this.props.item.Question} </div>
           <TextField

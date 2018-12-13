@@ -26,7 +26,8 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
         setLoading: true,
         newQuestions: [],
         masterItems: [],
-        currentUser: undefined
+        currentUser: undefined,
+        resolvedQuestions: []
     };
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.loadData = this.loadData.bind(this);
@@ -43,9 +44,6 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
    this.loadData();
 
   }
-
-
-
 
   private setLoading(status: boolean): void {
     this.setState({ isLoading: status });
@@ -79,6 +77,7 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
     this.setState({
       masterItems: divisionList,
       newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
+      resolvedQuestions: newQuestionItems.filter(nq => nq.Status === "Resolved"),
       isLoading: false,
     });
   }

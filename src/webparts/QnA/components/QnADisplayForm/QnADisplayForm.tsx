@@ -37,7 +37,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       qnaActionHistory: [],
       qnaOriginalCopy: [],
       searchNewq: "",
-      searchQnA: ""
+      searchQnA: "",
+      resolvedQuestions: []
     };
 
     this.changeToEdit = this.changeToEdit.bind(this);
@@ -104,6 +105,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     //console.log(newQuestionItems);
     this.setState({
       newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
+      resolvedQuestions: newQuestionItems.filter(nq => nq.Status === "Resolved"),
       isLoading: false
     });
   }
@@ -444,7 +446,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       <div>
         <Moment
           //format={"MMMM Do YYYY, h:mm:ss a"}
-          format={"DD/MM/YYYY, h:mm a"}
+          format={"DD/MM/YYYY, h:mm A"}
           date={cellInfo.original.PostedDate}
         />
       </div>

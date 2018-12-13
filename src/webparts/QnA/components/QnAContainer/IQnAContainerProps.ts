@@ -28,4 +28,5 @@ export interface IQnAContainerState {
     //editItem: IMyTasks;
     setLoading: boolean;
     currentUser: any;
+    resolvedQuestions: any[];
 }

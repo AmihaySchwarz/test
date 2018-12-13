@@ -33,6 +33,7 @@ export interface IQnADisplayFormState {
     selectedDivisionListName: string;
     formView: ViewType;
     newQuestions: INewQuestions[];
+    resolvedQuestions: INewQuestions[];
     listTrackingItem: IQnAListTrackingItem;
     currentUser: any;
     qnaActionHistory: any[];
