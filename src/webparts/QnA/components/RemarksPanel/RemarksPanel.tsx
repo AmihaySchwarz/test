@@ -26,15 +26,18 @@ import styles from "../QnAForm/QnAForm.module.scss";
        { this.props.item != undefined && 
        <div className={styles.remarksModalContent}>
         <span className={styles.notificationText}> Remarks </span>
-        <div> Question: {this.props.item.Question} </div>
+        <br />
+        <br />
           <TextField
             value={this.state.remarks}
             multiline
-            rows={4}
+            rows={10}
             required={true}
             resizable={true} 
             onChanged={(value) => this.handleInputChange(value)}
+            
           />
+          <br />
           <PrimaryButton
             text="Save"
             primary={true}

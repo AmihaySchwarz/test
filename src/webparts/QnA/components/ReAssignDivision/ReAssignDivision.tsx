@@ -57,19 +57,21 @@ import {
 
        { this.props.item != undefined && 
        <div className={styles.reassignModalContent}>
-        <span className={styles.notificationText}> Reassign to New Division </span>
-        <div> <span> Question: {this.props.item.Question} </span> </div>
+        <span className={styles.notificationText}> Reassign Division </span>
+        <br />
+        <br />
         <div className={styles.dropdownCont}>
-        <Dropdown
-            placeHolder="Select Division"
-            id="division"
-            options={this.state.divisionList}
-            selectedKey={
-            selectedDivision ? selectedDivision.key : undefined
-            }
-            onChanged={this.setDivisionDD}
-        />
+          <Dropdown
+              placeHolder="Select Division"
+              id="division"
+              options={this.state.divisionList}
+              selectedKey={
+              selectedDivision ? selectedDivision.key : undefined
+              }
+              onChanged={this.setDivisionDD}
+          />
         </div>
+        <br />
           <PrimaryButton
             text="Save"
             primary={true}

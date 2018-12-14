@@ -6,7 +6,7 @@ import { ViewType } from "../../../common/enum";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "../Pagination/Pagination";
-import { DefaultButton } from "office-ui-fabric-react/lib/Button";
+import { DefaultButton, PrimaryButton } from "office-ui-fabric-react/lib/Button";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
@@ -400,7 +400,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   public updateRemarks(data:any, newQ: any): void {
     console.log("remarks", data,newQ);
 
-    if (_.isEmpty(data)){
+    if ((_.isEmpty(data)) || (data === " ") || _.isEmpty(data.trim())){
       toast.error("Remarks is empty");
     } else {
        try {
@@ -918,37 +918,57 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             Header: "Actions",
                             accessor: "newQuestionsActions",
                             Cell: ({ row }) => (
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    this.addNewQuestionToQnAList({ row })
-                                  }
-                                >
-                                  Add to QnA List
-                                </button>
-                                <br />
-                                {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
-                                <button onClick={() => this.markAsResolved({ row })}>
-                                  Mark as Resolved
-                                </button>
-                                <div className={styles.modalWindow}>
-                                  <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
-                                    <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
-                                  </Modal>
+                              <div className={styles.newQuestButtons}>
+                                <div className={styles.newQuestBtn}>  
+                                  {/* <button
+                                    onClick={() =>
+                                      this.addNewQuestionToQnAList({ row })
+                                    }
+                                  >
+                                    Add to QnA List
+                                  </button> */}
+                                  <PrimaryButton 
+                                    onClick={() =>
+                                      this.addNewQuestionToQnAList({ row })
+                                    }
+                                    text='Add to QnA List'
+                                  />
                                 </div>
                                
-                                <button onClick={() => this.reassignQuestion({row})}>
-                                  Reassign to Other Division
-                                </button>
-         
-                                <Modal  open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
-                                  <div className={styles.dialogContent}>
-                                    <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
-                                    divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />  
+                               
+                                {/* <button onClick={()=>this.deleteNewQuestion({row})}>Delete Question</button><br /> */}
+                                <div className={styles.newQuestBtn}>
+                                  {/* <button onClick={() => this.markAsResolved({ row })}>
+                                    Mark as Resolved
+                                  </button> */}
+                                  <PrimaryButton 
+                                    onClick={() => this.markAsResolved({ row })}
+                                    text='Mark as Resolved'
+                                  />
+                                  <div className={styles.modalWindow}>
+                                    <Modal open={this.state.openModal} onClose={this.onCloseModal} center>
+                                      <RemarksPanel item={this.state.nqForRemarks} onSubmitRemarks={data => this.updateRemarks(data,this.state.nqForRemarks)} />
+                                    </Modal>
                                   </div>
-                                  
-                                </Modal>
+                                </div>
 
+                                <div className={styles.newQuestBtn}>
+                                  {/* <button onClick={() => this.reassignQuestion({row})}>
+                                    Reassign to Other Division
+                                  </button>*/}
+                                  <PrimaryButton 
+                                    onClick={() => this.reassignQuestion({row})}
+                                    text='Reassign Division'
+                                  />
+          
+                                  <Modal  open={this.state.reassignModal} onClose={this.onCloseReassignModal} center>
+                                    <div className={styles.dialogContent}>
+                                      <ReAssignDivision defaultDivision={this.state.selectedDivisionText} item={this.state.nqNewDivision} 
+                                      divisionList={this.state.division} onSubmitReAssign={data => this.updateNewQuestionDivision(data,this.state.nqNewDivision)} />  
+                                    </div>
+                                    
+                                  </Modal>
+                                </div>
 
                               </div>
                             ) 
