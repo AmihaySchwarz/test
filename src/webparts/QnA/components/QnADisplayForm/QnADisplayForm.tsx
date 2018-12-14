@@ -456,6 +456,18 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     );
   }
 
+  public renderResolvedDateField(cellInfo) {
+    return (
+      <div>
+        <Moment
+          //format={"MMMM Do YYYY, h:mm:ss a"}
+          format={"DD/MM/YYYY, h:mm A"}
+          date={cellInfo.original.ResolvedDate}
+        />
+      </div>
+    );
+  }
+
   public showResolvedQuestions(){
     //set state that show ResolvedQuestions
     this.setState({showResolvedQuestions: true});
@@ -588,7 +600,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                           {
                             Header: "Resolved Date",
                             accessor: "ResolvedDate",
-                            Cell: this.renderDateField
+                            Cell: this.renderResolvedDateField
                           }
                         ]
                       }

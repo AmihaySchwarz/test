@@ -1018,7 +1018,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Cell: this.renderQuestionsEdit,
                         filterable: false,
                         sortable: false,
-                        width: 200
+                        width: 310
                       },
                       {
                         Header: "Answer",
@@ -1026,7 +1026,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Cell: this.renderEditableAnswer,
                         filterable: false,
                         sortable: false ,
-                        width: 200
+                        width: 450
                       },
                       {
                         Header: "Classification",
