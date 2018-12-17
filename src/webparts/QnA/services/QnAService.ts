@@ -64,7 +64,7 @@ export class QnAService extends BaseService implements IQnAService {
 
     public getQnAItems(divisionListName: string): Promise<any> {
        // console.log(divisionListName, "master list item");
-        return sp.web.lists.getByTitle(divisionListName).items.orderBy('Created', true).select("ID", "Questions", "Answer", "Classification", "QnAID", "Remarks").getAll().then((items: any[]) => {
+        return sp.web.lists.getByTitle(divisionListName).items.orderBy('Created', true).select("ID", "Questions", "Answer", "Classification", "QnAID", "Remarks", "Rating").getAll().then((items: any[]) => {
            // console.log(items);
             return items;
         });

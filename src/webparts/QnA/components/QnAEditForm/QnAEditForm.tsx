@@ -665,6 +665,27 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.updateActionHistory(item,index);
   }
 
+  public updateQnARating = (data, cellInfo) => {
+    let qnaItems = [...this.state.qnaItems];
+    let index;
+    if(cellInfo.original.Id != null){
+      //index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
+      index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
+    } else {
+       //index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
+       index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
+    }
+
+    let item = {
+      ...qnaItems[index],
+      Rating: data, 
+    };
+    qnaItems[index] = item;
+    this.setState({ qnaItems });
+
+    this.updateActionHistory(item,index);
+  }
+
   public updateQuestions = (data, cellInfo) => {
     console.log(data, cellInfo, "update question");
 
@@ -765,6 +786,24 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
           //required={true}
           //resizable={true}
           onChanged={data => this.updateQnARemarks(data, cellInfo)}
+        />
+        
+      </div>
+     
+    );
+  }
+
+  public renderEditableRating = (cellInfo) => {
+
+    return (
+      <div>
+        <TextField
+          value={cellInfo.original.Rating}
+          //multiline
+          //rows={4}
+          //required={true}
+          //resizable={true}
+          onChanged={data => this.updateQnARating(data, cellInfo)}
         />
         
       </div>
@@ -1018,7 +1057,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Cell: this.renderQuestionsEdit,
                         filterable: false,
                         sortable: false,
-                        width: 310
+                        width: 240
                       },
                       {
                         Header: "Answer",
@@ -1026,13 +1065,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Cell: this.renderEditableAnswer,
                         filterable: false,
                         sortable: false ,
-                        width: 450
+                        width: 260
                       },
                       {
                         Header: "Classification",
                         accessor: "Classification",
                         Cell: this.renderEditableDropdown,
-                        sortable: false
+                        sortable: false,
+                        width: 115
                       },
                       {
                         Header: "Remarks",
@@ -1042,63 +1082,47 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         sortable: false
                       },
                       {
+                        Header:"Rating",
+                        accessor: "Rating",
+                        filterable: false,
+                        sortable: false,
+                        Cell: this.renderEditableRating
+                      },
+                      {
                         Header: "Actions",
                         accessor: "Actions",
                         filterable: false,
                         sortable: false, 
                         Cell: ({ row, index }) => (
-                          <div>
-                            <button onClick={() => 
-                            this.deleteQnA({ row })
-                          }>
-                              Delete Question
-                            </button> <br />
-
-                             <Tooltip 
-                                popperOptions={{
-                                  modifiers: {
-                                    preventOverflow: {
-                                      priority: ['bottom', 'top'],
-                                      boundariesElement: "scrollParent"
+                          <div className={styles.newQuestButtons}>
+                            <div className={styles.newQuestBtn}>  
+                              <PrimaryButton
+                               onClick={() => this.deleteQnA({ row })} 
+                               text="Delete Question"/>
+                            </div>
+                              <Tooltip 
+                                  popperOptions={{
+                                    modifiers: {
+                                      preventOverflow: {
+                                        priority: ['bottom', 'top'],
+                                        boundariesElement: "scrollParent"
+                                      }
                                     }
-                                  }
-                                }}
-                                position="left-end"                              
-                                trigger="click" 
-                                //interactive
-                                arrow      
-                                offset={0}     
-                                sticky={true}
-                                stickyDuration={0}             
-                                html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
-                            >
-                              <button>Preview</button>
-                            </Tooltip>
-
-                            {/* <Floater
-                              
-                              content={
-                                <div>
-                                  <QnAPreviewPanel qnaItem={row} />
-                                </div>
-                              }
-                             // open={this.state.openTooltip}
-                              placement="left-end"
-                              offset={0}
-                              styles={{
-                                tooltip: {
-                                  filter: "none"
-                                },
-                                container: {
-                                  backgroundColor: "#FFF",
-                                  width: "272px",
-                                  height: "377px",
-                                  padding: "0px"
-                                }
-                              }}
-                            >
-                              <button>Preview</button>
-                            </Floater> */}
+                                  }}
+                                  position="left-end"                              
+                                  trigger="click" 
+                                  //interactive
+                                  arrow      
+                                  offset={0}     
+                                  sticky={true}
+                                  stickyDuration={0}             
+                                  html= {<div><QnAPreviewPanel qnaItem={row} /></div>}
+                              >
+                              <div className={styles.newQuestBtn}> 
+                                <PrimaryButton text="Preview" />
+                               </div>
+                              </Tooltip>
+                            
                           </div>
                         )
                       }

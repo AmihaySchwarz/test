@@ -449,7 +449,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       <div>
         <Moment
           //format={"MMMM Do YYYY, h:mm:ss a"}
-          format={"DD/MM/YYYY, h:mm A"}
+          format={"DD/MM/YYYY h:mm A"}
           date={cellInfo.original.PostedDate}
         />
       </div>
@@ -461,7 +461,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       <div>
         <Moment
           //format={"MMMM Do YYYY, h:mm:ss a"}
-          format={"DD/MM/YYYY, h:mm A"}
+          format={"DD/MM/YYYY h:mm A"}
           date={cellInfo.original.ResolvedDate}
         />
       </div>
@@ -618,9 +618,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                   
               ):(
                 <div> 
-                  <div className={styles.tableLabels}>New Questions </div>
+                  
                   {this.state.newQuestions.length > 0 ? ( 
                             <div>    
+                              <div className={styles.tableLabels}>New Questions </div>
                               <div className={styles.controlMenu}>               
                                 <div className={styles.searchCont}> 
                                   <span>Search: </span>
@@ -670,9 +671,59 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                             </div>
                           ): (
                             <div>
-                              <span className={styles.notificationText}> There are no New Questions from the Database </span>
-                            </div> 
-                          
+                              {ResQLength > 0 ? (
+                                <div>
+                                  <span className={styles.notificationText}> There are no New Questions from the Database </span>
+                                  <div className={styles.tableLabels}>Resolved Questions </div>   
+                                  <ReactTable
+                                      PaginationComponent={Pagination}
+                                      data={resolvedQuestions} //this.state.newQuestions
+                                      columns={[
+                                        {
+                                          columns: [
+                                            {
+                                              Header: "Question",
+                                              accessor: "Question",
+                                              style: { 'overflow': 'visible !important', 
+                                                      'overflow-wrap': 'break-word !important',
+                                                      'word-wrap': 'break-word !important',
+                                                      'white-space': 'normal !important' },
+                                              sortable: false 
+                                            },
+                                            {
+                                              Header: "Posted Date",
+                                              accessor: "PostedDate",
+                                              Cell: this.renderDateField,
+                                              sortable: false 
+                                            },
+                                            {
+                                              Header: "Posted By",
+                                              accessor: "PostedBy"
+                                            },
+                                            {
+                                              Header: "Remarks",
+                                              accessor: "Remarks"
+                                            },
+                                            {
+                                              Header: "Resolved By",
+                                              accessor: "ResolvedBy"
+                                            },
+                                            {
+                                              Header: "Resolved Date",
+                                              accessor: "ResolvedDate",
+                                              Cell: this.renderResolvedDateField
+                                            }
+                                          ]
+                                        }
+                                      ]}
+                                      pageSize={resQPgSize}
+                                      className="-striped -highlight"
+                                    />
+                                </div>
+                               ) : (
+                                  <span className={styles.notificationText}> There are no items from the Database </span>
+                              )}
+                            </div>                           
                           )}
 
                         <br />
@@ -703,7 +754,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                               'overflow-wrap': 'break-word !important',
                                                               'word-wrap': 'break-word !important',
                                                               'white-space': 'normal !important' },
-                                                  sortable: false  
+                                                  sortable: false ,
+                                                  width: 230  
                                                 },
                                                 {
                                                   Header: "Answer",
@@ -714,7 +766,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                               'overflow-wrap': 'break-word !important',
                                                               'word-wrap': 'break-word !important',
                                                               'white-space': 'normal !important' },
-                                                  sortable: false 
+                                                  sortable: false,
+                                                  width: 275 
                                                 },
                                                 {
                                                   Header: "Classification",
@@ -729,6 +782,12 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                               'word-wrap': 'break-word !important',
                                                               'white-space': 'normal !important' },
                                                   sortable: false 
+                                                },
+                                                {
+                                                  Header:"Rating",
+                                                  accessor: "Rating",
+                                                  filterable: false,
+                                                  sortable: false
                                                 }
                                               ]
                                             }
