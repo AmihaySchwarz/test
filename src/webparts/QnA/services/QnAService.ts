@@ -337,8 +337,8 @@ export class QnAService extends BaseService implements IQnAService {
             text: term.Name
         }));
         
-        console.log(termSetGroup.Name);
-        console.log(termNames);
+        //console.log(termSetGroup.Name);
+        //console.log(termNames);
         //console.log(setWithData);
         return termNames;
     }

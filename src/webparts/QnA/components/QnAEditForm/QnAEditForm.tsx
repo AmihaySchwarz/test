@@ -1081,7 +1081,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Header: "Classification",
                         accessor: "Classification",
                         Cell: this.renderEditableDropdown,
-                        sortable: false,
+                        sortable: true,
                         width: 115
                       },
                       {
@@ -1095,7 +1095,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         Header:"Rating",
                         accessor: "Rating",
                         filterable: false,
-                        sortable: false,
+                        sortable: true,
                         style: { 'display': 'flex',
                             'justify-content': 'center !important'
                         }

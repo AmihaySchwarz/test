@@ -731,7 +731,8 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                 },
                                                 {
                                                   Header: "Classification",
-                                                  accessor: "Classification"
+                                                  accessor: "Classification",
+                                                  sortable: true,
                                                 },
                                                 {
                                                   Header: "Remarks",
@@ -747,7 +748,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                   Header:"Rating",
                                                   accessor: "Rating",
                                                   filterable: false,
-                                                  sortable: false,
+                                                  sortable: true,
                                                   style: { 'display': 'flex',
                                                       'justify-content': 'center !important'
                                                   },
