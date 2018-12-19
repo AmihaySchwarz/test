@@ -967,7 +967,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                             Header: "Actions",
                             accessor: "newQuestionsActions",
                             Cell: ({ row }) => (
-                              <div className={styles.newQuestButtons}>
+                              <div>
                                 <div className={styles.newQuestBtn}>  
                                   {/* <button
                                     onClick={() =>
@@ -1107,7 +1107,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         filterable: false,
                         sortable: false, 
                         Cell: ({ row }) => (
-                          <div className={styles.newQuestButtons}>
+                          <div>
                             <div className={styles.newQuestBtn}>  
                               <PrimaryButton
                                onClick={() => this.deleteQnA({ row })} 
