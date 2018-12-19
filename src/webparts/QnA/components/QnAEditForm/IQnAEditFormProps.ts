@@ -55,4 +55,5 @@ export interface IQnAEditFormState {
     nqForRemarks: INewQuestions;
     reassignModal: boolean;
     nqNewDivision: INewQuestions;
+    allDivisions: any[];
 }

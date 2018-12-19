@@ -1,8 +1,10 @@
 import "@pnp/polyfill-ie11";
 //require('core-js');
 import 'es6-promise';
-
-//import 'core-js/es6/array';
+//import "es6-promise/auto"; 
+//import "babel-polyfill";
+import 'core-js/es6/array';
+import 'core-js/es6/number';
 //import 'es6-map/implement';
 //require('es6-promise/auto');
 import 'whatwg-fetch';
@@ -26,6 +28,7 @@ import { QnAContainer } from './components/QnAContainer/QnAContainer';
 import { IQnAService, QnAService } from './services';
 import * as MockQnAServiceImport from './services/MockQnAService';
 import { sp } from '@pnp/sp';
+import { taxonomy } from "@pnp/sp-taxonomy";
 
 let MockQnAService: typeof MockQnAServiceImport;
 if (DEBUG) {
@@ -67,6 +70,9 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
               Accept: 'application/json; odata=verbose' //; odata=verbose
             }
           }
+        });
+        taxonomy.setup({
+          spfxContext: this.context
         });
       });
   }

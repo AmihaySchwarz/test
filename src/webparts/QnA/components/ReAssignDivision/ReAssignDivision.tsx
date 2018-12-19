@@ -7,6 +7,7 @@ import {
     Dropdown,
     IDropdownOption
   } from "office-ui-fabric-react/lib/Dropdown";
+ 
 
   export default class ReAssignDivision extends React.Component<IReAssignDivisionProps,IReAssignDivisionState> {
     public state = {
@@ -19,15 +20,15 @@ import {
 
     
     public componentDidMount(){
-    //console.log(this.props, "reassign division");
+      //console.log(this.props, "reassign division");
         this.setState({
             selectedDivision: this.props.defaultDivision,
             divisionList: this.props.divisionList
         });
-    }
+    }    
    
     public componentWillReceiveProps(newProps): void {
-       // console.log(newProps, "reassing division will receive props");
+        //console.log(newProps, "reassing division will receive props");
         this.setState({
             selectedDivision: newProps.defaultDivision,
             divisionList: newProps.divisionList
@@ -66,7 +67,7 @@ import {
               id="division"
               options={this.state.divisionList}
               selectedKey={
-              selectedDivision ? selectedDivision.key : undefined
+              selectedDivision ? selectedDivision : undefined
               }
               onChanged={this.setDivisionDD}
           />

@@ -13,6 +13,7 @@ import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { INewQuestions } from "../models/INewQuestions";
 import * as moment from 'moment'; 
 import 'moment-timezone';
+import { taxonomy, ITermStore, ITermGroupData, ITermGroup } from "@pnp/sp-taxonomy";
 
 //API Service endpoint : https://sitqnaapp.azurewebsites.net 
 //kbid: da570262-16d1-4b75-85be-ed753244532d
@@ -313,6 +314,33 @@ export class QnAService extends BaseService implements IQnAService {
            // console.log(result);
             return result;
         });
+    }
+
+    public async getAllDivision(): Promise<any> {
+        //const store: ITermStore = await taxonomy.termStores.getById("0d9a3c16-5838-4abd-8235-6db9593d0738");
+        // get a single term by id 6c285b4d-49f9-4666-981d-2b7be6872978
+    
+       // const store: any = await taxonomy.termStores.getByName("Taxonomy_9D1X5aueEcT7a3LKqetQKw==");
+
+        //const store: ITermStore = 
+        //const store: ITermStore = await taxonomy.termStores.getByName("Taxonomy_9D1X5aueEcT7a3LKqetQKw==").get();
+        //const set: ITermSet = store.getTermSetById("6c285b4d-49f9-4666-981d-2b7be6872978");
+        
+        
+        const store: ITermStore = await taxonomy.termStores.getByName("Taxonomy_9D1X5aueEcT7a3LKqetQKw==");
+        const setWithData = await store.getTermSetById("6c285b4d-49f9-4666-981d-2b7be6872978");
+        const termSetGroup = await setWithData.group.get();
+
+        const terms = await setWithData.terms.get();
+        let termNames = terms.map(term => ({
+            key: term.Name,
+            text: term.Name
+        }));
+        
+        console.log(termSetGroup.Name);
+        console.log(termNames);
+        //console.log(setWithData);
+        return termNames;
     }
 
     public getNewQuestions(endpoint: string, division: string):Promise<any>{ //tenant: string, clientId: string, 

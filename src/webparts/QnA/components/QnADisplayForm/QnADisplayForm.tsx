@@ -674,51 +674,11 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                               {ResQLength > 0 ? (
                                 <div>
                                   <span className={styles.notificationText}> There are no New Questions from the Database </span>
-                                  <div className={styles.tableLabels}>Resolved Questions </div>   
-                                  <ReactTable
-                                      PaginationComponent={Pagination}
-                                      data={resolvedQuestions} //this.state.newQuestions
-                                      columns={[
-                                        {
-                                          columns: [
-                                            {
-                                              Header: "Question",
-                                              accessor: "Question",
-                                              style: { 'overflow': 'visible !important', 
-                                                      'overflow-wrap': 'break-word !important',
-                                                      'word-wrap': 'break-word !important',
-                                                      'white-space': 'normal !important' },
-                                              sortable: false 
-                                            },
-                                            {
-                                              Header: "Posted Date",
-                                              accessor: "PostedDate",
-                                              Cell: this.renderDateField,
-                                              sortable: false 
-                                            },
-                                            {
-                                              Header: "Posted By",
-                                              accessor: "PostedBy"
-                                            },
-                                            {
-                                              Header: "Remarks",
-                                              accessor: "Remarks"
-                                            },
-                                            {
-                                              Header: "Resolved By",
-                                              accessor: "ResolvedBy"
-                                            },
-                                            {
-                                              Header: "Resolved Date",
-                                              accessor: "ResolvedDate",
-                                              Cell: this.renderResolvedDateField
-                                            }
-                                          ]
-                                        }
-                                      ]}
-                                      pageSize={resQPgSize}
-                                      className="-striped -highlight"
-                                    />
+                                   
+                                    <div className={styles.actionButtons}>
+                                      <DefaultButton text="Resolved Questions" 
+                                          onClick={this.showResolvedQuestions}/>
+                                    </div>
                                 </div>
                                ) : (
                                   <span className={styles.notificationText}> There are no items from the Database </span>
@@ -787,7 +747,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                   Header:"Rating",
                                                   accessor: "Rating",
                                                   filterable: false,
-                                                  sortable: false
+                                                  sortable: false,
+                                                  style: { 'display': 'flex',
+                                                      'justify-content': 'center !important'
+                                                  },
                                                 }
                                               ]
                                             }

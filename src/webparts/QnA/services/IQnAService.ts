@@ -25,5 +25,6 @@ export interface IQnAService {
     publishQnAMakerItem:(endpoint: string, kbid: string) => Promise<any>;
     getQnAMakerItems:(endpoint: string, kbid: string, env: string) => Promise<any> ;
     getCurrentUser:() => Promise<any>;  
+    getAllDivision:() => Promise<any>;
     //updateWebpartProps(propertyPath: string, newValue: any): void;
 }
