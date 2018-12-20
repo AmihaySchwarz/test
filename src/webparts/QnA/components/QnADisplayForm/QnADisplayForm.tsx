@@ -673,6 +673,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                             <div>
                               {ResQLength > 0 ? (
                                 <div>
+                                  <div className={styles.tableLabels}>New Questions </div>
                                   <span className={styles.notificationText}> There are no New Questions from the Database </span>
                                    
                                     <div className={styles.actionButtons}>
@@ -681,7 +682,14 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                     </div>
                                 </div>
                                ) : (
-                                  <span className={styles.notificationText}> There are no items from the Database </span>
+                                 <div>
+                                  <div className={styles.tableLabels}>New Questions </div>
+                                  <span className={styles.notificationText}> There are no New Questions from the Database </span>
+                                  <div className={styles.actionButtons}>
+                                    <DefaultButton text="Resolved Questions" 
+                                        onClick={this.showResolvedQuestions}/>
+                                  </div>
+                                </div>
                               )}
                             </div>                           
                           )}
@@ -749,8 +757,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                   accessor: "Rating",
                                                   filterable: false,
                                                   sortable: true,
-                                                  style: { 'display': 'flex',
-                                                      'justify-content': 'center !important'
+                                                  className: styles.rating,
+                                                  style: { 
+                                                      'justify-content': 'center !important',
+                                                      'display': 'flex'
                                                   },
                                                 }
                                               ]

@@ -1096,8 +1096,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                         accessor: "Rating",
                         filterable: false,
                         sortable: true,
-                        style: { 'display': 'flex',
-                            'justify-content': 'center !important'
+                        className: styles.rating,
+                        style: {  
+                          'justify-content': 'center !important',
+                          'display': 'flex'
                         }
                         //Cell: this.renderEditableRating
                       },

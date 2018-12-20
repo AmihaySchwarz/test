@@ -30,10 +30,10 @@ import styles from "../QnAForm/QnAForm.module.scss";
         <br />
           <TextField
             value={this.state.remarks}
-            multiline
-            rows={10}
+            //multiline
+            //rows={10}
             required={true}
-            resizable={true} 
+            //resizable={true} 
             onChanged={(value) => this.handleInputChange(value)}
             
           />

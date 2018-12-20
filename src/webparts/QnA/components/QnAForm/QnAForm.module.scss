@@ -30,7 +30,10 @@
   // .newQuestButtons{
   //   display: grid; 
   // }
-
+  .rating{
+    justify-content: center !important;
+    display: flex;
+  }
   .newQuestBtn{
     padding: 4px;
   }

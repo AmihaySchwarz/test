@@ -66,20 +66,29 @@ export class QnAContainer extends React.Component<IQnAContainerProps, IQnAContai
   // }
 
   private async loadMasterList(currentUser: any): Promise<void> {
-    let masterListItems = await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName );
-    let divisionList = masterListItems.map(divisionItem => ({
-      key: divisionItem.QnAListName,
-      text: divisionItem.Division.Label
-    }));
 
-    let newQuestionItems = await this.actionHandler.getNewQuestions(this.props.endpointUrl, divisionList[0].text);
-    
-    this.setState({
-      masterItems: divisionList,
-      newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
-      resolvedQuestions: newQuestionItems.filter(nq => nq.Status === "Resolved"),
-      isLoading: false,
-    });
+    try{
+      let masterListItems = await this.actionHandler.getMasterListItems(currentUser, this.props.webUrl,this.props.masterListName );
+      let divisionList = masterListItems.map(divisionItem => ({
+        key: divisionItem.QnAListName,
+        text: divisionItem.Division.Label
+      }));
+  
+      let newQuestionItems = await this.actionHandler.getNewQuestions(this.props.endpointUrl, divisionList[0].text);
+      
+      this.setState({
+        masterItems: divisionList,
+        newQuestions: newQuestionItems.filter(nq => nq.Status !== "Resolved"),
+        resolvedQuestions: newQuestionItems.filter(nq => nq.Status === "Resolved"),
+        isLoading: false,
+      });
+    } catch (e) {
+      console.log(e);
+      this.setState({
+        isLoading: false
+      });
+    }
+   
   }
 
 
