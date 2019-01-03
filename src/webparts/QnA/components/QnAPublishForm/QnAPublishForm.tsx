@@ -395,9 +395,9 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                 />
               </div>
             </div>
-            <span className={styles.tableLabels}> Preview Changes </span>
+            
             <div className={styles.tableCont}>{/*updatedQnA*/}
-
+              <div className={styles.tableLabels}> Preview Changes </div>
             {this.state.qnaActionHistory.length > 0 ? ( 
                <ReactTable 
                   data={this.state.qnaActionHistory } 
@@ -408,16 +408,31 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                         {
                           Header: "Questions",
                           accessor: "qnaItem.Questions",
-                          Cell: this.renderQuestionsPublish
+                          Cell: this.renderQuestionsPublish,
+                          filterable: false,
+                          style: { 'overflow': 'visible !important', 
+                                    'overflow-wrap': 'break-word !important',
+                                    'word-wrap': 'break-word !important',
+                                    'white-space': 'normal !important' },
+                          sortable: false ,
+                          width: 230  
                         },
                         {
                           Header: "Answer",
                           accessor: "qnaItem.Answer",
                           Cell: this.renderAnswerPublish,
+                          filterable: false,
+                          style: { 'overflow': 'visible !important', 
+                                      'overflow-wrap': 'break-word !important',
+                                      'word-wrap': 'break-word !important',
+                                      'white-space': 'normal !important' },
+                          sortable: false,
+                          width: 275
                         },
                         {
                           Header: "Classification",
-                          accessor: "qnaItem.Classification"
+                          accessor: "qnaItem.Classification",
+                          sortable: true,
                         },
                         {
                           Header: "Change Type",
@@ -425,12 +440,16 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                         },
                         {
                           Header: "Remarks",
-                          accessor: "qnaItem.Remarks"
+                          accessor: "qnaItem.Remarks",
+                          style: { 'overflow': 'visible !important', 
+                                                              'overflow-wrap': 'break-word !important',
+                                                              'word-wrap': 'break-word !important',
+                                                              'white-space': 'normal !important' },
+                          sortable: false 
                         }
                       ]
                     }
                   ]}
-                  defaultPageSize={10}
                   pageSize={pgSize}
                   className="-striped -highlight"
                 />
