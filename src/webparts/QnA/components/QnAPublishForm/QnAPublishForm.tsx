@@ -250,9 +250,10 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
 
         const qnaWithKBID = addedItems.map(addedItem => {
           console.log(addedItem.qnaItem.Id);
+          console.log(this.state.selectedDivisionText);
           let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
-            if (kb.metadata[1]){
-              return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
+            if ((kb.metadata[1]) && (kb.metadata[2])){
+              return (kb.metadata[1].value === addedItem.qnaItem.Id.toString() && (kb.metadata[2].value === this.state.selectedDivisionText.toLowerCase())); 
             }
           });
           console.log(matchKb);
