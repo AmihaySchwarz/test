@@ -886,7 +886,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       //    // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
       //   });
       // }
-      console.log(this.state.searchQnA);
+      //console.log(this.state.searchQnA);
       if((this.state.searchQnA == "") || (this.state.searchQnA == null)){
         QnACpy = this.state.qnaItems;
       } 

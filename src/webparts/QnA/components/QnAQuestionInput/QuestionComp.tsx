@@ -26,18 +26,18 @@ export default class QuestionComp extends React.Component<any,any> {
     return (
       <div className={styles.listitem}>
         <div key={index} className={styles.items}>
-          {this.state.isEdit ? (
+           {this.state.isEdit ? ( 
             <textarea className={styles.editItemInput}
               value={item}
               onBlur={event => this.handleBlurItem(index, event)}
               onChange={event => this.itemChange(index, event)}
             />
-          ) : (
-            <div className={styles.qContainer}>
-              <span className={styles.indivQuestions} onClick={() => this.handleEditItem(index)}>{item} </span>
-                <span className={styles.xButton} onClick={() => this.handleRemoveItem(index)}> x </span>
-            </div>
-          )}
+            ) : (
+             <div className={styles.qContainer}>
+               <span className={styles.indivQuestions} onClick={() => this.handleEditItem(index)}>{item} </span>
+                 <span className={styles.xButton} onClick={() => this.handleRemoveItem(index)}> x </span>
+             </div>
+           )} 
         </div>
       </div>
     );
