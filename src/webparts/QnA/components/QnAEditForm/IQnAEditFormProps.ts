@@ -56,4 +56,5 @@ export interface IQnAEditFormState {
     reassignModal: boolean;
     nqNewDivision: INewQuestions;
     allDivisions: any[];
+    searchedQnA: IQnAListItem[];
 }
