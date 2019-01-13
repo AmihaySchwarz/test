@@ -699,7 +699,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                   /> */}
                                   <input className={styles.searchtxtBox}
                                         value={this.state.searchNewq}
-                                        onChange={e => this.setState({searchNewq: e.target.value})}
+                                        onChange={e => this.setState({
+                                          searchNewq: e.target.value,
+                                          searchedNewq: []
+                                        })}
                                         placeholder="Search"
                                         onKeyPress={this.searchNewqValuesKeyPress}
                                   />
@@ -782,7 +785,10 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                                                   
                                           <input className={styles.searchtxtBox}
                                             value={this.state.searchQnA}
-                                            onChange={e => this.setState({searchQnA: e.target.value})}
+                                            onChange={e => this.setState({
+                                              searchQnA: e.target.value,
+                                              searchedQnA: []
+                                            })}
                                             placeholder="Search"
                                             onKeyPress={this.searchQnAValuesKeyPress}
                                           />

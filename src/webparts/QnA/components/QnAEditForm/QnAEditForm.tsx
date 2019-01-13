@@ -637,41 +637,34 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
 
   public updateQnAAnswer = (data, cellInfo) => {
-    //console.log(data)
-
     let qnaItems = [...this.state.qnaItems];
     let index;
     if(cellInfo.original.Id != null){
       index = qnaItems.findIndex(d => d.Id == cellInfo.original.Id);
-      //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
     } else {
        index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
-       //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
+
     let indexSearched;
     let searchedQnA;
+
     if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
         || (this.state.searchQnA !== "") ){
-          searchedQnA = [...this.state.searchedQnA];
-          
+          searchedQnA = [...this.state.searchedQnA]; 
           if(cellInfo.original.Id != null){
             indexSearched = searchedQnA.findIndex(d => d.Id == cellInfo.original.Id);
-            //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
           } else {
             indexSearched = searchedQnA.findIndex(d => d.identifier == cellInfo.original.identifier);
-             //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
           }
     }
 
     if(this.getText(data) !== this.getText(cellInfo.original.Answer)){
-     // console.log(this.getText(data), "====", this.getText(cellInfo.original.Answer));
       let item = {
         ...qnaItems[index],
         Answer: data, 
       };
       qnaItems[index] = item;
       this.setState({ qnaItems });
-      
       this.updateActionHistory(item,index);
       
       if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
@@ -1078,7 +1071,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
                   <div className={styles.searchCont}> 
                     <input className={styles.searchtxtBox}
                           value={this.state.searchNewq}
-                          onChange={e => this.setState({searchNewq: e.target.value})}
+                          onChange={e => this.setState({
+                            searchNewq: e.target.value,
+                            searchedNewq: []
+                          })}
                           placeholder="Search"
                           onKeyPress={this.searchNewqValuesKeyPress}
                     />
@@ -1196,7 +1192,10 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
               <div className={styles.searchCont}> 
                 <input className={styles.searchtxtBox}
                   value={this.state.searchQnA}
-                  onChange={e => this.setState({searchQnA: e.target.value})}
+                  onChange={e => this.setState({
+                    searchQnA: e.target.value,
+                    searchedQnA: []
+                  })}
                   placeholder="Search"
                   onKeyPress={this.searchQnAValuesKeyPress}
                 />
