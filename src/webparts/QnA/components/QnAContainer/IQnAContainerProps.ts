@@ -13,6 +13,7 @@ export interface IQnAContainerProps {
   webUrl: string;
   qnAMakerKnowledgeBaseId: string;
   isConfigured: boolean;
+  lockTiming: number;
   //clientId: any;
   //tenant: any;
   //authContextOptions: AuthenticationContext.Options;

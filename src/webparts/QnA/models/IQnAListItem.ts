@@ -8,5 +8,7 @@ export interface IQnAListItem {
     identifier: number;
     Remarks: string;
     Ratings: string;
+    RowKey: string;
+    PartitionKey: string;
 }
 

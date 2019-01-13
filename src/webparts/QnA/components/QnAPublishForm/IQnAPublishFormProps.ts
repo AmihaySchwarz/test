@@ -51,4 +51,6 @@ export interface IQnAPublishFormState {
     searchNewq: string;
     searchQnA: string;
     isqnaActionHistoryEmpty: boolean;
+    selected: any[];
+    selectAll: boolean;
 }

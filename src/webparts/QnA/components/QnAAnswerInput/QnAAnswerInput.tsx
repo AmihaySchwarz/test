@@ -9,6 +9,7 @@ export default class QnAAnswerInput extends React.Component<any, any> {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.setProps = this.setProps.bind(this);
+    
   }
 
   public setProps() {
@@ -49,6 +50,7 @@ export default class QnAAnswerInput extends React.Component<any, any> {
   public formats = ["bold", "italic", "list", "bullet", "indent", "link"];
 
   public render() {
+   // console.log(this.props.value);
     const style =
       _.isEmpty(this.props.value) || this.props.value === "<p><br></p>"
         ? {}

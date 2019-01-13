@@ -108,6 +108,11 @@ export class QnAActionHandler {
         return res;
     }
 
+    public async sendReassignEmail(division: string, oldDivision: any): Promise<any>{
+        let res = await this.service.sendReassignEmail(division, oldDivision);
+        return res;
+    }
+
     public async reassignQuestion(endpoint: string, item: INewQuestions, division: string): Promise<any>{
         let res = await this.service.reassignQuestion(endpoint,item, division);
         return res;

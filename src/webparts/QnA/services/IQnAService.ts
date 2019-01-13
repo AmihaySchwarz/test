@@ -8,6 +8,7 @@ export interface IQnAService {
     getNewQuestions: (endpoint: string, division: string) => Promise<any>; //tenant: string, clientId: string, 
     deleteFromNewQuestion:(endpoint: string, item: INewQuestions) =>Promise<any>; //tenant: string, clientId: string, 
     resolveQuestion:(endpoint: string, item: INewQuestions, remarks: string, currentUser: any) => Promise<any>;
+    sendReassignEmail:(division: string, oldDivision: any) => Promise<any>;
     reassignQuestion:(endpoint: string, item: INewQuestions, division: string) => Promise<any>;
     checkLockStatus:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;
     createLockItem:(currentUser: any, division: string, qnaListTrackingListName: string) => Promise<any>;

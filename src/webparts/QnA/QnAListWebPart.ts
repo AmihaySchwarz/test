@@ -47,6 +47,7 @@ export interface IQnAListWebPartProps {
   webUrl: string;
   tenant: string;
   QnAMakerKnowledgeBaseId: string;
+  lockTiming: number;
 }
 
 export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPartProps> {
@@ -90,7 +91,8 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
           qnATrackingListName: this.properties.qnATrackingListName, 
           webUrl: this.properties.webUrl,
           qnAMakerKnowledgeBaseId: this.properties.QnAMakerKnowledgeBaseId,
-          isConfigured: this.needsConfiguration()
+          isConfigured: this.needsConfiguration(),
+          lockTiming: this.properties.lockTiming
           //edirectUrl: this.properties.redirectUrl
         //}],
         //authContextOptions: this.getAuthContextOptions(),
@@ -155,6 +157,10 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
               label: strings.QnAMakerKnowledgeBaseIdFieldLabel,
               
             }),
+            PropertyPaneTextField('lockTiming', {
+              label: strings.LockTimingFieldLabel,
+              
+            }),
               ]
             }
           ]
@@ -177,7 +183,7 @@ export default class QnAListWebPart extends BaseClientSideWebPart<IQnAListWebPar
   }
 
   private needsConfiguration(): boolean {
-    console.log("needscionfig");
+    console.log("needsconfig");
     let config =  !!this.properties.qnATrackingListName &&
         //!!this.properties.webUrl &&
         !!this.properties.masterListName &&

@@ -6,7 +6,7 @@ import { ViewType } from "../../../common/enum";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "../Pagination/Pagination";
-import { DefaultButton, PrimaryButton } from "office-ui-fabric-react/lib/Button";
+import { DefaultButton, PrimaryButton, IconButton } from "office-ui-fabric-react/lib/Button";
 import { TextField } from "office-ui-fabric-react/lib/TextField";
 import { QnAPreviewPanel } from "../QnAPreviewPanel/QnAPreviewPanel";
 import QuestionInput from "../QnAQuestionInput/QuestionInput";
@@ -36,7 +36,7 @@ const modalStyle = {
 export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditFormState> {
   constructor(props) {
     super(props);
-    console.log(props);
+    //console.log(props);
     this.state = {
       division: [],
       selectedDivision: undefined,
@@ -55,7 +55,8 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       reassignModal: false,
       nqNewDivision: undefined,
       allDivisions: [],
-      searchedQnA: []
+      searchedQnA: [],
+      searchedNewq: []
     };
 
     this.onSaveClick = this.onSaveClick.bind(this);
@@ -68,10 +69,14 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.deleteQnA = this.deleteQnA.bind(this);
     this.lockList = this.lockList.bind(this);
     this.searchQnAValues = this.searchQnAValues.bind(this);
+    this.searchQnAValuesKeyPress = this.searchQnAValuesKeyPress.bind(this);
+    this.searchNewqValues = this.searchNewqValues.bind(this);
+    this.searchNewqValuesKeyPress = this.searchNewqValuesKeyPress.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
-      console.log(newProps, "will receive props");
+      //console.log(newProps, "will receive props");
+      let lockTime = parseInt(newProps.properties.lockTiming);
     if (
       newProps.defaultDivision
     ) {
@@ -90,12 +95,13 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       this.loadQnAListData(newProps.defaultDivision.key);
       this.loadNewQuestionsData(newProps.defaultDivision.text);
       this.getAllDivisions();
-      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
+      setInterval(this.updateLockReleaseTimeIncrementally, lockTime * 60 * 1000); //15 * 60 * 1000
     }
   }
 
   public componentDidMount(): void {
-    console.log(this.props, "did mount");
+    //console.log(this.props, "did mount");
+    let lockTime = parseInt(this.props.properties.lockTiming);
     if (
         this.props.defaultDivision
       ) {
@@ -114,7 +120,7 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         this.loadQnAListData(this.props.defaultDivision.key);
         this.loadNewQuestionsData(this.props.defaultDivision.text);
         this.getAllDivisions();
-        setInterval(this.updateLockReleaseTimeIncrementally, 15 *  60 * 1000); //15 * 60 * 1000
+        setInterval(this.updateLockReleaseTimeIncrementally, lockTime * 60 * 1000); //15 * 60 * 1000
       }
 
   }
@@ -337,20 +343,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
 
   public addNewQuestionToQnAList(item: any): void {
     this.setState({isLoading: true});
-    // this.props.actionHandler.addQuestionToQnAList(
-    //   this.props.properties.webUrl,
-    //   this.state.selectedDivisionListName,
-    //   item.row
-    // ).then(res => {
-    //   console.log(res);
-    //   this.setState(prevState => {
-    //     return {
-    //         qnaItems: [...prevState.qnaItems, res.data],
-    //         isLoading: false
-    //     };
-    //   });
-    // });
-    //let newQnA = null;
     let itemAddActionHistory = null;
     let identifierNum = parseInt(Math.random().toString().slice(2,11));
     //this.setState(oldstate => {
@@ -367,7 +359,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         QnAID: 0,
         Id: null,
         Remarks: "",
-        identifier: identifierNum
+        identifier: identifierNum,
+        RowKey: item.row._original.RowKey,
+        PartitionKey: item.row._original.PartitionKey,
       };
        //create identifier for new question row for history
        itemAddActionHistory = {
@@ -444,16 +438,30 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     console.log("new division", data, newQ);
     try {
       this.setState({isLoading: true});
-      this.props.actionHandler.reassignQuestion(
-        this.props.properties.endpointUrl,
-        newQ._original,
-        data
-      ).then(res => {
-        this.loadNewQuestionsData(this.props.defaultDivision.text);
-        toast.info(res);
+      if((data.trim() !== "") || (!_.isEmpty(data))) {
+        this.props.actionHandler.reassignQuestion(
+          this.props.properties.endpointUrl,
+          newQ._original,
+          data
+        ).then(res => {
+          this.loadNewQuestionsData(this.props.defaultDivision.text);
+          let origDivision = newQ._original.Division;
+          if((origDivision.toString().toLowerCase() !== data.toString().toLowerCase()) || (data != "") || (!_.isEmpty(data))){
+            this.props.actionHandler.sendReassignEmail(data, newQ._original).then(emailRes => {
+              //toast.info(emailRes );
+              toast.info(res);
+            });
+          }      
+          //toast.info(res);
+          this.setState({isLoading: false});
+          this.setState({ reassignModal: false });
+        });
+      } else {
+        toast.info("No Changes to Division");
         this.setState({isLoading: false});
         this.setState({ reassignModal: false });
-      });
+      }
+      
     }catch (error) {
       console.log(error);      
       toast.error("an error has occured");
@@ -487,7 +495,9 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
         QnAID: 0,
         Id: null,
         Remarks: "",
-        identifier: identifierNum
+        identifier: identifierNum,
+        RowKey: 0,
+        PartitionKey: "",
       };
       
       //create identifier for new question row for history
@@ -638,6 +648,20 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
        index = qnaItems.findIndex(d => d.identifier == cellInfo.original.identifier);
        //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
     }
+    let indexSearched;
+    let searchedQnA;
+    if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
+        || (this.state.searchQnA !== "") ){
+          searchedQnA = [...this.state.searchedQnA];
+          
+          if(cellInfo.original.Id != null){
+            indexSearched = searchedQnA.findIndex(d => d.Id == cellInfo.original.Id);
+            //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
+          } else {
+            indexSearched = searchedQnA.findIndex(d => d.identifier == cellInfo.original.identifier);
+             //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
+          }
+    }
 
     if(this.getText(data) !== this.getText(cellInfo.original.Answer)){
      // console.log(this.getText(data), "====", this.getText(cellInfo.original.Answer));
@@ -647,11 +671,19 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       };
       qnaItems[index] = item;
       this.setState({ qnaItems });
-  
+      
       this.updateActionHistory(item,index);
+      
+      if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
+        || (this.state.searchQnA !== "") ){
+          let searcheditem = {
+            ...searchedQnA[indexSearched],
+            Answer: data, 
+          };
+          searchedQnA[indexSearched] = searcheditem;
+          this.setState({ searchedQnA });
+      }
     }
-
-   
   }
 
   public updateQnARemarks = (data, cellInfo) => {
@@ -675,6 +707,27 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
+
+    if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
+        || (this.state.searchQnA !== "") ){
+          let searchedQnA = [...this.state.searchedQnA];
+          let indexSearched;
+          if(cellInfo.original.Id != null){
+            indexSearched = searchedQnA.findIndex(d => d.Id == cellInfo.original.Id);
+            //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
+          } else {
+            indexSearched = searchedQnA.findIndex(d => d.identifier == cellInfo.original.identifier);
+            //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
+          }
+
+          let searcheditem = {
+            ...searchedQnA[indexSearched],
+            Remarks: data, 
+          };
+          searchedQnA[indexSearched] = searcheditem;
+          this.setState({ searchedQnA });
+    }
+    
   }
 
   public updateQnARating = (data, cellInfo) => {
@@ -696,6 +749,26 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
+
+    if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
+        || (this.state.searchQnA !== "") ){
+          let searchedQnA = [...this.state.searchedQnA];
+          let indexSearched;
+          if(cellInfo.original.Id != null){
+            indexSearched = searchedQnA.findIndex(d => d.Id == cellInfo.original.Id);
+            //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
+          } else {
+            indexSearched = searchedQnA.findIndex(d => d.identifier == cellInfo.original.identifier);
+            //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
+          }
+
+          let itemSearched = {
+            ...searchedQnA[indexSearched],
+            Rating: data, 
+          };
+          searchedQnA[indexSearched] = itemSearched;
+          this.setState({ searchedQnA });
+    }
   }
 
   public updateQuestions = (data, cellInfo) => {
@@ -721,6 +794,28 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
+
+    //if the searchedQnA is not empty then user is on search.
+    if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) || (this.state.searchQnA !== "") ){
+      let arraySearched = [...this.state.searchedQnA];
+      let indexSearched;
+      if(cellInfo.original.Id != null){
+        indexSearched = arraySearched.findIndex(d => d.Id == cellInfo.original.Id);
+        //index = _.findIndex(array,d => d.Id == cellInfo.original.Id);
+      } else {
+        indexSearched = arraySearched.findIndex(d => d.identifier == cellInfo.original.identifier);
+         //index = _.findIndex(array,d => d.identifier == cellInfo.original.identifier);
+      }
+     
+      let searchedQnA = [...this.state.searchedQnA];
+      let itemSearched = {
+        ...searchedQnA[indexSearched],
+        Questions: JSON.stringify(data)
+      };
+   
+      searchedQnA[indexSearched] = itemSearched;
+      this.setState({ searchedQnA });
+    }
   }
 
   public updateClassification = (data, cellInfo) => {
@@ -744,6 +839,30 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
     this.setState({ qnaItems });
 
     this.updateActionHistory(item,index);
+
+    if((this.state.searchedQnA.length !== 0) && (!_.isEmpty(this.state.searchQnA)) 
+        || (this.state.searchQnA !== "") ){
+          let searchedQnA = [...this.state.searchedQnA];
+          console.log("NEW CLASS", data);
+
+          let indexSearched;
+          if(cellInfo.original.Id != null){
+            indexSearched = searchedQnA.findIndex(d => d.Id == cellInfo.original.Id);
+            //index = _.findIndex(qnaItems,d => d.Id == cellInfo.original.Id);
+          } else {
+            indexSearched = searchedQnA.findIndex(d => d.identifier == cellInfo.original.identifier);
+            //index = _.findIndex(qnaItems,d => d.identifier == cellInfo.original.identifier);
+          }
+
+          let itemSearched = {
+            ...searchedQnA[indexSearched],
+            Classification: data //JSON.stringify(data)
+          };
+          searchedQnA[indexSearched] = itemSearched;
+          this.setState({ searchedQnA });      
+    }
+
+
   }
 
   public renderQuestionsEdit = cellInfo => {
@@ -793,10 +912,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       <div>
         <TextField
           value={cellInfo.original.Remarks}
-          //multiline
-          //rows={4}
-          //required={true}
-          //resizable={true}
           onChanged={data => this.updateQnARemarks(data, cellInfo)}
         />
         
@@ -811,10 +926,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
       <div>
         <TextField
           value={cellInfo.original.Rating}
-          //multiline
-          //rows={4}
-          //required={true}
-          //resizable={true}
           onChanged={data => this.updateQnARating(data, cellInfo)}
         />
         
@@ -848,7 +959,6 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
   }
 
   public searchQnAValues(){
-    
     var searchVal = this.state.qnaItems.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
@@ -856,56 +966,86 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
          // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
     this.setState({
-      searchedQnA: searchVal
+      searchedQnA: searchVal,
     });
   }
 
-  public render() {
-    
-    let newQuestions = this.state.newQuestions; 
-
-    let QnACpy;
-    if(this.state.searchedQnA.length == 0){
-      QnACpy  = this.state.qnaItems;
-    } else {
-      QnACpy  = this.state.searchedQnA;
+  public searchQnAValuesKeyPress(e){
+    if (e.key === 'Enter') {
+      var searchVal = this.state.qnaItems.filter(row => {
+        return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+        row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+        row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); 
+      });
+      this.setState({
+        searchedQnA: searchVal,
+      });
     }
-    
-    let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
-    let NewQLength = (newQuestions) ? newQuestions.length : 0;
-    let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+  }
 
+  public searchNewqValues(){
+    let newQuestions = this.state.newQuestions.filter(row => {
+      return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+      row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+      String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
+    });
+    this.setState({
+      searchedNewq: newQuestions,
+    });
+  }
 
-    //console.log(this.state.qnaItems, "origi", QnACpy);
+  public searchNewqValuesKeyPress(e){
+    if (e.key === 'Enter') {
+      let newQuestions = this.state.newQuestions.filter(row => {
+        return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+        row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+        String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
+      });
+      this.setState({
+        searchedNewq: newQuestions,
+      });
+    }
+  }
 
-      // if (this.state.searchQnA) {
-      //   QnACpy = QnACpy.filter(row => {
-      //     return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-      //     row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
-      //     row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); //||
-      //    // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
-      //   });
-      // }
-      //console.log(this.state.searchQnA);
+  public render() {
+
+      let QnACpy;
+      if(this.state.searchedQnA.length == 0){
+        QnACpy  = this.state.qnaItems;
+      } else {
+        QnACpy  = this.state.searchedQnA;
+      }
+
+      let newQuestions;
+      let NewQLength;
+      let newQPgSize;
+      if(this.state.searchedNewq.length == 0){
+        newQuestions  = this.state.newQuestions;
+        NewQLength = (newQuestions) ? newQuestions.length : 0;
+        newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+      } else {
+        newQuestions  = this.state.searchedNewq;
+        NewQLength = (newQuestions) ? newQuestions.length : 0;
+        newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+      }
+      
+      let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+       
       if((this.state.searchQnA == "") || (this.state.searchQnA == null)){
         QnACpy = this.state.qnaItems;
       } 
 
-        if (this.state.searchNewq) {
-          newQuestions = newQuestions.filter(row => {
-            return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
-            row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
-            String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
-          });
-        }
+      if((this.state.searchNewq == "") || (this.state.searchNewq == null)){
+        newQuestions = this.state.newQuestions;
+        NewQLength = (newQuestions) ? newQuestions.length : 0;
+        newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+      } 
 
         return (
           <div>
             
             {this.state.isLoading && <LoadingSpinner />}
-            {/* <ToastContainer /> */}
-            {/* <Link activeClass="active" className="test1" to="test1" spy={true} smooth={true} duration={500} >Test Scroll</Link> */}
-            <div className={styles.controlMenu}>
+             <div className={styles.controlMenu}>
               <div className={styles.dropdownCont}>
                 <span className={styles.divisionLabel}> Division: {this.state.selectedDivisionText} </span>
               </div>
@@ -936,11 +1076,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
               {this.state.newQuestions.length > 0 ? ( 
                 <div> 
                   <div className={styles.searchCont}> 
-                    <span>Search: </span>
                     <input className={styles.searchtxtBox}
-                      value={this.state.searchNewq}
-                      onChange={e => this.setState({searchNewq: e.target.value})}
+                          value={this.state.searchNewq}
+                          onChange={e => this.setState({searchNewq: e.target.value})}
+                          placeholder="Search"
+                          onKeyPress={this.searchNewqValuesKeyPress}
                     />
+                    <IconButton iconProps={{ iconName: 'Search' }} 
+                          onClick={this.searchNewqValues}
+                          title="Search" 
+                          ariaLabel="Search" />
                   </div>
                   <ReactTable
                     PaginationComponent={Pagination}
@@ -1049,18 +1194,16 @@ export class QnAEditForm extends React.Component<IQnAEditFormProps, IQnAEditForm
             <div className={styles.tableCont}>
               <div className={styles.tableLabels}> QnA </div>
               <div className={styles.searchCont}> 
-                <span>Search: </span>
                 <input className={styles.searchtxtBox}
-									value={this.state.searchQnA}
+                  value={this.state.searchQnA}
                   onChange={e => this.setState({searchQnA: e.target.value})}
-								/>
-                <DefaultButton
-                  className={styles.searchBtn}
-                  primary={true}
-                  href="#" 
-                  text="Search"
-                  onClick={this.searchQnAValues}
+                  placeholder="Search"
+                  onKeyPress={this.searchQnAValuesKeyPress}
                 />
+                <IconButton iconProps={{ iconName: 'Search' }} 
+                      onClick={this.searchQnAValues}
+                      title="Search" 
+                      ariaLabel="Search" />
               </div>
               <ReactTable
                 data={QnACpy} //this.state.qnaItems

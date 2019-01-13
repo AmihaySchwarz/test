@@ -57,4 +57,5 @@ export interface IQnAEditFormState {
     nqNewDivision: INewQuestions;
     allDivisions: any[];
     searchedQnA: IQnAListItem[];
+    searchedNewq: INewQuestions[];
 }

@@ -1,10 +1,11 @@
 
 export interface INewQuestions {
-    Id: String;
-    Question: string;
+    Id?: String;
+    Question?: string;
     RowKey: string;
-    PostedDate: Date;
-    PostedBy: any;
-    Contact: any[];
+    PartitionKey: string;
+    PostedDate?: Date;
+    PostedBy?: any;
+    Contact?: any[];
 }
 

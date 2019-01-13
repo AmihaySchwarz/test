@@ -13,7 +13,8 @@ define([], function() {
     "QnAEndpointUrlFieldLabel": "QnA List Endpoint URL",
     "MasterListNameFieldLabel": "QnA Master List Name",
     "TenantFieldLabel" : "Tenant",
-    "QnAMakerKnowledgeBaseIdFieldLabel" : "QnAMaker Knowledge Base Id"
+    "QnAMakerKnowledgeBaseIdFieldLabel" : "QnAMaker Knowledge Base Id",
+    "LockTimingFieldLabel": "Editing Lock Timing (minutes)"
   }
 });
 

@@ -7,13 +7,14 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQnAService } from './IQnAService';
 import { BaseService } from '../../common/services/BaseService';
 import { HttpClientResponse, HttpClient, AadHttpClient } from '@microsoft/sp-http';
-import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult, Web } from '@pnp/sp';
+import { sp , RenderListDataParameters, RenderListDataOptions, ItemAddResult, Web , EmailProperties} from '@pnp/sp';
 import { IQnAListItem } from "../models/IQnAListItem";
 import { IQnAListTrackingItem } from "../models/IQnAListTrackingItem";
 import { INewQuestions } from "../models/INewQuestions";
 import * as moment from 'moment'; 
 import 'moment-timezone';
 import { taxonomy, ITermStore, ITermGroupData, ITermGroup } from "@pnp/sp-taxonomy";
+import ReactHtmlParser from 'react-html-parser';
 
 //API Service endpoint : https://sitqnaapp.azurewebsites.net 
 //kbid: da570262-16d1-4b75-85be-ed753244532d
@@ -164,7 +165,7 @@ export class QnAService extends BaseService implements IQnAService {
                         LockedReleaseTime: d, // d.toLocaleTimeString(),
                         LastUpdated: d, //d.toLocaleTimeString(),
                         LastPublished: d, //d.toLocaleTimeString(),
-                        qnaPublishString: null,
+                        qnaPublishString: JSON.stringify(qnaActionHistory),
                         qnaOriginalCopy: null
                     }).then(result => {
                       //  console.log(result);
@@ -270,7 +271,7 @@ export class QnAService extends BaseService implements IQnAService {
                     LockedById: currentUser.Id,
                     LockedReleaseTime: d //d.toLocaleDateString()
                 }).then(result => {
-                    console.log(result);
+                    console.log("List Locked: " , result);
                     return result;
                 }).catch(error => {
                     console.log(error);
@@ -444,6 +445,58 @@ export class QnAService extends BaseService implements IQnAService {
             }
         );
     }
+
+
+    private async getEmailTo(division: string): Promise<any> {
+     
+        return sp.web.lists.getByTitle("Email Configuration").items.select("ID", "Title","Topic", "EmailTo")
+                            .filter("Title eq '" + division +"'").get().then((items: any[]) => {
+            
+            let reassignItems = items.filter(i => i.Topic === null);
+            return reassignItems;
+         });
+    }
+
+    private async getEmailDet(): Promise<any> {
+       let title = "SIT_Reassignment";
+        return sp.web.lists.getByTitle("EmailTemplates").items.select("ID", "Title","Subject", "Body")
+                            .filter("Title eq '" + title +"'").get().then((items: any[]) => {            
+            return items;
+         });
+    }
+
+    public async sendReassignEmail(division: string, oldDivision: any): Promise<any> {
+        let emailProps: EmailProperties;
+        let res;
+
+        this.getEmailTo(division).then(emailRecpients => {
+            console.log(emailRecpients);
+            let recipients = emailRecpients[0].EmailTo.split(",");
+            
+            this.getEmailDet().then(emailDet => {
+                let emailBody = ReactHtmlParser(emailDet[0].Body).toString().replace("{question}", oldDivision.Question)
+                                .replace("{newDivision}", division)
+                                .replace("{oldDivision}", oldDivision.Division)
+                                .replace("{link}", 
+                                    "<a href='https://pleodata.sharepoint.com/sites/sit-faqchatbot-dev/SitePages/QnA-List-Management.aspx'> here </a>");
+                emailProps = {
+                    To: recipients,
+                    Subject: emailDet[0].Subject,
+                    Body: emailBody
+                };
+                sp.utility.sendEmail(emailProps).then((result) => {
+                    console.log("Email Sent", result);
+                    res = result;
+                },
+                   (error: any) => {
+                    console.error(error);
+                    res = error;
+                });
+            });
+        });
+
+         return res;
+     }
 
     public reassignQuestion(endpoint: string, item: INewQuestions, division: string): Promise<any>{
         //https://sitqnaapiservice20180920061357.azurewebsites.net/api/newquestions/reassignquestion

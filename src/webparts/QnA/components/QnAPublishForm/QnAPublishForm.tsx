@@ -34,23 +34,28 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
       qnaOriginalCopy: [],
       searchNewq: "",
       searchQnA: "",
-      isqnaActionHistoryEmpty: false
+      isqnaActionHistoryEmpty: false,
+      selected: [],
+      selectAll: false
     };
 
     this.publishQnA = this.publishQnA.bind(this);
     this.onBackClick = this.onBackClick.bind(this);
     this.updateLockReleaseTimeIncrementally = this.updateLockReleaseTimeIncrementally.bind(this);
+    this.toggleSelectAll = this.toggleSelectAll.bind(this);
+    this.handleSingleCheckboxChange = this.handleSingleCheckboxChange.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
     console.log(newProps.qnaActionHistory);
+    let lockTime = parseInt(newProps.properties.lockTiming);
     if (
       (newProps.qnaActionHistory !== undefined) &&
       (newProps.qnaActionHistory !== null) &&
       (newProps.qnaActionHistory.length !== 0) 
     ) {
       this.setState({
-        qnaActionHistory: this.props.qnaActionHistory,
+        qnaActionHistory: newProps.qnaActionHistory,
         qnaItems: newProps.qnaItems,
         newQuestions: newProps.newQuestions,
         currentUser: newProps.currentUser,
@@ -60,7 +65,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionListName: newProps.defaultDivision.key,
         qnaOriginalCopy: newProps.qnaOriginalCopy
       });
-      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
+      setInterval(this.updateLockReleaseTimeIncrementally, lockTime * 60 * 1000); //15 * 60 * 1000
     } else {
       this.setState({
         isqnaActionHistoryEmpty: true,
@@ -68,7 +73,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionText: newProps.defaultDivision.text,
         selectedDivisionListName: newProps.defaultDivision.key
       });
-      setInterval(this.updateLockReleaseTimeIncrementally, 15 * 60 * 1000); //15 * 60 * 1000
+      setInterval(this.updateLockReleaseTimeIncrementally, lockTime * 60 * 1000); //15 * 60 * 1000
     }
   }
 
@@ -88,6 +93,17 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         selectedDivisionText: this.props.defaultDivision.text,
         selectedDivisionListName: this.props.defaultDivision.key,
         qnaOriginalCopy: this.props.qnaOriginalCopy
+      });
+      var checkedCopy = [];
+      var selectAll = this.state.selectAll;
+      this.props.qnaActionHistory.forEach(e => {
+        e["toPublish"] = selectAll;
+        checkedCopy.push(e);
+      });
+
+      this.setState({
+        selected: checkedCopy,
+        selectAll: selectAll
       });
     } else {
       this.setState({
@@ -124,9 +140,26 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
     let formatItem;
     this.setState({isLoading: true });
 
-    console.log(this.state.qnaActionHistory, "IN PUBLISH!!!!");
+    //console.log(this.state.qnaActionHistory, "IN PUBLISH!!!!");
+    console.log(this.state.selected, "selected items");
+    let selectedQnAToPublish = [];
+    let unselectedQnA = [];
     try {
-      const updateKBArray = this.state.qnaActionHistory.reduce((newObject,currentItem)=>{
+
+      this.state.selected.forEach(selectedItem => {
+        if(selectedItem.toPublish == true){
+          //selected index is true find in qnaActionHistory and put in new toPublishArray
+          selectedQnAToPublish.push(selectedItem);
+        } else {
+          //selected index is false find in qnaActionHitory and put in new unPublishedArray
+          unselectedQnA.push(selectedItem);
+        }
+      });
+
+      console.log("selected ", selectedQnAToPublish);
+      console.log("unselected ", unselectedQnA);
+
+      const updateKBArray = selectedQnAToPublish.reduce((newObject,currentItem)=>{
         console.log(currentItem);
         
         if (currentItem.qnaItem.QnAID == 0) {
@@ -236,16 +269,16 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
         
       },{});
   
-      console.log(updateKBArray); 
+      //console.log(updateKBArray); 
       let publishQnAJSOn = JSON.stringify(updateKBArray);
-      console.log(publishQnAJSOn);
+      console.log("Publish String in QnA Maker => ", publishQnAJSOn);
   
       (async() => {
         const updateQnAMakerRes = await this.props.actionHandler.updateQnAMakerKB(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId,publishQnAJSOn);
         const qnAMakerItems = await this.props.actionHandler.getQnAMakerItems(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId, "test");
         let kbItems = JSON.parse(qnAMakerItems);
         console.log(kbItems);
-        let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
+        let addedItems = this.state.selected.filter(d => d.action == "add");
         console.log(addedItems );   
 
         const qnaWithKBID = addedItems.map(addedItem => {
@@ -265,75 +298,50 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
 
         const updateQnAList = await this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
         const publishQnAMaker = await this.props.actionHandler.publishQnAMakerItem(this.props.properties.endpointUrl,this.props.properties.qnAMakerKnowledgeBaseId);
-        this.props.actionHandler.updateQnAListTracking( this.props.properties.qnATrackingListName, this.state.selectedDivisionText,this.state.qnaActionHistory, this.state.qnaOriginalCopy,"publish");
+
+        //pass the unselected qna to be saved in tracking
+        this.props.actionHandler.updateQnAListTracking( this.props.properties.qnATrackingListName, this.state.selectedDivisionText,unselectedQnA, this.state.qnaOriginalCopy,"publish");
         toast.success("KB Successfully published");
         this.setState({
-          formView: ViewType.Display,
+          
           isLoading: false,
           qnaActionHistory: []
         });
+
+        //TOTEST:
+        //call handler to resolve the new question.
+        console.log(this.state.selected);
+        console.log(addedItems);
+        this.state.selected.forEach(publishedItem => {
+          if((publishedItem.qnaItem.RowKey !== "") && (publishedItem.qnaItem.PartitionKey !== "")){
+            let resolveQuest = {
+              RowKey: publishedItem.qnaItem.RowKey,
+              PartitionKey: publishedItem.qnaItem.PartitionKey
+            };
+
+            this.props.actionHandler.resolveQuestion(
+                this.props.properties.endpointUrl,
+                resolveQuest,
+                "Resolved",
+                this.state.currentUser
+                ).then(res => {
+                  toast.info(res);
+                  this.setState({
+                    formView: ViewType.Display,
+                    isLoading: false});
+                });
+          }
+        });
+
         this.props.onPublishedClick(this.state.selectedDivision);
       })().catch(err=> {
-        console.log(err);
-        toast.error("error in saving master list item");
+        console.log("Error => " , err);
+        toast.error("Error Occurred");
         this.setState({isLoading: false});
         this.props.onPublishedClick(this.state.selectedDivision);
       });
 
 
-      // this.props.actionHandler.updateQnAMakerKB(
-      //   this.props.properties.endpointUrl,
-      //   this.props.properties.qnAMakerKnowledgeBaseId,
-      //   publishQnAJSOn)
-      // .then( result => { 
-      //     console.log(result);
-      //     this.props.actionHandler.getQnAMakerItems(
-      //       this.props.properties.endpointUrl,
-      //       this.props.properties.qnAMakerKnowledgeBaseId,
-      //       "test")
-      //     .then(res => {
-      //       let kbItems = JSON.parse(res);
-      //       console.log(kbItems);
-      //       let addedItems = this.state.qnaActionHistory.filter(d => d.action == "add");
-      //       console.log(addedItems );   
-  
-      //       const qnaWithKBID = addedItems.map(addedItem => {
-      //         console.log(addedItem.qnaItem.Id);
-      //         let matchKb = kbItems.qnaDocuments.filter(doc => doc.metadata.length > 0).find(kb => { 
-      //            return kb.metadata[1].value === addedItem.qnaItem.Id.toString(); 
-      //         });
-      //        console.log(matchKb);
-      //       addedItem.qnaItem.QnAID = matchKb.id; 
-      //        return addedItem;
-      //       });
-  
-      //       console.log(qnaWithKBID);
-      //       const qnaWithIds =  qnaWithKBID.filter(items => items.action === "add").map( qna => qna.qnaItem);
-  
-      //       this.props.actionHandler.updateItemInQnAList(this.state.selectedDivisionListName,qnaWithIds);
-  
-      //       this.props.actionHandler.publishQnAMakerItem(
-      //         this.props.properties.endpointUrl,
-      //         this.props.properties.qnAMakerKnowledgeBaseId)
-      //       .then(() => {
-      //             this.props.actionHandler.updateQnAListTracking(
-      //               this.props.properties.qnATrackingListName, 
-      //               this.state.selectedDivisionText,
-      //               this.state.qnaActionHistory,
-      //               this.state.qnaOriginalCopy,
-      //               "publish")
-      //           .then(() => {
-      //             toast.success("KB Successfully published");
-      //             this.setState({
-      //               formView: ViewType.Display,
-      //               isLoading: false,
-      //               qnaActionHistory: []
-      //             });
-      //             this.props.onPublishedClick(this.state.selectedDivision, "success");
-      //           });
-      //       });
-      //     }); 
-      // });
     }catch (err){
       console.log(err);
       toast.error("something went wrong");
@@ -362,15 +370,56 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
     );
   }
 
+  public toggleSelectAll() {
+    var checkedCopy = [];
+    var selectAll = !this.state.selectAll;
+    this.setState({ selectAll: selectAll });
+
+    this.state.qnaActionHistory.forEach(x => {
+      x.toPublish = selectAll;
+      checkedCopy.push(x);
+    });
+    
+    console.log(checkedCopy, "checked items");
+
+		this.setState({
+			selected: checkedCopy
+    });
+    
+  }
+
+  public handleSingleCheckboxChange(row) {
+    //console.log(row);
+
+    let checkedCopy = this.state.selected;
+
+    const index = this.state.selected.findIndex(data => data.qnaItem.Id == row.qnaItem.Id);
+
+    checkedCopy[index].toPublish = !this.state.selected[index].toPublish;
+    if (checkedCopy[index].toPublish === false) {
+      this.setState({ selectAll: false });
+    }
+
+    this.setState({
+      selected: checkedCopy
+    });
+  }
+
 
   public render() {
-      console.log(this.state.isqnaActionHistoryEmpty, "QNA HISTORY");
+      //console.log(this.state.selected);
 
       let tblLength = (this.state.qnaActionHistory) ? this.state.qnaActionHistory.length : 0; 
       let pgSize = (tblLength > 10) ? 5 : tblLength;
 
     //   let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
     // let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
+    let isSelectedEmpty;
+    if(this.state.selected.length > 0){
+      isSelectedEmpty = false;
+    } else {
+      isSelectedEmpty = true;
+    }
 
         return ( 
           <div>
@@ -392,7 +441,7 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                   primary={true}
                   href="#"
                   onClick={this.publishQnA}
-                  disabled={this.state.isqnaActionHistoryEmpty}
+                  disabled={this.state.selected.length == 0}
                 />
               </div>
             </div>
@@ -406,6 +455,34 @@ export class QnAPublishForm extends React.Component<IQnAPublishFormProps, IQnAPu
                   columns={[
                     {
                       columns: [
+                        //TODO: checkbox; select items to publish then retain unpublised in publishQnA
+                        {
+                          id: "checkbox",
+                          accessor: "",
+                          Cell:  row  => {
+                            return (
+                              <input
+                                type="checkbox"
+                                className="checkbox"
+                                checked={row.original.toPublish}
+                                // checked={this.state.selected[row.original.toPublish]}
+                                onChange={() => this.handleSingleCheckboxChange(row.original)}
+                              />
+                            );
+                          },
+                          Header: x => {
+                            return (
+                              <input
+                                type="checkbox"
+                                className="checkbox"
+                                onChange={() => this.toggleSelectAll()}
+                                checked={this.state.selectAll}
+                              />
+                            );
+                          },
+                          sortable: false,
+                          width: 45
+                         },
                         {
                           Header: "Questions",
                           accessor: "qnaItem.Questions",

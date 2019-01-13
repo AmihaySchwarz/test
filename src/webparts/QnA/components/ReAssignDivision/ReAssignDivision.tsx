@@ -15,7 +15,8 @@ import {
       newQuestions: null,
       selectedDivision: null,
       selectedDivisionText: "",
-      divisionList: []
+      divisionList: [],
+      origDivision: null
     }; 
 
     
@@ -23,29 +24,34 @@ import {
       //console.log(this.props, "reassign division");
         this.setState({
             selectedDivision: this.props.defaultDivision,
-            divisionList: this.props.divisionList
+            divisionList: this.props.divisionList,
+            origDivision: this.props.defaultDivision
         });
     }    
    
     public componentWillReceiveProps(newProps): void {
-        //console.log(newProps, "reassing division will receive props");
+        console.log(newProps, "reassing division will receive props");
         this.setState({
             selectedDivision: newProps.defaultDivision,
-            divisionList: newProps.divisionList
+            divisionList: newProps.divisionList,
+            origDivision: this.props.defaultDivision
         });
     }
 
     public handleInputChange(value) {
-     // console.log(value);
+ 
       this.setState({
-        division: value
+        division: value,
+        selectedDivision: value.text
       });
     }
 
 
     public setDivisionDD = (item: IDropdownOption): void => {
+      
         this.setState({
-            division: item.text
+            division: item.text,
+            selectedDivision: item.text
           });
     }
 

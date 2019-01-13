@@ -15,6 +15,7 @@ declare interface IQnAListWebPartStrings {
   MasterListNameFieldLabel: string;
   TenantFieldLabel: string;
   QnAMakerKnowledgeBaseIdFieldLabel: string;
+  LockTimingFieldLabel: string;
 }
 
 declare module 'QnAListWebPartStrings' {

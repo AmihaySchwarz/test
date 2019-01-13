@@ -14,4 +14,5 @@ export interface IReAssignDivisionState {
     selectedDivision:any;
     selectedDivisionText: string;
     divisionList: any[];
+    origDivision: any[];
 }

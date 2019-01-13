@@ -41,6 +41,8 @@ export interface IQnADisplayFormState {
     searchNewq: string;
     searchQnA: string;
     showResolvedQuestions: boolean;
+    searchedQnA: any[];
+    searchedNewq: INewQuestions[];
 }
 
 export interface INewQuestionsFormState {

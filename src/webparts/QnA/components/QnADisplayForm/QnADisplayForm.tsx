@@ -6,7 +6,7 @@ import { ViewType } from "../../../common/enum";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Pagination } from "../Pagination/Pagination";
-import { DefaultButton } from "office-ui-fabric-react/lib/Button";
+import { DefaultButton, IconButton, IButtonProps } from "office-ui-fabric-react/lib/Button";
 import {
   Dropdown,
   IDropdownOption
@@ -18,6 +18,7 @@ import * as _ from "lodash";
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import * as moment from 'moment'; 
 import 'moment-timezone';
+
 
 export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADisplayFormState> {
   constructor(props) {
@@ -39,20 +40,24 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
       searchNewq: "",
       searchQnA: "",
       resolvedQuestions: [],
-      showResolvedQuestions: false
+      showResolvedQuestions: false,
+      searchedQnA: [],
+      searchedNewq: []
     };
 
     this.changeToEdit = this.changeToEdit.bind(this);
     this.changeToPublish = this.changeToPublish.bind(this);
     this.showResolvedQuestions = this.showResolvedQuestions.bind(this);
     this.hideResolveQuestions = this.hideResolveQuestions.bind(this);
+    this.searchQnAValues = this.searchQnAValues.bind(this);
+    this.searchQnAValuesKeyPress = this.searchQnAValuesKeyPress.bind(this);
+    this.searchNewqValues = this.searchNewqValues.bind(this);
+    this.searchNewqValuesKeyPress = this.searchNewqValuesKeyPress.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
-    console.log(newProps);
     if (
-      newProps.masterItems.length !== 0 //&&
-      //newProps.newQuestions.length !== 0
+      newProps.masterItems.length !== 0 
     ) {
       this.setState({
         qnaItems: newProps.qnaItems,
@@ -159,7 +164,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
         console.log(minutes, "DIFFERENCE");
 
-        if (minutes < 15 ) {
+        if (minutes < parseInt(this.props.properties.lockTiming, 10) ) {
           if(items[0].LockedBy == undefined) {
             // user can edit it. call lockList()
             this.lockList();
@@ -351,7 +356,7 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
       console.log(minutes, "DIFFERENCE");
 
-      if (minutes < 15 ) {
+      if (minutes <  parseInt(this.props.properties.lockTiming, 10) ) {
         if(items[0].LockedBy == undefined) {
           // user can edit it. call lockList()
           this.lockListPublish();
@@ -477,42 +482,105 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
     this.setState({showResolvedQuestions: false});
   }
 
-
-  public render() {
-    const { selectedDivision } = this.state;
-    let newQuestions = this.state.newQuestions; 
-    let QnACpy = this.state.qnaItems;
-    let resolvedQuestions = this.state.resolvedQuestions;
-
-    let QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
-    let pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
-
-    let NewQLength = (newQuestions) ? newQuestions.length : 0;
-    let newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
-
-    let ResQLength = (resolvedQuestions) ? resolvedQuestions.length : 0;
-    let resQPgSize = (ResQLength > 10) ? 5 : ResQLength;
-
-      if (this.state.searchQnA) {
-        QnACpy = QnACpy.filter(row => {
+  public searchQnAValues(){
+    var searchVal = this.state.qnaItems.filter(row => {
           return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
           row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); //||
          // row.Remarks.toLowerCase().includes(this.state.searchQnA.toLowerCase());
         });
-      }
+    this.setState({
+      searchedQnA: searchVal,
+    });
+  }
 
-       if (this.state.searchNewq) {
-        newQuestions = newQuestions.filter(row => {
-          return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
-          row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
-          String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
-        });
-      }
+  public searchQnAValuesKeyPress(e){
+    if (e.key === 'Enter') {
+      var searchVal = this.state.qnaItems.filter(row => {
+        return row.Answer.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+        row.Questions.toLowerCase().includes(this.state.searchQnA.toLowerCase()) || 
+        row.Classification.toLowerCase() == this.state.searchQnA.toLowerCase(); 
+      });
+      this.setState({
+        searchedQnA: searchVal,
+      });
+    }
+  }
+
+  public searchNewqValues(){
+    let newQuestions = this.state.newQuestions.filter(row => {
+      return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+      row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+      String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
+    });
+    this.setState({
+      searchedNewq: newQuestions,
+    });
+  }
+
+  public searchNewqValuesKeyPress(e){
+    if (e.key === 'Enter') {
+      let newQuestions = this.state.newQuestions.filter(row => {
+        return row.Question.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+        row.PostedBy.toLowerCase().includes(this.state.searchNewq.toLowerCase()) || 
+        String(row.PostedDate).toLowerCase().includes(this.state.searchNewq.toLowerCase());
+      });
+      this.setState({
+        searchedNewq: newQuestions,
+      });
+    }
+  }
+
+
+  public render() {
+    const { selectedDivision } = this.state;
+    let resolvedQuestions = this.state.resolvedQuestions;
+
+    let QnACpy;
+    let QnACpyLength;
+    let pgSize;
+    if(this.state.searchedQnA.length == 0){
+      QnACpy  = this.state.qnaItems;
+      QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+      pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
+    } else {
+      QnACpy  = this.state.searchedQnA;
+      QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+      pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
+    }
+
+    let newQuestions;
+    let NewQLength;
+    let newQPgSize;
+    if(this.state.searchedNewq.length == 0){
+      newQuestions  = this.state.newQuestions;
+      NewQLength = (newQuestions) ? newQuestions.length : 0;
+      newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+    } else {
+      newQuestions  = this.state.searchedNewq;
+      NewQLength = (newQuestions) ? newQuestions.length : 0;
+      newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+    }
+
+    if((this.state.searchQnA == "") || (this.state.searchQnA == null)){
+      QnACpy = this.state.qnaItems;
+      QnACpyLength = (QnACpy) ? QnACpy.length : 0; 
+      pgSize = (QnACpyLength > 10) ? 5 : QnACpyLength;
+    } 
+
+    if((this.state.searchNewq == "") || (this.state.searchNewq == null)){
+      newQuestions = this.state.newQuestions;
+      NewQLength = (newQuestions) ? newQuestions.length : 0;
+      newQPgSize = (NewQLength > 10) ? 5 : NewQLength;
+    } 
+
+     
+
+    let ResQLength = (resolvedQuestions) ? resolvedQuestions.length : 0;
+    let resQPgSize = (ResQLength > 10) ? 5 : ResQLength;
 
         return (
           <div>
-            {/* <ToastContainer /> */}
             {this.state.isLoading && <LoadingSpinner />}
             <div className={styles.controlMenu}>
               <span className={styles.divisionLabel}> Division: </span>
@@ -624,11 +692,21 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
                               <div className={styles.tableLabels}>New Questions </div>
                               <div className={styles.controlMenu}>               
                                 <div className={styles.searchCont}> 
-                                  <span>Search: </span>
-                                  <input className={styles.searchtxtBox}
+                                  {/* <input className={styles.searchtxtBox}
                                       value={this.state.searchNewq}
                                       onChange={e => this.setState({searchNewq: e.target.value})}
+                                      placeholder="Search"
+                                  /> */}
+                                  <input className={styles.searchtxtBox}
+                                        value={this.state.searchNewq}
+                                        onChange={e => this.setState({searchNewq: e.target.value})}
+                                        placeholder="Search"
+                                        onKeyPress={this.searchNewqValuesKeyPress}
                                   />
+                                  <IconButton iconProps={{ iconName: 'Search' }} 
+                                        onClick={this.searchNewqValues}
+                                        title="Search" 
+                                        ariaLabel="Search" />
                                 </div>
                                 <div className={styles.actionButtons}>
                                   <DefaultButton text="Resolved Questions" 
@@ -700,15 +778,21 @@ export class QnADisplayForm extends React.Component<IQnADisplayFormProps, IQnADi
 
                               {(QnACpyLength > 0) ? ( 
                                 <div>
-                                  <div className={styles.searchCont}> 
-                                                  <span>Search: </span>
-                                                  <input className={styles.searchtxtBox}
-                                                    value={this.state.searchQnA}
-                                                    onChange={e => this.setState({searchQnA: e.target.value})}
-                                                  />
-                                                </div>
+                                        <div className={styles.searchCont}> 
+                                                  
+                                          <input className={styles.searchtxtBox}
+                                            value={this.state.searchQnA}
+                                            onChange={e => this.setState({searchQnA: e.target.value})}
+                                            placeholder="Search"
+                                            onKeyPress={this.searchQnAValuesKeyPress}
+                                          />
+                                             <IconButton iconProps={{ iconName: 'Search' }} 
+                                              onClick={this.searchQnAValues}
+                                              title="Search" 
+                                              ariaLabel="Search" />
+                                        </div>
                                         <ReactTable
-                                          data={QnACpy} //this.state.qnaItems
+                                          data={QnACpy}
                                           PaginationComponent={Pagination}
                                           columns={[
                                             {
